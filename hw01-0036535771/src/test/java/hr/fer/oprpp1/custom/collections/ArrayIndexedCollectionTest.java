@@ -204,6 +204,15 @@ public class ArrayIndexedCollectionTest {
 	
 	// METHOD toArray()
 	
+	@Test
+	public void testToArray() {
+		ArrayIndexedCollection aic = new ArrayIndexedCollection(3);
+		aic.add(1); aic.add(2); aic.add(3);
+		aic.insert(5, 1);
+		Object[] expected = {1,5,2,3};
+		
+		assertArrayEquals(expected, aic.toArray());
+	}
 	
 	
 	
