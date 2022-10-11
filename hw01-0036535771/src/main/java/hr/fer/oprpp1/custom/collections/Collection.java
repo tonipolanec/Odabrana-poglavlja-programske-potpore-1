@@ -73,7 +73,6 @@ public class Collection {
 				add(value);
 			}
 		}
-		
 		other.forEach(new AddingProcessor());
 	}
 	

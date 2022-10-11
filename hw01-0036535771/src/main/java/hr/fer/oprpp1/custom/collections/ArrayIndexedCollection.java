@@ -71,6 +71,18 @@ public class ArrayIndexedCollection extends Collection {
 	}
 	
 	
+	
+	/** Returns true only if the collection contains given value, as determined by equals method. */
+	public boolean contains(Object value) {
+		for(int i=0; i<size; i++) {
+			if (elements[i].equals(value))
+				return true;
+		}
+		return false;
+	}
+	
+	
+	
 	/** Returns the object that is stored in backing array at position index. */
 	public Object get(int index) {
 		// Complexity of O(1)
@@ -170,6 +182,13 @@ public class ArrayIndexedCollection extends Collection {
 	}
 	
 	
+	/** Method calls processor.process(.) for each element of this collection. 
+	 * The order in which elements will be sent is undefined in this class. */
+	public void forEach(Processor processor) {
+		for(int i=0; i<size; i++) {
+			processor.process(get(i));
+		}
+	}
 	
 	
 	
