@@ -21,7 +21,7 @@ public class LinkedListIndexedCollection extends Collection {
 		size = 0;
 	}
 	public LinkedListIndexedCollection(Collection other) {
-		// Copy elements from other
+		addAll(other);
 	}
 	
 	
@@ -83,6 +83,7 @@ public class LinkedListIndexedCollection extends Collection {
 	public void clear() {
 		first = null;
 		last = null;
+		size = 0;
 	}
 	
 	
@@ -90,14 +91,41 @@ public class LinkedListIndexedCollection extends Collection {
 	public void insert(Object value, int position) {
 		if (position < 0 || position > size) 
 			throw new IndexOutOfBoundsException();
-				
+		
+		ListNode node = new ListNode();
+		node.value = value;
+		
+		ListNode currNode = new ListNode();
+		ListNode nextNode;
+		for(int i=0; i<position; i++) {
+			currNode = currNode.next;
+		}
+		nextNode = currNode.next;
+		
+		currNode.next = node;
+		node.prev = currNode;
+		node.next = nextNode;
+		nextNode.prev = node;
+		
+		size++;				
 	}
 	
 	
 	/** Searches the collection and returns the index of the first occurrence of the given value 
 	 * or -1 if the value is not found. */
 	public int indexOf(Object value) {
-
+		if (value == null)
+			return -1;
+		
+		ListNode node = first;
+		
+		for(int i=0; i<size; i++) {
+			if (node.value.equals(value)) 
+				return i;
+			node = node.next;
+		}
+		
+		return -1;
 	}
 	
 	
@@ -105,30 +133,61 @@ public class LinkedListIndexedCollection extends Collection {
 	
 	/** Returns true only if the collection contains given value, as determined by equals method. */
 	public boolean contains(Object value) {
-		// Value CAN be null
-		// Implement it here to always return false. 
+		ListNode node = first;
+		
+		for(int i=0; i<size; i++) {
+			if (node.value.equals(value)) 
+				return true;
+			node = node.next;
+		}
+		
 		return false;
 	}
 	
 	
-	/** Returns true only if the collection contains given value as determined by 
-	 * equals method and removes one occurrence of it 
-	 * (in this class it is not specified which one). */
-	public boolean remove(Object value) {
-		// Implement it here to always return false.
-		return false;
+	
+	/** Removes element at specified index from collection.*/
+	public void remove(int index) {
+		if (index < 0 || index >= size) 
+			throw new IndexOutOfBoundsException();
+		
+		
+		if (index == 0) {
+			first = first.next;
+			first.prev = null;
+
+		}else if (index == size-1) {
+			last = last.prev;
+			last.next = null;
+		
+		}else {	
+			ListNode node = first;
+			for(int i=0; i<index; i++) {
+				node = node.next;
+			}
+			ListNode prevNode = node.prev;
+			ListNode nextNode = node.next;
+			
+			prevNode.next = nextNode;
+			nextNode.prev = prevNode;
+		}
+				
+		size--;
 	}
 	
 	
 	/** Allocates new array with size equals to the size of this collections, 
 	 * fills it with collection content and returns the array. */
 	public Object[] toArray() {
-		// Object array = new Object[this.size()];
-		// Fills the array with collection content
-		// return array;
+		ListNode node = first;
+		Object[] array = new Object[this.size()];
 		
-		// Implement it here to throw UnsupportedOperationException.
-		throw new UnsupportedOperationException();
+		for(int i=0; i<size; i++) {
+			array[i] = node.value;
+			node = node.next;
+		}
+				
+		return array;
 	}
 	
 	
@@ -136,7 +195,12 @@ public class LinkedListIndexedCollection extends Collection {
 	/** Method calls processor.process(.) for each element of this collection. 
 	 * The order in which elements will be sent is undefined in this class. */
 	public void forEach(Processor processor) {
-
+		ListNode node = first;
+		
+		for(int i=0; i<size; i++) {
+			processor.process(node.value);
+			node = node.next;
+		}	
 	}
 	
 	

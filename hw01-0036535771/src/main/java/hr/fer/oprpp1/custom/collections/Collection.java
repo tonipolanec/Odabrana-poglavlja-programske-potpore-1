@@ -49,7 +49,7 @@ public class Collection {
 	/** Allocates new array with size equals to the size of this collections, 
 	 * fills it with collection content and returns the array. */
 	public Object[] toArray() {
-		// Object array = new Object[this.size()];
+		// Object[] array = new Object[this.size()];
 		// Fills the array with collection content
 		// return array;
 		
