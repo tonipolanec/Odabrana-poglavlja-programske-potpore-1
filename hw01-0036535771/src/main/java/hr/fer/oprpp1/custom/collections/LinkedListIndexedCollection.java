@@ -7,7 +7,6 @@ public class LinkedListIndexedCollection extends Collection {
 		Object value;
 		ListNode prev;
 		ListNode next;
-		
 	}
 	
 	int size;
@@ -21,6 +20,9 @@ public class LinkedListIndexedCollection extends Collection {
 		size = 0;
 	}
 	public LinkedListIndexedCollection(Collection other) {
+		if (other == null)
+			throw new NullPointerException();
+		
 		addAll(other);
 	}
 	
@@ -89,25 +91,42 @@ public class LinkedListIndexedCollection extends Collection {
 	
 	/** Inserts (does not overwrite) the given value at the given position in linked-list. */
 	public void insert(Object value, int position) {
+		if (value == null)
+			throw new NullPointerException();
 		if (position < 0 || position > size) 
 			throw new IndexOutOfBoundsException();
 		
 		ListNode node = new ListNode();
 		node.value = value;
 		
-		ListNode currNode = new ListNode();
-		ListNode nextNode;
-		for(int i=0; i<position; i++) {
-			currNode = currNode.next;
+		if (position == 0) {
+			first.prev = node;
+			node.next = first;
+			first = node;
+			
+			size++;
+		
+		}else if (position == size) {
+			// We are adding to the tail of collection so we can use add()
+			add(value);
+			
+		}else {
+			ListNode currNode = first;
+			ListNode nextNode;
+			for(int i=0; i<position-1; i++) {
+				currNode = currNode.next;
+			}
+			nextNode = currNode.next;
+			
+			currNode.next = node;
+			node.prev = currNode;
+			node.next = nextNode;
+			nextNode.prev = node;
+	
+			size++;
 		}
-		nextNode = currNode.next;
-		
-		currNode.next = node;
-		node.prev = currNode;
-		node.next = nextNode;
-		nextNode.prev = node;
-		
-		size++;				
+
+			
 	}
 	
 	

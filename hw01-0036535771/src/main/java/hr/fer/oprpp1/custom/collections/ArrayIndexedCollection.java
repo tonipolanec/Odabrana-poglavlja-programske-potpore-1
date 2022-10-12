@@ -11,9 +11,9 @@ public class ArrayIndexedCollection extends Collection {
 		this(16);
 	}
 	public ArrayIndexedCollection(int initialCapacity) {
-		if (initialCapacity < 1) {
+		if (initialCapacity < 1) 
 			throw new IllegalArgumentException();
-		}
+		
 		size = 0;
 		elements = new Object[initialCapacity];
 	}	
