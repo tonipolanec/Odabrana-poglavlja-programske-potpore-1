@@ -4,7 +4,6 @@ public class Processor {
 	
 	public void process(Object value) {
 		
-		
 	}
 
 }

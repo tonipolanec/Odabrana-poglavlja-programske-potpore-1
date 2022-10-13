@@ -1,18 +1,21 @@
 package hr.fer.oprpp1.custom.collections;
 
+
+/**
+ * Top class for various collections.
+ * 
+ * @author Toni Polanec
+ */
 public class Collection {
 
-	protected Collection() {	
-		
+	protected Collection() {		
 	}
 	
 	/** Returns true if collection contains no objects and false otherwise. */
 	public boolean isEmpty() {
-		// Utilizing method size()
 		if (this.size() == 0) 
 			return true;
-		else
-			return false;
+		return false;
 	}
 
 	
@@ -38,8 +41,8 @@ public class Collection {
 	
 	
 	/** Returns true only if the collection contains given value as determined by 
-	 * equals method and removes one occurrence of it 
-	 * (in this class it is not specified which one). */
+	 * equals method and removes one occurrence of it. 
+	 */
 	public boolean remove(Object value) {
 		// Implement it here to always return false.
 		return false;
@@ -47,7 +50,8 @@ public class Collection {
 	
 	
 	/** Allocates new array with size equals to the size of this collections, 
-	 * fills it with collection content and returns the array. */
+	 * fills it with collection content and returns the array. 
+	 */
 	public Object[] toArray() {
 		// Object[] array = new Object[this.size()];
 		// Fills the array with collection content
@@ -59,7 +63,8 @@ public class Collection {
 	
 	
 	/** Method calls processor.process(.) for each element of this collection. 
-	 * The order in which elements will be sent is undefined in this class. */
+	 * The order in which elements will be sent is undefined in this class. 
+	 */
 	public void forEach(Processor processor) {
 		// Implement it here as an empty method.
 	}
