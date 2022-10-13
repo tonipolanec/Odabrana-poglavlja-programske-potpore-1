@@ -8,8 +8,10 @@ package hr.fer.oprpp1.custom.collections;
  */
 public class ObjectStack {
 	
+	/**<p>ArrayIndexedCollection we use to implement stack.</p>*/
 	ArrayIndexedCollection aic;
 
+	/**<p> Initializes new ArrayIndexedCollection.</p>*/
 	public ObjectStack() {
 		aic = new ArrayIndexedCollection();
 	}

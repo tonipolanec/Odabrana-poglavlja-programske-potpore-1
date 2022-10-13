@@ -1,6 +1,5 @@
 package hr.fer.oprpp1.custom.collections.demo;
 
-import java.util.Arrays;
 import hr.fer.oprpp1.custom.collections.ObjectStack;
 
 

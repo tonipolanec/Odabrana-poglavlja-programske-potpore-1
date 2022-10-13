@@ -1,6 +1,5 @@
 package hr.fer.oprpp1.custom.collections;
 
-
 /**
  * Top class for various collections.
  * 
