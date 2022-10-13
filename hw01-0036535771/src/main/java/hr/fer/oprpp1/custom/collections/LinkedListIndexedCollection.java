@@ -33,7 +33,10 @@ public class LinkedListIndexedCollection extends Collection {
 	}
 	
 	
-	/** Adds the given object into this collection at the end of collection. */
+	/** Adds the given object into this collection at the end of collection. 
+	 * @param value
+	 * @exception NullPointerExcpetion if given null as an argument
+	 * */
 	public void add(Object value) {
 		if (value == null)
 			throw new NullPointerException();
@@ -57,7 +60,10 @@ public class LinkedListIndexedCollection extends Collection {
 	}
 	
 	
-	/** Returns the object that is stored in linked list at position index. */
+	/** Returns the object that is stored in linked list at position index. 
+	 * @param index
+	 * @exception IndexOutOfBoundsException if given index is lower than zero or greater or equals than size of collection
+	 * */
 	public Object get(int index) {
 		if (index < 0 || index >= size) 
 			throw new IndexOutOfBoundsException();
@@ -89,7 +95,12 @@ public class LinkedListIndexedCollection extends Collection {
 	}
 	
 	
-	/** Inserts (does not overwrite) the given value at the given position in linked-list. */
+	/** Inserts (does not overwrite) the given value at the given position in linked-list. 
+	 * @param value
+	 * @param position
+	 * @exception NullPointerException if given null as an argument
+	 * @exception IndexOutOfBoundsException if given index is lower than zero or greater than size of collection
+	 * */
 	public void insert(Object value, int position) {
 		if (value == null)
 			throw new NullPointerException();
@@ -130,8 +141,10 @@ public class LinkedListIndexedCollection extends Collection {
 	}
 	
 	
-	/** Searches the collection and returns the index of the first occurrence of the given value 
-	 * or -1 if the value is not found. */
+	/** Searches the collection and returns the index of the first occurrence of the given value
+	 * @param value
+	 * @return index at which is given value or -1 if it doesn't exists in collection
+	 * */
 	public int indexOf(Object value) {
 		if (value == null)
 			return -1;
@@ -150,8 +163,13 @@ public class LinkedListIndexedCollection extends Collection {
 	
 	
 	
-	/** Returns true only if the collection contains given value, as determined by equals method. */
+	/** Returns true only if the collection contains given value, as determined by equals method. 
+	 * @param value
+	 * */
 	public boolean contains(Object value) {
+		if (value == null)
+			return false;
+		
 		ListNode node = first;
 		
 		for(int i=0; i<size; i++) {
@@ -165,7 +183,10 @@ public class LinkedListIndexedCollection extends Collection {
 	
 	
 	
-	/** Removes element at specified index from collection.*/
+	/** Removes element at specified index from collection. 
+	 * @param index
+	 * @exception IndexOutOfBoundsException if given index is lower than zero or greater or equals than size of collection
+	 */
 	public void remove(int index) {
 		if (index < 0 || index >= size) 
 			throw new IndexOutOfBoundsException();
@@ -196,7 +217,9 @@ public class LinkedListIndexedCollection extends Collection {
 	
 	
 	/** Allocates new array with size equals to the size of this collections, 
-	 * fills it with collection content and returns the array. */
+	 * fills it with collection content and returns the array.
+	 * @return array of an collection
+	 * */
 	public Object[] toArray() {
 		ListNode node = first;
 		Object[] array = new Object[this.size()];
@@ -212,7 +235,9 @@ public class LinkedListIndexedCollection extends Collection {
 	
 	
 	/** Method calls processor.process(.) for each element of this collection. 
-	 * The order in which elements will be sent is undefined in this class. */
+	 * The order in which elements will be sent is undefined in this class. 
+	 * @param processor
+	 * */
 	public void forEach(Processor processor) {
 		ListNode node = first;
 		

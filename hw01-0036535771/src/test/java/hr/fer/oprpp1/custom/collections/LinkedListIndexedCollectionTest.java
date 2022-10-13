@@ -107,5 +107,88 @@ public class LinkedListIndexedCollectionTest {
 	
 	
 	
+	// METHOD indexOf(Object value)
+	
+	@Test
+	public void testIndexOfNull() {
+		assertEquals(-1, llic.indexOf(null));
+	}
+	
+	@Test
+	public void testIndexOfExampleFirst() {
+		LinkedListIndexedCollection llic = new LinkedListIndexedCollection();
+		llic.add(1); llic.add(2); llic.add(3); llic.add(4);
+		
+		assertEquals(0, llic.indexOf(1));
+	}
+	@Test
+	public void testIndexOfExampleMiddle() {
+		LinkedListIndexedCollection llic = new LinkedListIndexedCollection();
+		llic.add(1); llic.add(2); llic.add(3); llic.add(4);
+		
+		assertEquals(2, llic.indexOf(3));
+	}
+	@Test
+	public void testIndexOfExampleLast() {
+		LinkedListIndexedCollection llic = new LinkedListIndexedCollection();
+		llic.add(1); llic.add(2); llic.add(3); llic.add(4);
+		
+		assertEquals(3, llic.indexOf(4));
+	}
+	
+	
+	
+	// METHOD remove(int index)
+	
+	@Test
+	public void testRemoveIndexLowerThanZero() {
+		assertThrows(IndexOutOfBoundsException.class, () -> llic.remove(-1));
+	}
+	@Test
+	public void testRemoveIndexHigherThanSize() {
+		assertThrows(IndexOutOfBoundsException.class, () -> llic.remove(llic.size()));
+	}
+	@Test 
+	public void testRemoveFirst(){
+		LinkedListIndexedCollection llic = new LinkedListIndexedCollection();
+		llic.add(1); llic.add(2); llic.add(3); llic.add(4);
+		llic.remove(0);
+		
+		Object[] expected = {2,3,4};
+		assertArrayEquals(expected, llic.toArray());		
+	}
+	@Test 
+	public void testRemoveMiddle(){
+		LinkedListIndexedCollection llic = new LinkedListIndexedCollection();
+		llic.add(1); llic.add(2); llic.add(3); llic.add(4);
+		llic.remove(2);
+		
+		Object[] expected = {1,2,4};
+		assertArrayEquals(expected, llic.toArray());
+	}
+	@Test 
+	public void testRemoveLast(){
+		LinkedListIndexedCollection llic = new LinkedListIndexedCollection();
+		llic.add(1); llic.add(2); llic.add(3); llic.add(4);
+		llic.remove(3);
+		
+		Object[] expected = {1,2,3};
+		assertArrayEquals(expected, llic.toArray());
+	}
+	
+	
+	// METHOD toArray()
+	
+	@Test
+	public void testToArray() {
+		LinkedListIndexedCollection llic = new LinkedListIndexedCollection();
+		llic.add(2); llic.add(3); llic.add(4); llic.add(1);
+		
+		Object[] expected = {2,3,4,1};
+		assertArrayEquals(expected, llic.toArray());
+		
+	}
+	
+	
 
 }

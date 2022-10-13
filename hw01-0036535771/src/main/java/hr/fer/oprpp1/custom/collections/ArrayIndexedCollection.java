@@ -35,19 +35,21 @@ public class ArrayIndexedCollection extends Collection {
 	}
 	
 	
-	/** Returns the number of currently stored objects in this collections. */
+	/** @return the number of currently stored objects in this collections. */
 	public int size() {
 		return size;
 	}
 	
 	
-	/** Adds the given object into this collection. */
+	/** Adds the given object into this collection. 
+	 * @param value
+	 * @exception NullPointerException if given null as an argument
+	 * */
 	public void add(Object value) {
 		// Complexity of O(n)
-		
-		if (value == null) {
+		if (value == null) 
 			throw new NullPointerException();
-		}
+		
 		
 		int emptyEl = this.size();
 		if (emptyEl < elements.length) {
@@ -69,24 +71,14 @@ public class ArrayIndexedCollection extends Collection {
 		
 		size++;
 	}
+		
 	
-	
-	
-	/** Returns true only if the collection contains given value, as determined by equals method. */
-	public boolean contains(Object value) {
-		for(int i=0; i<size; i++) {
-			if (elements[i].equals(value))
-				return true;
-		}
-		return false;
-	}
-	
-	
-	
-	/** Returns the object that is stored in backing array at position index. */
+	/** Returns the object that is stored in backing array at position index. 
+	 * @param index
+	 * @exception IndexOutOfBoundsException if given index is lower than zero or greater or equals than size of collection
+	 * */
 	public Object get(int index) {
 		// Complexity of O(1)
-		
 		if (index < 0 || index >= size) {
 			throw new IndexOutOfBoundsException();
 		}
@@ -104,11 +96,18 @@ public class ArrayIndexedCollection extends Collection {
 	}
 	
 	
-	/** Inserts (does not overwrite) the given value at the given position in array. */
+	/** Inserts (does not overwrite) the given value at the given position in array. 
+	 * @param value
+	 * @param position
+	 * @exception NullPointerException if given null as an argument
+	 * @exception IndexOutOfBoundsException if given index is lower than zero or greater than size of collection
+	 * */
 	public void insert(Object value, int position) {
-		if (position < 0 || position > size) {
+		if (value == null)
+			throw new NullPointerException();
+		if (position < 0 || position > size) 
 			throw new IndexOutOfBoundsException();
-		}
+		
 		
 		// Inserting on last position
 		if (position == size) {
@@ -142,8 +141,10 @@ public class ArrayIndexedCollection extends Collection {
 	}
 	
 	
-	/** Searches the collection and returns the index of the first occurrence of the given value 
-	 * or -1 if the value is not found. */
+	/** Searches the collection and returns the index of the first occurrence of the given value
+	 * @param value
+	 * @return index at which is given value or -1 if it doesn't exists in collection
+	 * */
 	public int indexOf(Object value) {
 		// Average complexity of O(n/2)
 		if (value == null)
@@ -156,8 +157,23 @@ public class ArrayIndexedCollection extends Collection {
 		return -1;
 	}
 	
+	
+	/** Returns true only if the collection contains given value, as determined by equals method. 
+	 * @param value
+	 * */
+	public boolean contains(Object value) {
+		for(int i=0; i<size; i++) {
+			if (elements[i].equals(value))
+				return true;
+		}
+		return false;
+	}
+	
 
-	/** Removes element at specified index from collection. */
+	/** Removes element at specified index from collection. 
+	 * @param index
+	 * @exception IndexOutOfBoundsException if given index is lower than zero or greater or equals than size of collection
+	 */
 	public void remove(int index) {
 		if (index < 0 || index > size-1) 
 			throw new IndexOutOfBoundsException();
@@ -171,7 +187,9 @@ public class ArrayIndexedCollection extends Collection {
 	}
 	
 	/** Allocates new array with size equals to the size of this collections, 
-	 * fills it with collection content and returns the array. */
+	 * fills it with collection content and returns the array.
+	 * @return array of an collection
+	 * */
 	public Object[] toArray() {
 		Object[] array = new Object[this.size()];
 		
@@ -183,7 +201,9 @@ public class ArrayIndexedCollection extends Collection {
 	
 	
 	/** Method calls processor.process(.) for each element of this collection. 
-	 * The order in which elements will be sent is undefined in this class. */
+	 * The order in which elements will be sent is undefined in this class. 
+	 * @param processor
+	 * */
 	public void forEach(Processor processor) {
 		for(int i=0; i<size; i++) {
 			processor.process(get(i));
