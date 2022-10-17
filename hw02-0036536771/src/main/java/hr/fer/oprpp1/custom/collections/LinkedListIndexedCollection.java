@@ -1,5 +1,6 @@
 package hr.fer.oprpp1.custom.collections;
 
+import java.util.NoSuchElementException;
 
 /**
  * <p>Implementation of linked list collection.</p>
@@ -10,7 +11,7 @@ package hr.fer.oprpp1.custom.collections;
  * @see hr.fer.oprpp1.custom.collections.Collection
  * @see hr.fer.oprpp1.custom.collections.ArrayIndexedCollection
  */
-public class LinkedListIndexedCollection extends Collection {
+public class LinkedListIndexedCollection implements Collection {
 	
 	/**<p>Current numbers of elements in collection.</p>*/
 	int size;
@@ -56,6 +57,7 @@ public class LinkedListIndexedCollection extends Collection {
 	
 	
 	/** Returns the number of currently stored objects in this collections. */
+	@Override
 	public int size() {
 		return size;
 	}
@@ -65,6 +67,7 @@ public class LinkedListIndexedCollection extends Collection {
 	 * @param value
 	 * @exception NullPointerExcpetion if given null as an argument
 	 * */
+	@Override
 	public void add(Object value) {
 		if (value == null)
 			throw new NullPointerException();
@@ -86,8 +89,80 @@ public class LinkedListIndexedCollection extends Collection {
 		
 		size++;
 	}
+
+	/** Returns true only if the collection contains given value, as determined by equals method. 
+	 * @param value
+	 */
+	@Override
+	public boolean contains(Object value) {
+		if (value == null)
+			return false;
+		
+		ListNode node = first;
+		
+		for(int i=0; i<size; i++) {
+			if (node.value.equals(value)) 
+				return true;
+			node = node.next;
+		}
+		
+		return false;
+	}
+
+	/** Returns true only if the list contains given value as determined by 
+	 * equals method and removes one occurrence of it. 
+	 * @param value we want to remove from linked list
+	 * @return <code>true</code> if it was successfully removed, <code>false</code> if it doesn't contain given value
+	 */
+	@Override
+	public boolean remove(Object value) {
+		if (!contains(value))
+			return false;
+		
+		remove(indexOf(value));
+		return true;
+	}
+
+	/** Allocates new array with size equals to the size of this collections, 
+	 * fills it with collection content and returns the array.
+	 * @return array of an collection
+	 */
+	@Override
+	public Object[] toArray() {
+		ListNode node = first;
+		Object[] array = new Object[this.size()];
+		
+		for(int i=0; i<size; i++) {
+			array[i] = node.value;
+			node = node.next;
+		}
+				
+		return array;
+	}
+
+	/** Method calls processor.process(.) for each element of this collection. 
+	 * The order in which elements will be sent is undefined in this class. 
+	 * @param processor
+	 */
+	@Override
+	public void forEach(Processor processor) {
+		ListNode node = first;
+		
+		for(int i=0; i<size; i++) {
+			processor.process(node.value);
+			node = node.next;
+		}	
+	}
+
+	/** Removes all elements from this collection. */
+	@Override
+	public void clear() {
+		first = null;
+		last = null;
+		size = 0;
+	}
 	
-	
+
 	/** Returns the object that is stored in linked list at position index. 
 	 * @param index
 	 * @exception IndexOutOfBoundsException if given index is lower than zero or greater or equals than size of collection
@@ -113,16 +188,7 @@ public class LinkedListIndexedCollection extends Collection {
 		
 		return currNode.value;
 	}
-	
-	
-	/** Removes all elements from this collection. */
-	public void clear() {
-		first = null;
-		last = null;
-		size = 0;
-	}
-	
-	
+
 	/** Inserts (does not overwrite) the given value at the given position in linked-list. 
 	 * @param value
 	 * @param position
@@ -191,26 +257,6 @@ public class LinkedListIndexedCollection extends Collection {
 	
 	
 	
-	/** Returns true only if the collection contains given value, as determined by equals method. 
-	 * @param value
-	 */
-	public boolean contains(Object value) {
-		if (value == null)
-			return false;
-		
-		ListNode node = first;
-		
-		for(int i=0; i<size; i++) {
-			if (node.value.equals(value)) 
-				return true;
-			node = node.next;
-		}
-		
-		return false;
-	}
-	
-	
-	
 	/** Removes element at specified index from collection. 
 	 * @param index
 	 * @exception IndexOutOfBoundsException if given index is lower than zero or greater or equals than size of collection
@@ -244,35 +290,47 @@ public class LinkedListIndexedCollection extends Collection {
 	}
 	
 	
-	/** Allocates new array with size equals to the size of this collections, 
-	 * fills it with collection content and returns the array.
-	 * @return array of an collection
+	/**
+	 * Private static class used for getting elements from collection.
+	 * 
+	 * @author Toni Polanec
 	 */
-	public Object[] toArray() {
-		ListNode node = first;
-		Object[] array = new Object[this.size()];
+	private static class ElementsGetterLinkedList implements ElementsGetter {
+		ListNode currNode;
 		
-		for(int i=0; i<size; i++) {
-			array[i] = node.value;
-			node = node.next;
+		public ElementsGetterLinkedList(LinkedListIndexedCollection coll) {
+			currNode = coll.first;
 		}
-				
-		return array;
+		
+		/** Checks if collection has more elements to get. 
+		 * @return <code>true</code> if more elements available, <code>false</code> otherwise
+		 * */
+		public boolean hasNextElement() {
+			if (currNode == null) return false;
+			
+			return true;
+		}
+		
+		/** Returns next object in collection.
+		 * @return element at the next index
+		 * @throws NoSuchElementException if no more elements to get
+		 */
+		public Object getNextElement() {	
+			if(currNode == null) throw new NoSuchElementException();
+			
+			ListNode current = currNode;
+			currNode = currNode.next;
+			
+			return current.value;			
+		}
+		
+		
 	}
 	
-	
-	
-	/** Method calls processor.process(.) for each element of this collection. 
-	 * The order in which elements will be sent is undefined in this class. 
-	 * @param processor
-	 */
-	public void forEach(Processor processor) {
-		ListNode node = first;
-		
-		for(int i=0; i<size; i++) {
-			processor.process(node.value);
-			node = node.next;
-		}	
+
+	@Override
+	public ElementsGetter createElementsGetter() {
+		return new ElementsGetterLinkedList(this);
 	}
 	
 	

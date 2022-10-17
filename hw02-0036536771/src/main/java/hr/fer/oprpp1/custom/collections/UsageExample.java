@@ -19,7 +19,7 @@ public class UsageExample {
 		LinkedListIndexedCollection col2 = new LinkedListIndexedCollection(col);
 		
 		// This is local class representing a Processor which writes objects to System.out
-		class P extends Processor {
+		class P implements Processor {
 			public void process(Object o) {
 					System.out.println(o);
 			}

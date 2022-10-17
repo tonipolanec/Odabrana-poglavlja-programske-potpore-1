@@ -1,5 +1,6 @@
 package hr.fer.oprpp1.custom.collections;
 
+import java.util.NoSuchElementException;
 
 /**
  * <p>Implementation of array indexed collection.</p>
@@ -10,7 +11,7 @@ package hr.fer.oprpp1.custom.collections;
  * @see hr.fer.oprpp1.custom.collections.Collection
  * @see hr.fer.oprpp1.custom.collections.LinkedListIndexedCollection
  */
-public class ArrayIndexedCollection extends Collection {
+public class ArrayIndexedCollection implements Collection {
 	
 	/** <p>Current numbers of elements in collection</p>*/
 	private int size;
@@ -69,6 +70,7 @@ public class ArrayIndexedCollection extends Collection {
 	
 	
 	/** Returns the number of currently stored objects in this collections. */
+	@Override
 	public int size() {
 		return size;
 	}
@@ -78,6 +80,7 @@ public class ArrayIndexedCollection extends Collection {
 	 * @param value
 	 * @exception NullPointerException if given null as an argument
 	 */
+	@Override
 	public void add(Object value) {
 		// Complexity of O(n)
 		if (value == null) 
@@ -106,6 +109,65 @@ public class ArrayIndexedCollection extends Collection {
 	}
 		
 	
+	/** Returns true only if the collection contains given value, as determined by equals method. 
+	 * @param value
+	 */
+	@Override
+	public boolean contains(Object value) {
+		for(int i=0; i<size; i++) {
+			if (elements[i].equals(value))
+				return true;
+		}
+		return false;
+	}
+
+	/** Removes element with given value. If it doesn't exists it does nothing. 
+	 * @param value of an element we want to remove
+	 * @return <code>true</code> if it was successfully removed, <code>false</code> if collection didn't contain given value
+	 * */
+	@Override
+	public boolean remove(Object value) {
+		if (!contains(value))
+			return false;
+		
+		remove(indexOf(value));
+		return true;
+	}
+
+	/** Allocates new array with size equals to the size of this collections, 
+	 * fills it with collection content and returns the array.
+	 * @return array of an collection
+	 */
+	@Override
+	public Object[] toArray() {
+		Object[] array = new Object[this.size()];
+		
+		for(int i=0; i<size; i++) {
+			array[i] = this.get(i);
+		}
+		return array;
+	}
+
+	/** Method calls processor.process(.) for each element of this collection. 
+	 * The order in which elements will be sent is undefined in this class. 
+	 * @param processor with which we process elements
+	 */
+	@Override
+	public void forEach(Processor processor) {
+		for(int i=0; i<size; i++) {
+			processor.process(get(i));
+		}
+	}
+
+	/** Removes all elements from this collection. */
+	@Override
+	public void clear() {
+		for (int i=0; i<size; i++) {
+			elements[i] = null;
+		}
+		size = 0;
+	}
+
 	/** Returns the object that is stored in backing array at position index. 
 	 * @param index
 	 * @exception IndexOutOfBoundsException if given index is lower than zero or greater or equals than size of collection
@@ -117,15 +179,6 @@ public class ArrayIndexedCollection extends Collection {
 		}
 		
 		return elements[index];
-	}
-	
-	
-	/** Removes all elements from this collection. */
-	public void clear() {
-		for (int i=0; i<size; i++) {
-			elements[i] = null;
-		}
-		size = 0;
 	}
 	
 	
@@ -168,9 +221,7 @@ public class ArrayIndexedCollection extends Collection {
 			// Inserting value
 			elements[position] = value;
 			size++;
-		}
-
-				
+		}		
 	}
 	
 	
@@ -191,18 +242,6 @@ public class ArrayIndexedCollection extends Collection {
 	}
 	
 	
-	/** Returns true only if the collection contains given value, as determined by equals method. 
-	 * @param value
-	 */
-	public boolean contains(Object value) {
-		for(int i=0; i<size; i++) {
-			if (elements[i].equals(value))
-				return true;
-		}
-		return false;
-	}
-	
-
 	/** Removes element at specified index from collection. 
 	 * @param index
 	 * @exception IndexOutOfBoundsException if given index is lower than zero or greater or equals than size of collection
@@ -219,33 +258,59 @@ public class ArrayIndexedCollection extends Collection {
 		size--;
 	}
 	
-	/** Allocates new array with size equals to the size of this collections, 
-	 * fills it with collection content and returns the array.
-	 * @return array of an collection
+	/**
+	 * Private static class used for getting elements from collection.
+	 * 
+	 * @author Toni Polanec
 	 */
-	public Object[] toArray() {
-		Object[] array = new Object[this.size()];
+	private static class ElementsGetterArray implements ElementsGetter {
+		int index = 0;
+		ArrayIndexedCollection aic;
+		public ElementsGetterArray(ArrayIndexedCollection coll) {
+			aic = coll;
+		}
 		
-		for(int i=0; i<size; i++) {
-			array[i] = this.get(i);
+		/** Checks if collection has more elements to get. 
+		 * @return <code>true</code> if more elements available, <code>false</code> otherwise
+		 * */
+		public boolean hasNextElement() {
+			try {
+				Object element = aic.elements[index];
+				if (element == null) return false;
+				return true;
+				
+			} catch (IndexOutOfBoundsException ex) {
+				return false;
+			}
+			
 		}
-		return array;
+		
+		/** Returns next object in collection.
+		 * @return element at the next index
+		 * @throws NoSuchElementException if no more elements to get
+		 */
+		public Object getNextElement() {
+			try {
+				Object element = aic.elements[index++];
+				if (element == null) throw new NoSuchElementException();
+				
+				return element;
+			} catch (IndexOutOfBoundsException ex) {
+				throw new NoSuchElementException();
+			}
+			
+		}
+		
+		
+	}
+
+	@Override
+	public ElementsGetter createElementsGetter() {
+		return new ElementsGetterArray(this);
 	}
 	
 	
-	/** Method calls processor.process(.) for each element of this collection. 
-	 * The order in which elements will be sent is undefined in this class. 
-	 * @param processor
-	 */
-	public void forEach(Processor processor) {
-		for(int i=0; i<size; i++) {
-			processor.process(get(i));
-		}
-	}
-	
-	
-	
-	
+
 	
 	
 	

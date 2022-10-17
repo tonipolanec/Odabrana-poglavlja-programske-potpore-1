@@ -1,100 +1,81 @@
 package hr.fer.oprpp1.custom.collections;
 
 /**
- * Top class for various collections.
+ * Interface for various collections.
  * 
  * @author Toni Polanec
  */
-public class Collection {
+public interface Collection {
 
-	protected Collection() {		
-	}
 	
-	/** Returns true if collection contains no objects and false otherwise. */
-	public boolean isEmpty() {
-		if (this.size() == 0) 
-			return true;
+	/** Returns the number of currently stored objects in this collections. 
+	 * @return number of elements in collection*/
+	int size();
+
+
+	/** Returns true if collection contains no objects and false otherwise. 
+	 * @return <code>true</code> if collection has no elements, <code>false</code> otherwise.
+	 */
+	default boolean isEmpty() {
+		if (size() == 0) return true;
 		return false;
 	}
 
 	
-	/** Returns the number of currently stored objects in this collections. */
-	public int size() {
-		// Implement it here to always return 0.
-		return 0;
-	}
+	/** Adds the given object into this collection. 
+	 * @param value of element we want to add
+	 */
+	void add(Object value);
 	
 	
-	/** Adds the given object into this collection. */
-	public void add(Object value) {
-		// Implement it here to do nothing
-	}
-	
-	
-	/** Returns true only if the collection contains given value, as determined by equals method. */
-	public boolean contains(Object value) {
-		// Value CAN be null
-		// Implement it here to always return false. 
-		return false;
-	}
+	/** Returns true only if the collection contains given value, as determined by equals method. 
+	 * @param value element we want to check if it is in collection
+	 * @return <code>true</code> if it is in collection, <code>false</code> otherwise 
+	 */
+	boolean contains(Object value);
 	
 	
 	/** Returns true only if the collection contains given value as determined by 
 	 * equals method and removes one occurrence of it. 
+	 * @param value we want to remove from collection
+	 * @return <code>true</code> if it was successfully removed, <code>false</code> if it doesn't contain given value
 	 */
-	public boolean remove(Object value) {
-		// Implement it here to always return false.
-		return false;
-	}
+	boolean remove(Object value);
 	
 	
 	/** Allocates new array with size equals to the size of this collections, 
 	 * fills it with collection content and returns the array. 
+	 * @return array of type Object[]
 	 */
-	public Object[] toArray() {
-		// Object[] array = new Object[this.size()];
-		// Fills the array with collection content
-		// return array;
-		
-		// Implement it here to throw UnsupportedOperationException.
-		throw new UnsupportedOperationException();
-	}
+	Object[] toArray();
 	
 	
 	/** Method calls processor.process(.) for each element of this collection. 
 	 * The order in which elements will be sent is undefined in this class. 
+	 * @param processor with which we process each element in collection
 	 */
-	public void forEach(Processor processor) {
-		// Implement it here as an empty method.
-	}
+	void forEach(Processor processor);
 	
 
-	/** Method adds into the current collection all elements from the given collection. */
-	public void addAll(Collection other) {
-		
-		class AddingProcessor extends Processor {
-			public void process(Object value) {
-				add(value);
-			}
+	/** Method adds into the current collection all elements from the given collection. 
+	 * @param other collection we want to add to this collection
+	 */
+	default void addAll(Collection other) {
+		Object[] arr = other.toArray();
+		for (int i=0; i<other.size(); i++) {
+			add(arr[i]);
 		}
-		other.forEach(new AddingProcessor());
 	}
 	
 	
 	/** Removes all elements from this collection. */
-	public void clear() {
-		// Implement it here as an empty method.
-	}
+	void clear();
 
 
-
-
-
-
-
+	/** Creates and returns new ElementsGetter
+	 * @return new ElementsGetter for collection*/
+	ElementsGetter createElementsGetter();
 
 
 }
-
-
 

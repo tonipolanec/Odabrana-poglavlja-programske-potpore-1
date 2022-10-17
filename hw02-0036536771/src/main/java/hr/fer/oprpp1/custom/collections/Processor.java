@@ -1,9 +1,9 @@
 package hr.fer.oprpp1.custom.collections;
 
-public class Processor {
+public interface Processor {
 	
-	public void process(Object value) {
-		
-	}
-
+	/** Method in which we process element of a collection in a certain way 
+	 * @param value of element we want to process
+	 */
+	void process(Object value);
 }
