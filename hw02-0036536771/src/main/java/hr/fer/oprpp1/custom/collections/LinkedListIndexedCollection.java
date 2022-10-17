@@ -327,7 +327,8 @@ public class LinkedListIndexedCollection implements Collection {
 		
 	}
 	
-
+	/** Creates and returns new ElementsGetter for LinkedListIndexedCollection
+	 * @return new ElementsGetter for collection*/
 	@Override
 	public ElementsGetter createElementsGetter() {
 		return new ElementsGetterLinkedList(this);

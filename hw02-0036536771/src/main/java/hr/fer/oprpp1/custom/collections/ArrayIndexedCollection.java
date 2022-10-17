@@ -303,7 +303,10 @@ public class ArrayIndexedCollection implements Collection {
 		
 		
 	}
-
+	
+	
+	/** Creates and returns new ElementsGetter for ArrayIndexedCollection
+	 * @return new ElementsGetter for collection*/
 	@Override
 	public ElementsGetter createElementsGetter() {
 		return new ElementsGetterArray(this);
