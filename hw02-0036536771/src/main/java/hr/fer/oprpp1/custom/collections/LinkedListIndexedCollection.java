@@ -12,7 +12,7 @@ import java.util.NoSuchElementException;
  * @see hr.fer.oprpp1.custom.collections.Collection
  * @see hr.fer.oprpp1.custom.collections.ArrayIndexedCollection
  */
-public class LinkedListIndexedCollection implements Collection {
+public class LinkedListIndexedCollection implements List {
 	
 	/** <p>Current numbers of elements in collection.</p>*/
 	int size;
@@ -39,7 +39,8 @@ public class LinkedListIndexedCollection implements Collection {
 		ListNode next;
 	}
 	
-	/**<p>Initializes empty LinkedListIndexedCollection</p>*/
+	/**<p>Initializes empty LinkedListIndexedCollection</p>
+	 */
 	public LinkedListIndexedCollection() {
 		// first=last=null
 		first = null;
@@ -69,7 +70,8 @@ public class LinkedListIndexedCollection implements Collection {
 	}
 	
 	
-	/** Adds the given object into this collection at the end of collection. 
+	/** Adds the given object into this collection at the end of collection.
+	 *  
 	 * @param value
 	 * @exception NullPointerExcpetion if given null as an argument
 	 * */
@@ -98,7 +100,10 @@ public class LinkedListIndexedCollection implements Collection {
 	}
 
 	/** Returns true only if the collection contains given value, as determined by equals method. 
+	 * 
 	 * @param value
+	 * @return <code>true</code> if it is in collection,
+	 * 		<code>false</code> otherwise 
 	 */
 	@Override
 	public boolean contains(Object value) {
@@ -118,8 +123,10 @@ public class LinkedListIndexedCollection implements Collection {
 
 	/** Returns true only if the list contains given value as determined by 
 	 * equals method and removes one occurrence of it. 
+	 * 
 	 * @param value we want to remove from linked list
-	 * @return <code>true</code> if it was successfully removed, <code>false</code> if it doesn't contain given value
+	 * @return <code>true</code> if it was successfully removed, 
+	 * 		<code>false</code> if it doesn't contain given value
 	 */
 	@Override
 	public boolean remove(Object value) {
@@ -132,6 +139,7 @@ public class LinkedListIndexedCollection implements Collection {
 
 	/** Allocates new array with size equals to the size of this collections, 
 	 * fills it with collection content and returns the array.
+	 * 
 	 * @return array of an collection
 	 */
 	@Override
@@ -147,19 +155,7 @@ public class LinkedListIndexedCollection implements Collection {
 		return array;
 	}
 
-	/** Method calls processor.process(.) for each element of this collection. 
-	 * The order in which elements will be sent is undefined in this class. 
-	 * @param processor
-	 */
-	@Override
-	public void forEach(Processor processor) {
-		ListNode node = first;
-		
-		for(int i=0; i<size; i++) {
-			processor.process(node.value);
-			node = node.next;
-		}	
-	}
+
 
 	/** Removes all elements from this collection. */
 	@Override
@@ -172,8 +168,10 @@ public class LinkedListIndexedCollection implements Collection {
 	
 
 	/** Returns the object that is stored in linked list at position index. 
+	 * 
 	 * @param index
-	 * @exception IndexOutOfBoundsException if given index is lower than zero or greater or equals than size of collection
+	 * @exception IndexOutOfBoundsException if given index is lower than zero 
+	 * 		or greater or equals than size of collection
 	 */
 	public Object get(int index) {
 		if (index < 0 || index >= size) 
@@ -198,8 +196,10 @@ public class LinkedListIndexedCollection implements Collection {
 	}
 
 	/** Inserts (does not overwrite) the given value at the given position in linked-list. 
-	 * @param value
-	 * @param position
+	 * 
+	 * @param value of an object we want to add to collection
+	 * @param position we want to put given object in
+	 * 
 	 * @exception NullPointerException if given null as an argument
 	 * @exception IndexOutOfBoundsException if given index is lower than zero or greater than size of collection
 	 */
@@ -245,7 +245,8 @@ public class LinkedListIndexedCollection implements Collection {
 	}
 	
 	
-	/** Searches the collection and returns the index of the first occurrence of the given value
+	/** Searches the collection and returns the index of the first occurrence of the given value.
+	 * 
 	 * @param value
 	 * @return index at which is given value or -1 if it doesn't exists in collection
 	 */
@@ -268,6 +269,7 @@ public class LinkedListIndexedCollection implements Collection {
 	
 	
 	/** Removes element at specified index from collection. 
+	 * 
 	 * @param index
 	 * @exception IndexOutOfBoundsException if given index is lower than zero or greater or equals than size of collection
 	 */
@@ -303,6 +305,7 @@ public class LinkedListIndexedCollection implements Collection {
 	
 	
 	/** Creates and returns new ElementsGetter for LinkedListIndexedCollection
+	 * 
 	 * @return new ElementsGetter for collection*/
 	@Override
 	public ElementsGetter createElementsGetter() {
@@ -317,8 +320,13 @@ public class LinkedListIndexedCollection implements Collection {
 	 */
 	private static class ElementsGetterLinkedList implements ElementsGetter {
 		
+		/**<p>Reference to upper class <code>LinkedListIndexedCollection</code> </p>*/
 		LinkedListIndexedCollection llic;
+		
+		/**<p>Local reference to node we are currently getting. </p>*/
 		ListNode currNode;
+		
+		/**<p>Copy of <code>modificationCount</code> at the time of defining <code>ElementsGetterArray</code> </p>*/
 		long savedModificationCount;
 		
 		public ElementsGetterLinkedList(LinkedListIndexedCollection coll) {
@@ -328,9 +336,10 @@ public class LinkedListIndexedCollection implements Collection {
 		}
 		
 		/** Checks if collection has more elements to get. 
+		 * 
 		 * @return <code>true</code> if more elements available, <code>false</code> otherwise
 		 * @throws ConcurrentModificationException if collection was modified 
-		 * and ElementsGetter refers to old collection
+		 * 		and ElementsGetter refers to old collection
 		 */
 		public boolean hasNextElement() {
 			if (savedModificationCount != llic.modificationCount)
@@ -342,10 +351,11 @@ public class LinkedListIndexedCollection implements Collection {
 		}
 		
 		/** Returns next object in collection.
+		 * 
 		 * @return element at the next index
 		 * @throws NoSuchElementException if no more elements to get
 		 * @throws ConcurrentModificationException if collection was modified
-		 * and ElementsGetter refers to old collection
+		 * 		and ElementsGetter refers to old collection
 		 */
 		public Object getNextElement() {	
 			if (savedModificationCount != llic.modificationCount)

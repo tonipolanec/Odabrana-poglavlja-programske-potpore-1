@@ -12,7 +12,7 @@ import java.util.NoSuchElementException;
  * @see hr.fer.oprpp1.custom.collections.Collection
  * @see hr.fer.oprpp1.custom.collections.LinkedListIndexedCollection
  */
-public class ArrayIndexedCollection implements Collection {
+public class ArrayIndexedCollection implements List {
 	
 	/** <p>Current numbers of elements in collection</p>*/
 	private int size;
@@ -31,7 +31,7 @@ public class ArrayIndexedCollection implements Collection {
 	
 	/** Initializes ArrayIndexedCollection with given initial capacity.
 	 * 
-	 * @param initialCapacity
+	 * @param initialCapacity we want to configure out collection with
 	 * @exception IllegalArgumentException if initialCapacity is lower than 1
 	 */
 	public ArrayIndexedCollection(int initialCapacity) {
@@ -43,7 +43,7 @@ public class ArrayIndexedCollection implements Collection {
 		modificationCount = 0;
 	}	
 	
-	/** <p>Initializes ArrayIndexedCollection and copies other collection.</p>
+	/**<p>Initializes ArrayIndexedCollection and copies other collection.</p>
 	 * <p>Capacity is determined by other collections's size.</p>
 	 * 
 	 * @param other collection we want to copy in this new one
@@ -53,11 +53,11 @@ public class ArrayIndexedCollection implements Collection {
 		this(other, 1);
 	}
 	
-	/** <p>Initializes ArrayIndexedCollection and copies other collection.</p>
+	/**<p>Initializes ArrayIndexedCollection and copies other collection.</p>
 	 * <p>Capacity is determined by initialCapacity or others size (bigger of the two).</p>
 	 * 
 	 * @param other collection we want to copy in this new one
-	 * @param initialCapacity
+	 * @param initialCapacity we want to configure our collection with
 	 * @exception NullPointerException if given null collection to copy
 	 */
 	public ArrayIndexedCollection(Collection other, int initialCapacity) {
@@ -75,7 +75,8 @@ public class ArrayIndexedCollection implements Collection {
 	}
 	
 	
-	/** Returns the number of currently stored objects in this collections. */
+	/** Returns the number of currently stored objects in this collections. 
+	 */
 	@Override
 	public int size() {
 		return size;
@@ -83,7 +84,8 @@ public class ArrayIndexedCollection implements Collection {
 	
 	
 	/** Adds the given object into this collection. 
-	 * @param value
+	 * 
+	 * @param value of the object we want to add
 	 * @exception NullPointerException if given null as an argument
 	 */
 	@Override
@@ -117,7 +119,10 @@ public class ArrayIndexedCollection implements Collection {
 		
 	
 	/** Returns true only if the collection contains given value, as determined by equals method. 
-	 * @param value
+	 *
+	 * @param value element we want to check if it is in collection
+	 * @return <code>true</code> if it is in collection,
+	 * 		<code>false</code> otherwise 
 	 */
 	@Override
 	public boolean contains(Object value) {
@@ -129,8 +134,10 @@ public class ArrayIndexedCollection implements Collection {
 	}
 
 	/** Removes element with given value. If it doesn't exists it does nothing. 
+	 * 
 	 * @param value of an element we want to remove
-	 * @return <code>true</code> if it was successfully removed, <code>false</code> if collection didn't contain given value
+	 * @return <code>true</code> if it was successfully removed,
+	 * 		<code>false</code> if collection didn't contain given value
 	 * */
 	@Override
 	public boolean remove(Object value) {
@@ -143,6 +150,7 @@ public class ArrayIndexedCollection implements Collection {
 
 	/** Allocates new array with size equals to the size of this collections, 
 	 * fills it with collection content and returns the array.
+	 * 
 	 * @return array of an collection
 	 */
 	@Override
@@ -155,18 +163,10 @@ public class ArrayIndexedCollection implements Collection {
 		return array;
 	}
 
-	/** Method calls processor.process(.) for each element of this collection. 
-	 * The order in which elements will be sent is undefined in this class. 
-	 * @param processor with which we process elements
-	 */
-	@Override
-	public void forEach(Processor processor) {
-		for(int i=0; i<size; i++) {
-			processor.process(get(i));
-		}
-	}
 
-	/** Removes all elements from this collection. */
+
+	/** Removes all elements from this collection.
+	 */
 	@Override
 	public void clear() {
 		for (int i=0; i<size; i++) {
@@ -177,8 +177,10 @@ public class ArrayIndexedCollection implements Collection {
 	}
 
 	/** Returns the object that is stored in backing array at position index. 
-	 * @param index
-	 * @exception IndexOutOfBoundsException if given index is lower than zero or greater or equals than size of collection
+	 * 
+	 * @param index of an element we want to get
+	 * @exception IndexOutOfBoundsException if given index is lower than zero 
+	 * 		or greater or equals than size of collection
 	 */
 	public Object get(int index) {
 		// Complexity of O(1)
@@ -191,8 +193,10 @@ public class ArrayIndexedCollection implements Collection {
 	
 	
 	/** Inserts (does not overwrite) the given value at the given position in array. 
-	 * @param value
-	 * @param position
+	 * 
+	 * @param value of an object we want to add to collection
+	 * @param position we want to put given object in
+	 * 
 	 * @exception NullPointerException if given null as an argument
 	 * @exception IndexOutOfBoundsException if given index is lower than zero or greater than size of collection
 	 */
@@ -234,8 +238,9 @@ public class ArrayIndexedCollection implements Collection {
 	}
 	
 	
-	/** Searches the collection and returns the index of the first occurrence of the given value
-	 * @param value
+	/** Searches the collection and returns the index of the first occurrence of the given value.
+	 * 
+	 * @param value of an object we want to know index of
 	 * @return index at which is given value or -1 if it doesn't exists in collection
 	 */
 	public int indexOf(Object value) {
@@ -252,8 +257,10 @@ public class ArrayIndexedCollection implements Collection {
 	
 	
 	/** Removes element at specified index from collection. 
+	 * 
 	 * @param index
-	 * @exception IndexOutOfBoundsException if given index is lower than zero or greater or equals than size of collection
+	 * @exception IndexOutOfBoundsException if given index is lower than zero 
+	 * 		or greater or equals than size of collection
 	 */
 	public void remove(int index) {
 		if (index < 0 || index >= size) 
@@ -271,7 +278,9 @@ public class ArrayIndexedCollection implements Collection {
 	
 	
 	/** Creates and returns new ElementsGetter for ArrayIndexedCollection
-	 * @return new ElementsGetter for collection*/
+	 * 
+	 * @return new ElementsGetter for collection
+	 */
 	@Override
 	public ElementsGetter createElementsGetter() {
 		return new ElementsGetterArray(this);
@@ -285,8 +294,13 @@ public class ArrayIndexedCollection implements Collection {
 	 */
 	private static class ElementsGetterArray implements ElementsGetter {
 		
+		/**<p>Reference to upper class <code>ArrayIndexedCollection</code> </p>*/
 		ArrayIndexedCollection aic;
+		
+		/**<p>Number of current element we are getting </p>*/
 		int index = 0;
+		
+		/**<p>Copy of <code>modificationCount</code> at the time of defining <code>ElementsGetterArray</code> </p>*/
 		long savedModificationCount;
 		
 		public ElementsGetterArray(ArrayIndexedCollection coll) {
@@ -295,10 +309,11 @@ public class ArrayIndexedCollection implements Collection {
 		}
 		
 		/** Checks if collection has more elements to get. 
+		 * 
 		 * @return <code>true</code> if more elements available, <code>false</code> otherwise
 		 * @throws ConcurrentModificationException if collection was modified 
-		 * and ElementsGetter refers to old collection
-		 * */
+		 * 		and ElementsGetter refers to old collection
+		 */
 		public boolean hasNextElement() {
 			if (savedModificationCount != aic.modificationCount)
 				throw new ConcurrentModificationException();
@@ -315,10 +330,11 @@ public class ArrayIndexedCollection implements Collection {
 		}
 		
 		/** Returns next object in collection.
+		 * 
 		 * @return element at the next index
 		 * @throws NoSuchElementException if no more elements to get
 		 * @throws ConcurrentModificationException if collection was modified 
-		 * and ElementsGetter refers to old collection
+		 * 		and ElementsGetter refers to old collection
 		 */
 		public Object getNextElement() {
 			if (savedModificationCount != aic.modificationCount)

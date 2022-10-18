@@ -11,11 +11,13 @@ public interface Collection {
 
 	
 	/** Returns the number of currently stored objects in this collections. 
+	 * 
 	 * @return number of elements in collection*/
 	int size();
 
 
 	/** Returns true if collection contains no objects and false otherwise. 
+	 * 
 	 * @return <code>true</code> if collection has no elements, <code>false</code> otherwise.
 	 */
 	default boolean isEmpty() {
@@ -25,30 +27,34 @@ public interface Collection {
 
 	
 	/** Adds the given object into this collection. 
+	 * 
 	 * @param value of element we want to add
 	 */
 	void add(Object value);
 	
 	
 	/** Returns true only if the collection contains given value, as determined by equals method. 
+	 * 
 	 * @param value element we want to check if it is in collection
 	 * @return <code>true</code> if it is in collection,
-	 * <code>false</code> otherwise 
+	 * 		<code>false</code> otherwise 
 	 */
 	boolean contains(Object value);
 	
 	
 	/** Returns true only if the collection contains given value as determined by 
 	 * equals method and removes one occurrence of it. 
+	 * 
 	 * @param value we want to remove from collection
 	 * @return <code>true</code> if it was successfully removed, 
-	 * <code>false</code> if it doesn't contain given value
+	 * 		<code>false</code> if it doesn't contain given value
 	 */
 	boolean remove(Object value);
 	
 	
 	/** Allocates new array with size equals to the size of this collections, 
 	 * fills it with collection content and returns the array. 
+	 * 
 	 * @return array of type Object[]
 	 */
 	Object[] toArray();
@@ -56,12 +62,24 @@ public interface Collection {
 	
 	/** Method calls processor.process(.) for each element of this collection. 
 	 * The order in which elements will be sent is undefined in this class. 
+	 * 
 	 * @param processor with which we process each element in collection
 	 */
-	void forEach(Processor processor);
+	default void forEach(Processor processor) {
+		ElementsGetter getter = createElementsGetter();
+		
+		while(true) {
+			try {
+				processor.process(getter.getNextElement());
+			} catch (NoSuchElementException ex) {
+				break;
+			}
+		}
+	}
 	
 
 	/** Method adds into the current collection all elements from the given collection. 
+	 * 
 	 * @param other collection we want to add to this collection
 	 */
 	default void addAll(Collection other) {
@@ -77,6 +95,7 @@ public interface Collection {
 
 
 	/** Creates and returns new ElementsGetter
+	 * 
 	 * @return new ElementsGetter for collection
 	 */
 	ElementsGetter createElementsGetter();

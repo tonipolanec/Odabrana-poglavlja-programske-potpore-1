@@ -3,7 +3,6 @@ package hr.fer.oprpp1.custom.collections;
 import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
 
-import hr.fer.oprpp1.custom.collections.CollectionTest;
 
 public class ArrayIndexedCollectionTest {
 	
