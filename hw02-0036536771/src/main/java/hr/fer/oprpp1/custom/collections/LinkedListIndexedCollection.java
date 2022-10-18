@@ -365,7 +365,6 @@ public class LinkedListIndexedCollection implements List {
 			
 			ListNode current = currNode;
 			currNode = currNode.next;
-			
 			return current.value;			
 		}
 		
