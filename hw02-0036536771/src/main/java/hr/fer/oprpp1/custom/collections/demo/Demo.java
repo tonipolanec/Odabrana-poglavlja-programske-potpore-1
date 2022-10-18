@@ -129,6 +129,27 @@ public class Demo {
 //      ---------------------------------------------------------------------------	
 //		Podzadatak 3
 		
+//		//Collection col = new ArrayIndexedCollection();
+//		Collection col = new LinkedListIndexedCollection();
+//		
+//		col.add("Ivo");
+//		col.add("Ana");
+//		col.add("Jasna");
+//		
+//		ElementsGetter getter = col.createElementsGetter();
+//		
+//		System.out.println("Jedan element: " + getter.getNextElement());
+//		System.out.println("Jedan element: " + getter.getNextElement());
+//		
+//		col.clear();
+//		
+//		System.out.println("Jedan element: " + getter.getNextElement());
+		
+		
+		
+//      ---------------------------------------------------------------------------	
+//		Podzadatak 3
+		
 		//Collection col = new ArrayIndexedCollection();
 		Collection col = new LinkedListIndexedCollection();
 		
@@ -137,13 +158,24 @@ public class Demo {
 		col.add("Jasna");
 		
 		ElementsGetter getter = col.createElementsGetter();
+		getter.getNextElement();
 		
-		System.out.println("Jedan element: " + getter.getNextElement());
-		System.out.println("Jedan element: " + getter.getNextElement());
+		getter.processRemaining(System.out::println);
 		
-		col.clear();
 		
-		System.out.println("Jedan element: " + getter.getNextElement());
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
 		
 		
 

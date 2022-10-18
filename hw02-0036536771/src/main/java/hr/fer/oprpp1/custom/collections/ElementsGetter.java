@@ -1,5 +1,6 @@
 package hr.fer.oprpp1.custom.collections;
 
+import java.util.ConcurrentModificationException;
 import java.util.NoSuchElementException;
 
 public interface ElementsGetter {
@@ -14,5 +15,20 @@ public interface ElementsGetter {
 	 * @throws NoSuchElementException if no more elements to get
 	 */
 	Object getNextElement();
+	
+	
+	/** Process all remaining elements in collection
+	 * @param proccesor with which we process elements
+	 */
+	default void processRemaining(Processor p) {
+		while(true) {
+			try {		
+				p.process(getNextElement());
+				
+			} catch (NoSuchElementException ex) {
+				break;
+			}
+		}
+	}
 
 }
