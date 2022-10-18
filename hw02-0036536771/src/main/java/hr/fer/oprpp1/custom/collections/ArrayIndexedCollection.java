@@ -1,5 +1,6 @@
 package hr.fer.oprpp1.custom.collections;
 
+import java.util.ConcurrentModificationException;
 import java.util.NoSuchElementException;
 
 /**
@@ -19,6 +20,9 @@ public class ArrayIndexedCollection implements Collection {
 	/** <p>Array of object references</p>*/
 	private Object[] elements;
 	
+	/** <p>Number used to check if collection was modified in mean time.</p>*/
+	long modificationCount;
+	
 	
 	/** <p>Initializes ArrayIndexedCollection with initial capacity 16.</p>*/
 	public ArrayIndexedCollection() {
@@ -36,6 +40,7 @@ public class ArrayIndexedCollection implements Collection {
 		
 		size = 0;
 		elements = new Object[initialCapacity];
+		modificationCount = 0;
 	}	
 	
 	/** <p>Initializes ArrayIndexedCollection and copies other collection.</p>
@@ -66,6 +71,7 @@ public class ArrayIndexedCollection implements Collection {
 		
 		this.addAll(other);
 		size = other.size();
+		modificationCount = 0;
 	}
 	
 	
@@ -106,6 +112,7 @@ public class ArrayIndexedCollection implements Collection {
 		}
 		
 		size++;
+		modificationCount++;
 	}
 		
 	
@@ -166,6 +173,7 @@ public class ArrayIndexedCollection implements Collection {
 			elements[i] = null;
 		}
 		size = 0;
+		modificationCount++;
 	}
 
 	/** Returns the object that is stored in backing array at position index. 
@@ -221,6 +229,7 @@ public class ArrayIndexedCollection implements Collection {
 			// Inserting value
 			elements[position] = value;
 			size++;
+			modificationCount++;
 		}		
 	}
 	
@@ -256,6 +265,7 @@ public class ArrayIndexedCollection implements Collection {
 		}
 		
 		size--;
+		modificationCount++;
 	}
 	
 	/**
@@ -264,16 +274,24 @@ public class ArrayIndexedCollection implements Collection {
 	 * @author Toni Polanec
 	 */
 	private static class ElementsGetterArray implements ElementsGetter {
-		int index = 0;
+		
 		ArrayIndexedCollection aic;
+		int index = 0;
+		long savedModificationCount;
+		
 		public ElementsGetterArray(ArrayIndexedCollection coll) {
 			aic = coll;
+			savedModificationCount = coll.modificationCount;
 		}
 		
 		/** Checks if collection has more elements to get. 
 		 * @return <code>true</code> if more elements available, <code>false</code> otherwise
+		 * @throws ConcurrentModificationException if collection was modified and ElementsGetter refers to old collection
 		 * */
 		public boolean hasNextElement() {
+			if (savedModificationCount != aic.modificationCount)
+				throw new ConcurrentModificationException();
+			
 			try {
 				Object element = aic.elements[index];
 				if (element == null) return false;
@@ -288,8 +306,12 @@ public class ArrayIndexedCollection implements Collection {
 		/** Returns next object in collection.
 		 * @return element at the next index
 		 * @throws NoSuchElementException if no more elements to get
+		 * @throws ConcurrentModificationException if collection was modified and ElementsGetter refers to old collection
 		 */
 		public Object getNextElement() {
+			if (savedModificationCount != aic.modificationCount)
+				throw new ConcurrentModificationException();
+			
 			try {
 				Object element = aic.elements[index++];
 				if (element == null) throw new NoSuchElementException();

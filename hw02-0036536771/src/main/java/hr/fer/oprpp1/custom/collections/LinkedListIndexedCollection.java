@@ -1,5 +1,6 @@
 package hr.fer.oprpp1.custom.collections;
 
+import java.util.ConcurrentModificationException;
 import java.util.NoSuchElementException;
 
 /**
@@ -13,14 +14,17 @@ import java.util.NoSuchElementException;
  */
 public class LinkedListIndexedCollection implements Collection {
 	
-	/**<p>Current numbers of elements in collection.</p>*/
+	/** <p>Current numbers of elements in collection.</p>*/
 	int size;
 	
-	/**<p>Reference to the first node of the linked list.</p>*/
+	/** <p>Reference to the first node of the linked list.</p>*/
 	ListNode first;
 	
-	/**<p>Reference to the last node of the linked list.</p>*/
+	/** <p>Reference to the last node of the linked list.</p>*/
 	ListNode last;
+	
+	/** <p>Number used to check if collection was modified in mean time.</p>*/
+	long modificationCount;
 	
 	
 	/**<p>Local class for individual nodes in collection.</p>*/
@@ -41,6 +45,7 @@ public class LinkedListIndexedCollection implements Collection {
 		first = null;
 		last = null;
 		size = 0;
+		modificationCount = 0;
 	}
 	
 	/**Initializes LinkedListIndexedCollection and copies other collection.
@@ -53,6 +58,7 @@ public class LinkedListIndexedCollection implements Collection {
 			throw new NullPointerException();
 		
 		addAll(other);
+		modificationCount = 0;
 	}
 	
 	
@@ -88,6 +94,7 @@ public class LinkedListIndexedCollection implements Collection {
 		}
 		
 		size++;
+		modificationCount++;
 	}
 
 	/** Returns true only if the collection contains given value, as determined by equals method. 
@@ -160,6 +167,7 @@ public class LinkedListIndexedCollection implements Collection {
 		first = null;
 		last = null;
 		size = 0;
+		modificationCount++;
 	}
 	
 
@@ -210,6 +218,7 @@ public class LinkedListIndexedCollection implements Collection {
 			first = node;
 			
 			size++;
+			modificationCount++;
 		
 		}else if (position == size) {
 			// We are adding to the tail of collection so we can use add()
@@ -229,6 +238,7 @@ public class LinkedListIndexedCollection implements Collection {
 			nextNode.prev = node;
 	
 			size++;
+			modificationCount++;
 		}
 
 			
@@ -287,6 +297,7 @@ public class LinkedListIndexedCollection implements Collection {
 		}
 				
 		size--;
+		modificationCount++;
 	}
 	
 	
@@ -296,16 +307,25 @@ public class LinkedListIndexedCollection implements Collection {
 	 * @author Toni Polanec
 	 */
 	private static class ElementsGetterLinkedList implements ElementsGetter {
+		
+		LinkedListIndexedCollection llic;
 		ListNode currNode;
+		long savedModificationCount;
 		
 		public ElementsGetterLinkedList(LinkedListIndexedCollection coll) {
+			llic = coll;
 			currNode = coll.first;
+			savedModificationCount = coll.modificationCount;
 		}
 		
 		/** Checks if collection has more elements to get. 
 		 * @return <code>true</code> if more elements available, <code>false</code> otherwise
+		 * @throws ConcurrentModificationException if collection was modified and ElementsGetter refers to old collection
 		 * */
 		public boolean hasNextElement() {
+			if (savedModificationCount != llic.modificationCount)
+				throw new ConcurrentModificationException();
+			
 			if (currNode == null) return false;
 			
 			return true;
@@ -314,8 +334,12 @@ public class LinkedListIndexedCollection implements Collection {
 		/** Returns next object in collection.
 		 * @return element at the next index
 		 * @throws NoSuchElementException if no more elements to get
+		 * @throws ConcurrentModificationException if collection was modified and ElementsGetter refers to old collection
 		 */
 		public Object getNextElement() {	
+			if (savedModificationCount != llic.modificationCount)
+				throw new ConcurrentModificationException();
+			
 			if(currNode == null) throw new NoSuchElementException();
 			
 			ListNode current = currNode;
