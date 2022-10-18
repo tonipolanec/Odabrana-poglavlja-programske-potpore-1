@@ -1,5 +1,7 @@
 package hr.fer.oprpp1.custom.collections;
 
+import java.util.NoSuchElementException;
+
 /**
  * Interface for various collections.
  * 
@@ -30,7 +32,8 @@ public interface Collection {
 	
 	/** Returns true only if the collection contains given value, as determined by equals method. 
 	 * @param value element we want to check if it is in collection
-	 * @return <code>true</code> if it is in collection, <code>false</code> otherwise 
+	 * @return <code>true</code> if it is in collection,
+	 * <code>false</code> otherwise 
 	 */
 	boolean contains(Object value);
 	
@@ -38,7 +41,8 @@ public interface Collection {
 	/** Returns true only if the collection contains given value as determined by 
 	 * equals method and removes one occurrence of it. 
 	 * @param value we want to remove from collection
-	 * @return <code>true</code> if it was successfully removed, <code>false</code> if it doesn't contain given value
+	 * @return <code>true</code> if it was successfully removed, 
+	 * <code>false</code> if it doesn't contain given value
 	 */
 	boolean remove(Object value);
 	
@@ -73,9 +77,40 @@ public interface Collection {
 
 
 	/** Creates and returns new ElementsGetter
-	 * @return new ElementsGetter for collection*/
+	 * @return new ElementsGetter for collection
+	 */
 	ElementsGetter createElementsGetter();
 
+	
+	/** Gets all elements of collection with ElementsGetter and adds at the end all elements
+	 *  which tester finds acceptable.
+	 *  
+	 *  @param col other collection we want to add elements from
+	 *  @param tester for testing elements
+	 */
+	default void addAllSatisfying(Collection col, Tester tester) {
+		ElementsGetter getter = col.createElementsGetter();
+		
+		while(true) {
+			try {		
+				Object element = getter.getNextElement();
+				if (tester.test(element))
+					add(element);
+									
+			} catch (NoSuchElementException ex) {
+				break;
+			}
+		}
+	}
 
+	
+	
+	
+	
+	
+	
+	
+	
+	
 }
 

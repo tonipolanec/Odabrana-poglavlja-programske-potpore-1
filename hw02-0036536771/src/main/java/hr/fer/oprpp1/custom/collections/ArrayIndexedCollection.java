@@ -268,6 +268,16 @@ public class ArrayIndexedCollection implements Collection {
 		modificationCount++;
 	}
 	
+	
+	
+	/** Creates and returns new ElementsGetter for ArrayIndexedCollection
+	 * @return new ElementsGetter for collection*/
+	@Override
+	public ElementsGetter createElementsGetter() {
+		return new ElementsGetterArray(this);
+	}
+	
+	
 	/**
 	 * Private static class used for getting elements from collection.
 	 * 
@@ -286,7 +296,8 @@ public class ArrayIndexedCollection implements Collection {
 		
 		/** Checks if collection has more elements to get. 
 		 * @return <code>true</code> if more elements available, <code>false</code> otherwise
-		 * @throws ConcurrentModificationException if collection was modified and ElementsGetter refers to old collection
+		 * @throws ConcurrentModificationException if collection was modified 
+		 * and ElementsGetter refers to old collection
 		 * */
 		public boolean hasNextElement() {
 			if (savedModificationCount != aic.modificationCount)
@@ -306,7 +317,8 @@ public class ArrayIndexedCollection implements Collection {
 		/** Returns next object in collection.
 		 * @return element at the next index
 		 * @throws NoSuchElementException if no more elements to get
-		 * @throws ConcurrentModificationException if collection was modified and ElementsGetter refers to old collection
+		 * @throws ConcurrentModificationException if collection was modified 
+		 * and ElementsGetter refers to old collection
 		 */
 		public Object getNextElement() {
 			if (savedModificationCount != aic.modificationCount)
@@ -319,20 +331,13 @@ public class ArrayIndexedCollection implements Collection {
 				return element;
 			} catch (IndexOutOfBoundsException ex) {
 				throw new NoSuchElementException();
-			}
-			
+			}	
 		}
 		
-		
 	}
 	
 	
-	/** Creates and returns new ElementsGetter for ArrayIndexedCollection
-	 * @return new ElementsGetter for collection*/
-	@Override
-	public ElementsGetter createElementsGetter() {
-		return new ElementsGetterArray(this);
-	}
+	
 	
 	
 

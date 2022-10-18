@@ -301,6 +301,15 @@ public class LinkedListIndexedCollection implements Collection {
 	}
 	
 	
+	
+	/** Creates and returns new ElementsGetter for LinkedListIndexedCollection
+	 * @return new ElementsGetter for collection*/
+	@Override
+	public ElementsGetter createElementsGetter() {
+		return new ElementsGetterLinkedList(this);
+	}
+	
+	
 	/**
 	 * Private static class used for getting elements from collection.
 	 * 
@@ -320,8 +329,9 @@ public class LinkedListIndexedCollection implements Collection {
 		
 		/** Checks if collection has more elements to get. 
 		 * @return <code>true</code> if more elements available, <code>false</code> otherwise
-		 * @throws ConcurrentModificationException if collection was modified and ElementsGetter refers to old collection
-		 * */
+		 * @throws ConcurrentModificationException if collection was modified 
+		 * and ElementsGetter refers to old collection
+		 */
 		public boolean hasNextElement() {
 			if (savedModificationCount != llic.modificationCount)
 				throw new ConcurrentModificationException();
@@ -334,7 +344,8 @@ public class LinkedListIndexedCollection implements Collection {
 		/** Returns next object in collection.
 		 * @return element at the next index
 		 * @throws NoSuchElementException if no more elements to get
-		 * @throws ConcurrentModificationException if collection was modified and ElementsGetter refers to old collection
+		 * @throws ConcurrentModificationException if collection was modified
+		 * and ElementsGetter refers to old collection
 		 */
 		public Object getNextElement() {	
 			if (savedModificationCount != llic.modificationCount)
@@ -351,12 +362,7 @@ public class LinkedListIndexedCollection implements Collection {
 		
 	}
 	
-	/** Creates and returns new ElementsGetter for LinkedListIndexedCollection
-	 * @return new ElementsGetter for collection*/
-	@Override
-	public ElementsGetter createElementsGetter() {
-		return new ElementsGetterLinkedList(this);
-	}
+	
 	
 	
 	
