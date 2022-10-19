@@ -8,7 +8,7 @@ public class SmartScriptTester {
 
 	public static void main(String[] args) {
 		Lexer lexer = new Lexer("This is sample text.\r\n"
-				+ "{$ FOR i 1 10 1 $}\r\n"
+				+ "{$ FOR i 1 index -1.2 $}\r\n"
 				+ " This is {$= i $}-th time this message is generated.\r\n"
 				+ "{$END$}\r\n"
 				+ "{$FOR i 0 10 2 $}\r\n"
@@ -16,11 +16,17 @@ public class SmartScriptTester {
 				+ "{$END$}");
 
 		while(true) {
-			if(lexer.checkNextElement())
+			if(lexer.checkNextElement()) {
 				System.out.println(lexer.getElement().asText());
-			else
+			
+			
+			
+			
+			} else
 				break;
 		}
+		
+
 	}
 
 }
