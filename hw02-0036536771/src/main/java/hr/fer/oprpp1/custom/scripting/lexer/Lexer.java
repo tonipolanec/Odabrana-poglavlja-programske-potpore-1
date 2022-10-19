@@ -52,7 +52,7 @@ public class Lexer {
 				// Normal state
 				if(escaped) { 
 					char nextChar = nextChar();
-					if(nextChar != '\\' || nextChar != '{')
+					if(!(nextChar == '\\' || nextChar == '{'))
 						throw new LexerException("Wrong escape in TEXT mode!");
 					
 					value += nextChar;
@@ -238,10 +238,19 @@ public class Lexer {
 						return new ElementConstantInteger(Integer.parseInt(value));
 						
 					// ELEMENT STRING
-					} else if (checkNextChar() == '"') {
-						int stringStart = ++currentIndex;
-						char prev = checkNextChar();
-						while(checkNextChar() != '"' || prev == '\\') {
+					} else if (checkNextChar() == '"' || checkNextChar() == '\\') {
+						char prev = ' ';
+						
+						int stringStart = 0;
+						if(checkNextChar() == '"') {
+							stringStart = ++currentIndex;
+						}else if(checkNextChar() == '\\'){
+							stringStart = currentIndex++;
+							prev = '\\';
+						}
+						//prev = checkNextChar();
+						
+						while(checkNextChar() != '"' || (prev == '\\' && checkNextChar() == '"')) {
 							prev = checkNextChar();
 							currentIndex++;
 						}
@@ -280,6 +289,8 @@ public class Lexer {
 				if(string.charAt(index) == '\\') {
 					processed += '\\';
 				
+				} else if(string.charAt(index) == '"') {
+					processed += '"';
 				} else if(string.charAt(index) == 'n') {
 					processed += '\n';
 					
@@ -293,6 +304,7 @@ public class Lexer {
 					throw new LexerException("Tag escaping invalid!");
 				}
 				
+				escaped = false;
 				index++;
 					
 			} else if(string.charAt(index) == '\\') {

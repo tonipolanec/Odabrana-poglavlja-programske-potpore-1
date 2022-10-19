@@ -7,13 +7,7 @@ import hr.fer.oprpp1.custom.scripting.lexer.LexerException;
 public class SmartScriptTester {
 
 	public static void main(String[] args) {
-		Lexer lexer = new Lexer("This is sample text.\r\n"
-				+ "{$ FOR i 1 index -1.2 $}\r\n"
-				+ " This is {$= i $}-th time this message is generated.\r\n"
-				+ "{$END$}\r\n"
-				+ "{$FOR i 0 10 2 $}\r\n"
-				+ " sin({$=i$}^2) = {$= i i * @sin \"0.000\" @decfmt $}\r\n"
-				+ "{$END$}");
+		Lexer lexer = new Lexer("Example \\{$=1$}. Now actually write one {$=1$}");
 
 		while(true) {
 			if(lexer.checkNextElement()) {
