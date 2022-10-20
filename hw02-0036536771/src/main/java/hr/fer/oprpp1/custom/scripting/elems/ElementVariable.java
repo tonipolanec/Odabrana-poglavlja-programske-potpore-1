@@ -23,4 +23,15 @@ public class ElementVariable extends Element {
 	public String getName() {
 		return name;
 	}
+	
+	@Override
+	public boolean equals(Element element) {
+		if (element instanceof ElementVariable) {
+			ElementVariable e = (ElementVariable) element;
+			
+			if(!name.equals(e.name)) return false;
+			return true;
+		}
+		return false;
+	}
 }

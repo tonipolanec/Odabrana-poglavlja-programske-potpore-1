@@ -24,4 +24,14 @@ public class ElementConstantInteger extends Element {
 		return value;
 	}
 
+	@Override
+	public boolean equals(Element element) {
+		if (element instanceof ElementConstantInteger) {
+			ElementConstantInteger e = (ElementConstantInteger) element;
+			
+			if(value != e.value) return false;
+			return true;
+		}
+		return false;
+	}
 }

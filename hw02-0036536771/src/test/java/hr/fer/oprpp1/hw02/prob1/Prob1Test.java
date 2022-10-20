@@ -2,7 +2,6 @@ package hr.fer.oprpp1.hw02.prob1;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 public class Prob1Test {

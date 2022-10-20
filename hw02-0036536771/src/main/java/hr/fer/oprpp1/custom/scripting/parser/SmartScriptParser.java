@@ -29,7 +29,6 @@ public class SmartScriptParser {
 			documentNode = new DocumentNode();
 			Element element;
 			Node node;
-			int flag = 0; // default state
 			
 			ObjectStack stack = new ObjectStack();
 			stack.push(documentNode);
@@ -50,8 +49,14 @@ public class SmartScriptParser {
 						if (!(variable instanceof ElementVariable))
 							throw new SmartScriptParserException("Wrong for tag variable!");
 						
+						// Checks if we are still in for tag
+						if(lexer.getState() != LexerState.TAG) throw new SmartScriptParserException("Too few for arguments!");
 						Element start = lexer.getElement();
+						
+						// Checks if we are still in for tag
+						if(lexer.getState() != LexerState.TAG) throw new SmartScriptParserException("Too few for arguments!");
 						Element end = lexer.getElement();
+						
 						if (lexer.getState() == LexerState.TAG) {
 							Element step = lexer.getElement();
 		
@@ -59,6 +64,10 @@ public class SmartScriptParser {
 						} else {
 							node = new ForLoopNode((ElementTag)element, (ElementVariable)variable, start, end, null);
 						}
+						
+						if(lexer.getState() == LexerState.TAG) 
+							throw new SmartScriptParserException("Too much for arguments!");
+						
 
 						try {
 							((Node) stack.peek()).addChildNode(node);

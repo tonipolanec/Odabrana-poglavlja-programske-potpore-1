@@ -8,7 +8,7 @@ public class EchoNode extends Node {
 	private int size;
 	
 	public EchoNode() {
-		elements = new Element[10];
+		elements = new Element[5];
 		size = 0;
 	}
 	public EchoNode(Element... elems) {
@@ -22,7 +22,10 @@ public class EchoNode extends Node {
 		String echoString = "{$= ";
 		
 		for(int i=0; i<size; i++) {
-			echoString += elements[i].asText() + " ";
+			if (elements[i] instanceof ElementString)
+				echoString += "\"" + elements[i].asText() + "\" ";
+			else
+				echoString += elements[i].asText() + " ";
 		}
 		
 		return echoString + "$}";
@@ -46,6 +49,22 @@ public class EchoNode extends Node {
 		
 	}
 	
+ 	@Override
+ 	public boolean equals(Object other) {
+ 		if(other instanceof EchoNode) {
+	 		EchoNode otherNode = (EchoNode) other;
+	 		if (!super.equals(otherNode)) return false;
+	 		
+	 		if (size != otherNode.size) return false;
+	 		for(int i=0; i<size; i++) {
+	 			if(!elements[i].equals(otherNode.elements[i])) return false;
+	 		}
+	 		
+	 		return true;
+ 		}
+ 		
+ 		return false;
+ 	}
 	
 
 }

@@ -20,6 +20,20 @@ public class TextNode extends Node {
 	
 	@Override
 	public String toString() {
-		return getText() + "\n";
+		return getText() + "";
 	}
+	
+	@Override
+ 	public boolean equals(Object other) {
+ 		if(other instanceof TextNode) {
+ 			TextNode otherNode = (TextNode) other;
+	 		if (!super.equals(otherNode)) return false;
+	 		
+	 		if (!text.equals(otherNode.text)) return false;
+	 		
+	 		return true;
+ 		}
+ 		
+ 		return false;
+ 	}
 }

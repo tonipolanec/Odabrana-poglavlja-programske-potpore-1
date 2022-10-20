@@ -24,6 +24,8 @@ public class Node {
 	 * @return number of children
 	 */
 	public int numberOfChildren() { 
+		if (children == null) return 0;
+		
 		return children.size();
 	}
 	
@@ -42,6 +44,23 @@ public class Node {
 	 */
 	public String toString() {
 		return null;
+	}
+
+	@Override
+	public boolean equals(Object other) {
+		if(other instanceof Node) {
+			Node otherNode = (Node) other;
+			
+			if (numberOfChildren() != otherNode.numberOfChildren()) return false;
+			
+			for(int i=0; i<numberOfChildren(); i++) {
+				if (!getChild(i).equals(otherNode.getChild(i)))
+					return false;
+			}
+			return true;
+		}
+		
+		return false;
 	}
 	
 	

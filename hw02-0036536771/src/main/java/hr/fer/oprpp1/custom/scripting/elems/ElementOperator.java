@@ -23,5 +23,16 @@ public class ElementOperator extends Element {
 	public String getName() {
 		return symbol;
 	}
+	
+	@Override
+	public boolean equals(Element element) {
+		if (element instanceof ElementOperator) {
+			ElementOperator e = (ElementOperator) element;
+			
+			if(!symbol.equals(e.symbol)) return false;
+			return true;
+		}
+		return false;
+	}
 
 }

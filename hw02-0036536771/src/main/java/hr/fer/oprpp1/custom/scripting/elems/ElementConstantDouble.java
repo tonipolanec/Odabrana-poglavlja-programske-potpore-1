@@ -23,5 +23,16 @@ public class ElementConstantDouble extends Element {
 	public double getValue() {
 		return value;
 	}
+	
+	@Override
+	public boolean equals(Element element) {
+		if (element instanceof ElementConstantDouble) {
+			ElementConstantDouble e = (ElementConstantDouble) element;
+			
+			if(value != e.value) return false;
+			return true;
+		}
+		return false;
+	}
 
 }

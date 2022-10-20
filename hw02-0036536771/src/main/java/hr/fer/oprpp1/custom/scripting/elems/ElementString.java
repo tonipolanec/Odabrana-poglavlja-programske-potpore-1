@@ -17,6 +17,7 @@ public class ElementString extends Element {
 		//return unEscapeString(value); //if we want to see all hidden characters like \n, \r etc
 		return value;
 	}
+	
 
 	/** Returns variable value
 	 *  @return value
@@ -47,6 +48,17 @@ public class ElementString extends Element {
 	            default: sb.append(string.charAt(i));
 	        }
 	    return sb.toString();
+	}
+	
+	@Override
+	public boolean equals(Element element) {
+		if (element instanceof ElementString) {
+			ElementString e = (ElementString) element;
+			
+			if(!value.endsWith(e.value)) return false;
+			return true;
+		}
+		return false;
 	}
 
 }

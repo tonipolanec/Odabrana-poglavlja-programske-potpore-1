@@ -23,5 +23,16 @@ public class ElementTag extends Element {
 	public String getName() {
 		return name;
 	}
+	
+	@Override
+	public boolean equals(Element element) {
+		if (element instanceof ElementTag) {
+			ElementTag e = (ElementTag) element;
+			
+			if(!name.equals(e.name)) return false;
+			return true;
+		}
+		return false;
+	}
 
 }

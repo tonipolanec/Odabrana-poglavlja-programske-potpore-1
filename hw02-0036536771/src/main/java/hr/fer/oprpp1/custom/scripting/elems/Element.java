@@ -9,5 +9,10 @@ public class Element {
 	public String asText() {
 		return "";
 	}
+	
+
+	public boolean equals(Element element) {
+		throw new UnsupportedOperationException("Error at Element equals()!");
+	}
 
 }

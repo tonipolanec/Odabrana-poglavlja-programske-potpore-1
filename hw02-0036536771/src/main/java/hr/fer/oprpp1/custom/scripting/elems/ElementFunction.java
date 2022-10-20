@@ -14,7 +14,7 @@ public class ElementFunction extends Element {
 	 */
 	@Override
 	public String asText() {
-		return name;
+		return "@" + name;
 	}
 	
 	/** Returns variable name
@@ -22,5 +22,16 @@ public class ElementFunction extends Element {
 	 */
 	public String getName() {
 		return name;
+	}
+	
+	@Override
+	public boolean equals(Element element) {
+		if (element instanceof ElementFunction) {
+			ElementFunction e = (ElementFunction) element;
+			
+			if(!name.equals(e.name)) return false;
+			return true;
+		}
+		return false;
 	}
 }
