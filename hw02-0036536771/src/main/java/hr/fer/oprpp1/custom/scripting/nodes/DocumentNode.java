@@ -9,8 +9,12 @@ public class DocumentNode extends Node {
 	
 	@Override
 	public String toString() {
-		//...
-		return "";
+		String docBody = "";
+		for(int i=0; i<numberOfChildren(); i++) {
+			docBody += getChild(i).toString();
+		}
+		
+		return docBody;
 	}
 
 }

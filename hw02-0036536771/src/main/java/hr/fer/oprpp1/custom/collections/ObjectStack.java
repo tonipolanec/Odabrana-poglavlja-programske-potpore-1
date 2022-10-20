@@ -57,7 +57,7 @@ public class ObjectStack {
 	public Object peek() {
 		Object poppedObject;
 		try {
-			poppedObject = aic.get(aic.size());
+			poppedObject = aic.get(aic.size()-1);
 		} catch (IndexOutOfBoundsException ex) {
 			throw new EmptyStackException();
 		}
