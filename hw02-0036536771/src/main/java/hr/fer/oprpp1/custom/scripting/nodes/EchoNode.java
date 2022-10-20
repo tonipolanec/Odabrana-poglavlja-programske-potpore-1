@@ -15,22 +15,7 @@ public class EchoNode extends Node {
 		elements = elems;
 		size = elems.length;
 	}
-	
-	
-	@Override
-	public String toString() {
-		String echoString = "{$= ";
-		
-		for(int i=0; i<size; i++) {
-			if (elements[i] instanceof ElementString)
-				echoString += "\"" + elements[i].asText() + "\" ";
-			else
-				echoString += elements[i].asText() + " ";
-		}
-		
-		return echoString + "$}";
-	}
-	
+
 	/**<p> Adds element to array of elements </p>*/
  	public void addElement(Element e) {
 		if (size < elements.length) {
@@ -47,6 +32,25 @@ public class EchoNode extends Node {
 			elements = newArray;
 		}
 		
+	}
+ 	
+ 	/**<p>Returns number of elements in node </p>*/
+ 	public int getSize() {
+ 		return size;
+ 	}
+ 	
+ 	@Override
+	public String toString() {
+		String echoString = "{$= ";
+		
+		for(int i=0; i<size; i++) {
+			if (elements[i] instanceof ElementString)
+				echoString += "\"" + elements[i].asText() + "\" ";
+			else
+				echoString += elements[i].asText() + " ";
+		}
+		
+		return echoString + "$}";
 	}
 	
  	@Override

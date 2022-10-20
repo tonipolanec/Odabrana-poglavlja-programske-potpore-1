@@ -77,7 +77,17 @@ public class ForLoopNode extends Node {
 	 		if (!variable.equals(otherNode.variable)) 				return false;
 	 		if (!startExpression.equals(otherNode.startExpression)) return false;
 	 		if (!endExpression.equals(otherNode.endExpression)) 	return false;
-	 		if (!stepExpression.equals(otherNode.stepExpression))	return false;
+	 		
+	 		
+	 		if (stepExpression != null && otherNode.stepExpression != null)
+	 			if (!stepExpression.equals(otherNode.stepExpression))	return false;
+	 		
+	 		if (startExpression == null)
+	 			if (otherNode.startExpression != null) return false;
+	 		if (otherNode.stepExpression == null)
+	 			if (startExpression != null) return false;
+	 		
+	 		
 	 		
 	 		return true;
  		}

@@ -2,33 +2,47 @@ package hr.fer.oprpp1.custom.scripting.lexer;
 
 import hr.fer.oprpp1.custom.scripting.elems.*;
 
-/** Lexer class used for...
+/** Lexer class used for tokenizing input stream.
  * 
  * @author Toni Polanec
  */
 public class Lexer {
 
+	/**<p>Input data in characters</p>*/
 	private char[] data;
+	
+	/**<p>Index we are currently working with in data array</p>*/
 	private int currentIndex;
+	
+	/**<p>Shows which state we are in (<code>TEXT</code> or <code>TAG</code>)</p>*/
 	private LexerState state;
 	
+	
 	//private Element element;
+	/**<p>Flag to know if we are processing tag or not</p>*/
 	private boolean currentlyInTag;
+	
+	/**<p>Flag for tag name</p>*/
+	private boolean gotTokenName;
+	
+	/**<p>Index at which current tag ends</p>*/
 	private int tagEnd;
-	private TokenType currentTokenType;
+	
+
 	
 	public Lexer(String data) {
 		this.data = data.toCharArray();
 		currentIndex = 0;
 		currentlyInTag = false;
-		currentTokenType = TokenType.TAG;
+		gotTokenName = false;
 		
 		state = determineFirstState();
 	}
 	 
 	/** Gets next element in data.
 	 * @return next element
-	 * @throws LexerException if any error happens*/
+	 * @throws LexerException if any error happens
+	 */
 	public Element getElement() {
 		if(currentIndex >= data.length) 
 			throw new LexerException("No elements available.");
@@ -102,11 +116,11 @@ public class Lexer {
 				String value = "";
 				
 				// We need tag name at the beginning of tag
-				if (currentTokenType == TokenType.TAG) {
+				if (!gotTokenName) {
 					//System.out.println("--TAG--");
 					if (checkNextChar() == '=') {
 						value += nextChar();
-						currentTokenType = null;
+						gotTokenName = true;
 						//System.out.println("name: " + value);
 						
 						checkIfLastInTag();
@@ -120,7 +134,7 @@ public class Lexer {
 							else
 								throw new LexerException("Invalid tag (variable name)!");
 						}
-						currentTokenType = null;
+						gotTokenName = true;
 						//System.out.println("name: " + value);
 						
 						checkIfLastInTag();
@@ -280,6 +294,29 @@ public class Lexer {
 	}
 	 
 	
+	/**<p> Checks if there's next element to get. <p>*/ 
+	public boolean checkNextElement() {
+		//skipWhitespaces();
+		if(currentIndex >= data.length) 
+			return false;
+		return true;
+	}
+	
+	
+	/**<p> Returns state which lexer is currently in. <p>*/
+	public LexerState getState() {
+		return state;
+	}
+	
+	/** Determines if it is first text or immediately tag.
+	 * @return <code>LexerState.TAG</code> or <code>LexerState.TAG</code>
+	 */
+	public LexerState determineFirstState() {
+		if (checkTagStart(false))
+			return LexerState.TAG;
+		return LexerState.TEXT;
+	}
+	
 	
 	/** Processes the string by escaping rules in tag.
 	 * @param string we want to process
@@ -323,13 +360,7 @@ public class Lexer {
 				processed += string.charAt(index++);
 			}
 		}
-
 		return processed;
-	}
-	
-	/**<p> Returns state which lexer is currently in. <p>*/
-	public LexerState getState() {
-		return state;
 	}
 	
 	
@@ -341,23 +372,17 @@ public class Lexer {
 		if (currentIndex >= tagEnd) {
 			//System.out.println("--ENDTAG--");
 			currentlyInTag = false;
-			currentTokenType = TokenType.TAG; // For next tag if it exists
+			gotTokenName = false; // For next tag if it exists
 			state = LexerState.TEXT;
 			currentIndex += 2; // We need to skip tag end symbols '$}'
 		}
 	}
-
-
-	/**<p> Checks if there's next element to get. <p>*/ 
-	public boolean checkNextElement() {
-		//skipWhitespaces();
-		if(currentIndex >= data.length) 
-			return false;
-		return true;
-	}
 	
 	
-	/**<p> Return next character in data </p>*/
+	/** Return next character in data.
+	 * @return next character in data
+	 * @exception LexerException if we at the end of file 
+	 */
 	private char nextChar() {
 		try {
 			return data[currentIndex++];
@@ -366,7 +391,10 @@ public class Lexer {
 		}
 	}
 	
-	/**<p> Checks which character is next data </p>*/
+	/** Checks which character is next data but we don't increment currentIndex.
+	 * @return next character in data
+	 * @exception LexerException if we at the end of file 
+	 */
 	private char checkNextChar() {
 		if(currentIndex + 1 > data.length) return ' ';
 		try {
@@ -379,7 +407,12 @@ public class Lexer {
 		}
 	}
 	
-	/**<p> Checks tag start symbols <code>{$</code> </p>*/
+	
+	/** Checks tag start symbols <code>{$</code>.
+	 * @param escaped boolean if we are currently in escape mode
+	 * @return <code>true</code> if next are tag symbols, <code>false</code> otherwise
+	 * @exception LexerException if we at the end of file
+	 */
 	private boolean checkTagStart(boolean escaped) {
 		// Don't start tag if its escaped
 		if (escaped) return false;
@@ -391,7 +424,7 @@ public class Lexer {
 			currentIndex -= 2;
 		
 			if(c1 == '{' && c2 == '$') {
-				currentTokenType = TokenType.TAG;
+				gotTokenName = false;
 				setState(LexerState.TAG);
 				return true;
 			}
@@ -401,7 +434,10 @@ public class Lexer {
 			throw new LexerException("Failed checking tag start symbols!");
 		}
 	}
-	/**<p> Checks tag end symbols <code>$}</code> </p>*/
+	/** Checks tag end symbols <code>{$</code>.
+	 * @return <code>true</code> if next are tag symbols, <code>false</code> otherwise
+	 * @exception LexerException if we at the end of file
+	 */
 	private boolean checkTagEnd() {
 		try {
 			char c1 = nextChar();
@@ -409,7 +445,6 @@ public class Lexer {
 			currentIndex -= 2;
 		
 			if(c1 == '$' && c2 == '}') {
-				//setState(LexerState.TEXT);
 				return true;
 			}
 			return false;
@@ -424,8 +459,7 @@ public class Lexer {
 		this.state = state; 
 	}
 	
-	/** Skips all whitespaces up to next element.
-	 */
+	/**<p> Skips all whitespaces up to next element. </p>*/
 	private void skipWhitespaces() {
 		while(currentIndex < data.length) {
 			char c = data[currentIndex];
@@ -438,16 +472,8 @@ public class Lexer {
 		}
 	}
 	
-	/**<p> Determines if it is first text or immediately tag. </p>*/
-	public LexerState determineFirstState() {
-		if (checkTagStart(false))
-			return LexerState.TAG;
-		return LexerState.TEXT;
-		
-	}
 	
-	
-	/**<p> Checks if we are at the end of file <p>*/
+	/**<p> Checks if we are at the end of file. <p>*/
 	private boolean checkEOF() {
 		if (currentIndex >= data.length)
 			return true;

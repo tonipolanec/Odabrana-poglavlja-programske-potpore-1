@@ -44,6 +44,7 @@ public class SmartScriptParser {
 				
 				
 				else if (element instanceof ElementTag) {
+					
 					if (element.asText().equals("for")) {
 						Element variable = lexer.getElement();
 						if (!(variable instanceof ElementVariable))
@@ -100,6 +101,7 @@ public class SmartScriptParser {
 						} catch(EmptyStackException ex) {
 							throw new SmartScriptParserException("Cannot add child node to nothing!");
 						}
+					
 					}
 					
 				}

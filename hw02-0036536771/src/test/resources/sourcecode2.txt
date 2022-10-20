@@ -1,0 +1,7 @@
+This is sample text.
+{$ FOR i 1 10 1 $}
+	Print regular text \{$ try escaping that
+{$END$}
+Ispisi varijablu {$= i "neka"            $}
+{$		 FoR var "good variable name" "two useless strings" $}
+{$  	end$}

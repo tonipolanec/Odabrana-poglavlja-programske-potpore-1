@@ -1,0 +1,5 @@
+{$ FOR		 sco_re    "-1"10 	 "1" $}
+{$= i i * @sin "0.000" @decfmt $}
+{$End  $}
+{$	= name i $}
+{$End  $}

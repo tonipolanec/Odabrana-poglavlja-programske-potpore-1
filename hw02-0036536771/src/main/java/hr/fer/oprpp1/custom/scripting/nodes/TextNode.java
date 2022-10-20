@@ -20,7 +20,9 @@ public class TextNode extends Node {
 	
 	@Override
 	public String toString() {
-		return getText() + "";
+		// We need to add escapes back in
+		String stringWithEscapes = getText().replace("\\", "\\\\").replace("{", "\\{");
+		return stringWithEscapes;
 	}
 	
 	@Override
