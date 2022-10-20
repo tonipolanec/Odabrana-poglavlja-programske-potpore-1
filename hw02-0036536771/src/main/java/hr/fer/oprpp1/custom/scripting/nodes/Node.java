@@ -37,5 +37,12 @@ public class Node {
 	}
 	
 	
+	/** Returns string representation of node 
+	 * @return string of node
+	 */
+	public String toString() {
+		return null;
+	}
+	
 	
 }

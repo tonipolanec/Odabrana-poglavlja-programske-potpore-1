@@ -42,7 +42,7 @@ public class Lexer {
 			boolean escaped = false;
 			
 			// Goes as long as it can until tag start symbols
-			while(!checkTagStart(escaped) || currentIndex > data.length) {
+			while(!checkTagStart(escaped) && !checkEOF() /*|| currentIndex < data.length*/) {
 				
 				// If it starts with escape character
 				if (checkNextChar() == '\\' && !escaped) {
@@ -91,7 +91,7 @@ public class Lexer {
 			
 			skipWhitespaces();
 			
-			while(currentIndex < tagEnd) {
+			while(currentIndex < tagEnd && !checkEOF()) {
 				String value = "";
 				
 				// We need tag name at the beginning of tag
@@ -320,15 +320,21 @@ public class Lexer {
 		return processed;
 	}
 	
+	/**<p> Returns state which lexer is currently in. <p>*/
+	public LexerState getState() {
+		return state;
+	}
+	
 	
 	/**<p> Checks if current element is last in tag. 
 	 * If it is switch state. </p>
 	 */
-	public void checkIfLastInTag() {
+	private void checkIfLastInTag() {
 		skipWhitespaces();
 		if (currentIndex >= tagEnd) {
 			System.out.println("--ENDTAG--");
 			currentlyInTag = false;
+			currentTokenType = TokenType.TAG; // For next tag if it exists
 			state = LexerState.TEXT;
 			currentIndex += 2; // We need to skip tag end symbols '$}'
 		}
@@ -337,6 +343,7 @@ public class Lexer {
 
 	/**<p> Checks if there's next element to get. <p>*/ 
 	public boolean checkNextElement() {
+		skipWhitespaces();
 		if(currentIndex >= data.length) 
 			return false;
 		return true;
@@ -354,6 +361,7 @@ public class Lexer {
 	
 	/**<p> Checks which character is next data </p>*/
 	private char checkNextChar() {
+		if(currentIndex + 1 > data.length) return ' ';
 		try {
 			char c = nextChar();
 			currentIndex--;
@@ -368,8 +376,9 @@ public class Lexer {
 	private boolean checkTagStart(boolean escaped) {
 		// Don't start tag if its escaped
 		if (escaped) return false;
-		
+		if(currentIndex + 2 > data.length) return false;
 		try {
+			
 			char c1 = nextChar();
 			char c2 = nextChar();
 			currentIndex -= 2;
@@ -422,9 +431,12 @@ public class Lexer {
 		}
 	}
 	
-//	public Element getLastElement() {
-//		return element;
-//	}
+	/**<p> Checks if we are at the end of file <p>*/
+	private boolean checkEOF() {
+		if (currentIndex >= data.length)
+			return true;
+		return false;
+	}
 	
 	
 	

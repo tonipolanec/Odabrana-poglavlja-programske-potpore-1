@@ -6,8 +6,23 @@ public class EchoNode extends Node {
 
 	private Element[] elements;
 	
-	public EchoNode() {
-		// TODO Auto-generated constructor stub
+	public EchoNode(Element... elems) {
+		elements = elems;
 	}
+	
+	
+	@Override
+	public String toString() {
+		String echoString = "{$= ";
+		
+		for(int i=0; i<elements.length; i++) {
+			echoString += elements[i].toString() + " ";
+		}
+		
+		return echoString + "$}";
+	}
+	
+	
+	
 
 }

@@ -14,14 +14,14 @@ public class ElementString extends Element {
 	 */
 	@Override
 	public String asText() {
-		return unEscapeString(value);
+		return value;
 	}
 
 	/** Returns variable value
 	 *  @return value
 	 */
-	public String getValue() {
-		return value;
+	public String getPlainText() {
+		return unEscapeString(value);
 	}
 	
 	

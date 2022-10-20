@@ -10,8 +10,15 @@ public class ForLoopNode extends Node {
 	private Element endExpression;
 	private Element stepExpression; // can be NULL
 	
-	public ForLoopNode() {
-		// TODO Auto-generated constructor stub
+	public ForLoopNode(ElementVariable var, Element start, Element end, Element step) {
+		variable = var;
+		startExpression = start;
+		endExpression = end;
+		stepExpression = step;
+		
+	}
+	public ForLoopNode(ElementVariable var, Element start, Element end) {
+		this(var, start, end, null);
 	}
 
 	public ElementVariable getVariable() {
@@ -29,4 +36,19 @@ public class ForLoopNode extends Node {
 	public Element getStepExpression() {
 		return stepExpression;
 	}
+	
+	
+	@Override
+	public String toString() {
+		String echoString = "{$ ";
+		echoString += variable.toString() + " " + startExpression.toString() + " " + endExpression.toString();
+		
+		if (stepExpression != null)
+			echoString += stepExpression.toString();
+		
+		
+		return echoString + " $}";
+	}
+	
+	
 }

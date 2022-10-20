@@ -6,8 +6,8 @@ public class TextNode extends Node {
 	private String text;
 	
 	
-	public TextNode() {
-		// TODO Auto-generated constructor stub
+	public TextNode(String text) {
+		this.text = text;
 	}
 
 	/** Returns variable text
@@ -15,5 +15,11 @@ public class TextNode extends Node {
 	 */
 	public String getText() {
 		return text;
+	}
+	
+	
+	@Override
+	public String toString() {
+		return getText() + "\n";
 	}
 }
