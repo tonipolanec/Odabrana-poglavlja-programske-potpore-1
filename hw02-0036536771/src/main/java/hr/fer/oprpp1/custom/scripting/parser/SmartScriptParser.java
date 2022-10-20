@@ -25,6 +25,7 @@ public class SmartScriptParser {
 	public void parse() {
 		try {
 			
+
 			documentNode = new DocumentNode();
 			Element element;
 			Node node;
@@ -44,32 +45,37 @@ public class SmartScriptParser {
 				
 				
 				else if (element instanceof ElementTag) {
-					if (element.asText() == "for") {
+					if (element.asText().equals("for")) {
+						Element variable = lexer.getElement();
+						if (!(variable instanceof ElementVariable))
+							throw new SmartScriptParserException("Wrong for tag variable!");
+						
 						Element start = lexer.getElement();
 						Element end = lexer.getElement();
 						if (lexer.getState() == LexerState.TAG) {
 							Element step = lexer.getElement();
-							
-							node = new ForLoopNode(new ElementVariable(element.asText()), start, end, step);
+		
+							node = new ForLoopNode((ElementTag)element, (ElementVariable)variable, start, end, step);
 						} else {
-							node = new ForLoopNode(new ElementVariable(element.asText()), start, end, null);
+							node = new ForLoopNode((ElementTag)element, (ElementVariable)variable, start, end, null);
 						}
-						
+
 						try {
 							((Node) stack.peek()).addChildNode(node);
+							stack.push(node);
 						} catch(EmptyStackException ex) {
 							throw new SmartScriptParserException("Cannot add child node to nothing!");
 						}
 						
 						
-					} else if (element.asText() == "end") {
+					} else if (element.asText().equals("end")) {
 						try {
 							stack.pop();
 						} catch (EmptyStackException ex) {
 							throw new SmartScriptParserException("Empty stack exception! (Too much END tags)");
 						}
 					
-					} else if (element.asText() == "=") {
+					} else if (element.asText().equals("=")) {
 						EchoNode echoNode = new EchoNode();
 						
 						while (lexer.getState() == LexerState.TAG) {
@@ -100,7 +106,8 @@ public class SmartScriptParser {
 				throw new SmartScriptParserException("Wrong closings of open tags!");
 			}
 			
-			
+		} catch (SmartScriptParserException ex) {
+			throw new SmartScriptParserException(ex.getMessage());
 		} catch (LexerException ex) {
 			throw new SmartScriptParserException(ex.getMessage());
 		} catch (Exception ex) {

@@ -22,7 +22,7 @@ public class EchoNode extends Node {
 		String echoString = "{$= ";
 		
 		for(int i=0; i<size; i++) {
-			echoString += elements[i].toString() + " ";
+			echoString += elements[i].asText() + " ";
 		}
 		
 		return echoString + "$}";

@@ -9,7 +9,11 @@ public class SmartScriptTester {
 
 	public static void main(String[] args) {
 		
-		String docBody = "Example \\{$=1$}. Now actually write one {$=1$}";
+		String docBody = "This is sample text.\r\n"
+				+ "{$ FOR i 1 10 1 $}\r\n"
+				+ "This is {$= i $}-th time this message is generated.\r\n"
+				+ "{$END$}"
+				+ "closing text";
 		SmartScriptParser parser = null;
 		
 		try {
@@ -29,7 +33,7 @@ public class SmartScriptTester {
 		String originalDocumentBody = document.toString();
 		
 		// should write something like original content of docBody
-		System.out.println(originalDocumentBody); 	
+		System.out.println("\nOriginal content:\n" + originalDocumentBody); 	
 		
 	
 

@@ -24,9 +24,9 @@ public class Lexer {
 		tagNameDefined = false;
 		currentTokenType = TokenType.TAG;
 		
-		state = LexerState.TEXT;
+		state = determineFirstState();
 	}
-	
+	 
 	/** Gets next element in data.
 	 * @return next element
 	 * @throws LexerException if any error happens*/
@@ -37,6 +37,7 @@ public class Lexer {
 		
 		if(state == LexerState.TEXT) {
 			// We need to worry about strings, escaped characters and starting tag symbol
+			
 			
 			String value = "";
 			boolean escaped = false;
@@ -63,7 +64,7 @@ public class Lexer {
 				}
 			}
 
-			System.out.println("--TEXT--");
+			System.out.println("--TEXT--\n"+ ElementString.getPlainText(value));
 			return new ElementString(value);						
 		}
 		
@@ -100,21 +101,21 @@ public class Lexer {
 					if (checkNextChar() == '=') {
 						value += nextChar();
 						currentTokenType = null;
-						System.out.println("name:");
+						System.out.println("name: " + value);
 						
 						checkIfLastInTag();
 						return new ElementTag(value);
 					}
 					else if (Character.isLetter(checkNextChar())) {
 						value += nextChar();
-						while(checkNextChar() != ' ' && checkNextChar() != '$') {
+						while(checkNextChar() != ' ' && checkNextChar() != '$' && checkNextChar() != '-' && checkNextChar() != '"') {
 							if(Character.isLetter(checkNextChar()) || Character.isDigit(checkNextChar()) || checkNextChar() == '_')
 								value += nextChar();
 							else
 								throw new LexerException("Invalid tag (variable name)!");
 						}
 						currentTokenType = null;
-						System.out.println("name:");
+						System.out.println("name: " + value);
 						
 						checkIfLastInTag();
 						return new ElementTag(value);
@@ -128,14 +129,14 @@ public class Lexer {
 					// ELEMENT VARIABLE
 					if (Character.isLetter(checkNextChar())) {
 						value += nextChar();
-						while(checkNextChar() != ' ' && checkNextChar() != '$') {
+						while(checkNextChar() != ' ' && checkNextChar() != '$' && checkNextChar() != '-' && checkNextChar() != '"') {
 							if(Character.isLetter(checkNextChar()) || Character.isDigit(checkNextChar()) || checkNextChar() == '_')
 								value += nextChar();
 							else
 								throw new LexerException("Invalid variable name!");
 						}
 
-						System.out.println("variable:");
+						System.out.println("variable: " + value);
 
 						checkIfLastInTag();
 						return new ElementVariable(value);
@@ -152,7 +153,7 @@ public class Lexer {
 									throw new LexerException("Invalid function name!");
 							}
 
-							System.out.println("function:");
+							System.out.println("function: "+value);
 
 							checkIfLastInTag();
 							return new ElementVariable(value);
@@ -164,25 +165,25 @@ public class Lexer {
 					// ELEMENT OPERATOR +
 					} else if (checkNextChar() == '+') {
 						checkIfLastInTag();
-						System.out.println("operator:");
+						System.out.println("operator: +");
 						return new ElementOperator(nextChar()+"");
 						
 					// ELEMENT OPERATOR *
 					} else if (checkNextChar() == '*') {
 						checkIfLastInTag();
-						System.out.println("operator:");
+						System.out.println("operator: *");
 						return new ElementOperator(nextChar()+"");
 						
 					// ELEMENT OPERATOR /
 					} else if (checkNextChar() == '/') {
 						checkIfLastInTag();
-						System.out.println("operator:");
+						System.out.println("operator: /");
 						return new ElementOperator(nextChar()+"");
 						
 					// ELEMENT OPERATOR ^
 					} else if (checkNextChar() == '^') {
 						checkIfLastInTag();
-						System.out.println("operator:");
+						System.out.println("operator: ^");
 						return new ElementOperator(nextChar()+"");
 						
 					// ELEMENT OPERATOR -
@@ -191,7 +192,7 @@ public class Lexer {
 						// Checks if there's digit behind '-'
 						if (!Character.isDigit(checkNextChar())) {
 							checkIfLastInTag();
-							System.out.println("operator:");
+							System.out.println("operator: -");
 							return new ElementOperator(value);
 						
 						// There's digit behind '-', treat it as digit!
@@ -208,7 +209,7 @@ public class Lexer {
 									dot = true;
 							}
 
-							System.out.println("minus number");
+							System.out.println("minus number: " + value);
 							
 							checkIfLastInTag();
 							if (dot)
@@ -230,7 +231,7 @@ public class Lexer {
 								dot = true;
 						}
 
-						System.out.println("number:");
+						System.out.println("number: " + value);
 
 						checkIfLastInTag();
 						if (dot)
@@ -258,7 +259,7 @@ public class Lexer {
 						
 						String string = new String(data, stringStart, stringEnd-stringStart);
 
-						System.out.println("string:");
+						System.out.println("string: " + string);
 
 						checkIfLastInTag();
 						return new ElementString(processEscaping(string));
@@ -343,7 +344,7 @@ public class Lexer {
 
 	/**<p> Checks if there's next element to get. <p>*/ 
 	public boolean checkNextElement() {
-		skipWhitespaces();
+		//skipWhitespaces();
 		if(currentIndex >= data.length) 
 			return false;
 		return true;
@@ -430,6 +431,15 @@ public class Lexer {
 			break;
 		}
 	}
+	
+	/**<p> Determines if it is first text or immediately tag. </p>*/
+	public LexerState determineFirstState() {
+		if (checkTagStart(false))
+			return LexerState.TAG;
+		return LexerState.TEXT;
+		
+	}
+	
 	
 	/**<p> Checks if we are at the end of file <p>*/
 	private boolean checkEOF() {
