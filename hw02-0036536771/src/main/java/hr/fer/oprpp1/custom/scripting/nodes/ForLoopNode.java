@@ -3,6 +3,10 @@ package hr.fer.oprpp1.custom.scripting.nodes;
 import hr.fer.oprpp1.custom.scripting.elems.*;
 import hr.fer.oprpp1.custom.scripting.parser.SmartScriptParserException;
 
+/** Class for ForLoop nodes in document model.
+ * 
+ * @author Toni Polanec
+ */
 public class ForLoopNode extends Node {
 
 	private ElementTag name;
@@ -11,6 +15,9 @@ public class ForLoopNode extends Node {
 	private Element endExpression;
 	private Element stepExpression; // can be NULL
 	
+	/** Base constructor for ForLoopNode 
+	 * @throws SmartScriptParserException if we add wrong type of elements in ForLoopNode
+	 */
 	public ForLoopNode(ElementTag name, ElementVariable var, Element start, Element end, Element step) {
 		if(start instanceof ElementFunction || start instanceof ElementOperator)
 			throw new SmartScriptParserException("Wrong FOR elements!");
@@ -68,9 +75,9 @@ public class ForLoopNode extends Node {
 	
 	
 	@Override
- 	public boolean equals(Node other) {
- 		if(other instanceof ForLoopNode) {
- 			ForLoopNode otherNode = (ForLoopNode) other;
+ 	public boolean equals(Node node) {
+ 		if(node instanceof ForLoopNode) {
+ 			ForLoopNode otherNode = (ForLoopNode) node;
 	 		if (!super.equals(otherNode)) return false;
 	 		
 	 		if (!name.equals(otherNode.name)) 						return false;

@@ -1,5 +1,9 @@
 package hr.fer.oprpp1.custom.scripting.nodes;
 
+/** Class for Text nodes in document model.
+ * 
+ * @author Toni Polanec
+ */
 public class TextNode extends Node {
 
 	/**<p> Text of TextNode </p>*/
@@ -26,9 +30,9 @@ public class TextNode extends Node {
 	}
 	
 	@Override
- 	public boolean equals(Node other) {
- 		if(other instanceof TextNode) {
- 			TextNode otherNode = (TextNode) other;
+ 	public boolean equals(Node node) {
+ 		if(node instanceof TextNode) {
+ 			TextNode otherNode = (TextNode) node;
 	 		if (!super.equals(otherNode)) return false;
 	 		
 	 		if (!text.equals(otherNode.text)) return false;

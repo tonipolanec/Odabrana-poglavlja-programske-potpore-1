@@ -1,10 +1,10 @@
 package hr.fer.oprpp1.custom.scripting.nodes;
 
+/** Class for representing DocumentNode in document model.
+ * 
+ * @author Toni Polanec
+ */
 public class DocumentNode extends Node {
-
-	public DocumentNode() {
-		super();
-	}
 	
 	
 	@Override

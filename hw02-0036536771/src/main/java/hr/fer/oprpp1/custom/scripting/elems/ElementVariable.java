@@ -1,5 +1,10 @@
 package hr.fer.oprpp1.custom.scripting.elems;
 
+/**
+ * Class for representing all variable elements.
+ * 
+ * @author Toni Polanec
+ */
 public class ElementVariable extends Element {
 
 	/**<p> Name of a object ElementVariable </p>*/
@@ -17,12 +22,6 @@ public class ElementVariable extends Element {
 		return name;
 	}
 	
-	/** Returns variable name
-	 *  @return name
-	 */
-	public String getName() {
-		return name;
-	}
 	
 	@Override
 	public boolean equals(Element element) {

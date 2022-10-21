@@ -1,5 +1,10 @@
 package hr.fer.oprpp1.custom.scripting.elems;
 
+/**
+ * Class for representing all tag elements.
+ * 
+ * @author Toni Polanec
+ */
 public class ElementTag extends Element {
 
 	/**<p> Name of a object ElementTag </p>*/
@@ -17,12 +22,6 @@ public class ElementTag extends Element {
 		return name;
 	}
 	
-	/** Returns variable name
-	 *  @return name
-	 */
-	public String getName() {
-		return name;
-	}
 	
 	@Override
 	public boolean equals(Element element) {

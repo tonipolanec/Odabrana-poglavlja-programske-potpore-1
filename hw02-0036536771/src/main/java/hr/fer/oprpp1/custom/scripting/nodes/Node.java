@@ -1,14 +1,17 @@
 package hr.fer.oprpp1.custom.scripting.nodes;
 
 import hr.fer.oprpp1.custom.collections.ArrayIndexedCollection;
+import hr.fer.oprpp1.custom.scripting.parser.SmartScriptParserException;
 
+/** Parent class for all nodes in document model.
+ * 
+ * @author Toni Polanec
+ */
 public class Node {
 
 	/**<p> Collection of all children nodes. </p>*/
 	private ArrayIndexedCollection children;
 	
-	public Node() {
-	}
 	
 	/** Ads child node to children collection.
 	 * @param child we want to add to children collection
@@ -29,27 +32,35 @@ public class Node {
 		return children.size();
 	}
 	
-	/** Returns selected child by index 
+	/** Returns selected child by index.
 	 * @param index of wanted child
-	 * @exception IndexOutOfBoundsException if given index is lower than zero 
+	 * @exception SmartScriptParserException if given index is lower than zero 
 	 * 		or greater or equals than size of children collection
 	 */
 	public Node getChild(int index) {
-		return (Node) children.get(index);
+		try {
+			return (Node) children.get(index);
+		} catch (IndexOutOfBoundsException ex) {
+			throw new SmartScriptParserException("Error with getting node child!");
+		}
+		
 	}
 	
 	
-	/** Returns string representation of node 
-	 * @return string of node
+	/** Returns string representation of a node.
+	 * @return string
 	 */
 	public String toString() {
 		return null;
 	}
 
-	
-	public boolean equals(Node other) {
-		if(other instanceof Node) {
-			Node otherNode = (Node) other;
+	/** Checks if this and given node are equal.
+	 * @param node we want to compare
+	 * @return <code>true</code> if equal, <code>false</code> otherwise
+	 */
+	public boolean equals(Node node) {
+		if(node instanceof Node) {
+			Node otherNode = (Node) node;
 			
 			if (numberOfChildren() != otherNode.numberOfChildren()) return false;
 			

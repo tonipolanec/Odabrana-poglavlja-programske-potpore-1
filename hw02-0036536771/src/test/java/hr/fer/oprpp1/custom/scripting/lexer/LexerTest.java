@@ -142,7 +142,7 @@ public class LexerTest {
 		if (!(e instanceof ElementString))
 			fail();
 		
-		assertEquals("Joe \"Long\" Smith" , e.asText());
+		assertEquals("Joe \"Long\" Smith" , ((ElementString) e).getValue());
 	}
 	
 	

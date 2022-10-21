@@ -6,26 +6,37 @@ import hr.fer.oprpp1.custom.scripting.elems.*;
 import hr.fer.oprpp1.custom.scripting.lexer.*;
 import hr.fer.oprpp1.custom.scripting.nodes.*;
 
+/**
+ * Class for Smart Script Parser. <br> 
+ * 
+ * After initializing it with some source code, parser parses given text and gives out
+ * document model of that text.
+ * 
+ * @author Toni Polanec
+ *
+ */
 public class SmartScriptParser {
 
-	//private String document;
+	/**<p> Lexer used for tokenizing elements in text </p>*/
 	private Lexer lexer;
-	DocumentNode documentNode;
+	/**<p> Main node of document model, we add all other nodes to this one </p>*/
+ 	DocumentNode documentNode;
+ 	
 	
 	public SmartScriptParser(String document) {
-		//this.document = document;
 		lexer = new Lexer(document);
 		parse();
 	}
 	
-	/** Parse document using initialized lexer.
+	
+	/** Parse document using initialized lexer. <br>
+	 * Parses and saves document node with all child nodes in local variable <code>documentNode</code>.
 	 * 
 	 * @throws SmartScriptParserException if parsing gone wrong
 	 */
 	public void parse() {
 		try {
-			
-
+	
 			documentNode = new DocumentNode();
 			Element element;
 			Node node;
@@ -33,6 +44,7 @@ public class SmartScriptParser {
 			ObjectStack stack = new ObjectStack();
 			stack.push(documentNode);
 			
+			// Goes through all elements in text
 			while(lexer.checkNextElement()) {
 				element = lexer.getElement();
 				
@@ -41,8 +53,7 @@ public class SmartScriptParser {
 					node = new TextNode(element.asText());
 					((Node) stack.peek()).addChildNode(node);
 				}
-				
-				
+						
 				else if (element instanceof ElementTag) {
 					
 					if (element.asText().equals("for")) {
@@ -105,7 +116,6 @@ public class SmartScriptParser {
 					}
 					
 				}
-				
 					
 			}
 			

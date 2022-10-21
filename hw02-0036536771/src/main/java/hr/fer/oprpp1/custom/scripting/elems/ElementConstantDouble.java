@@ -1,5 +1,10 @@
 package hr.fer.oprpp1.custom.scripting.elems;
 
+/**
+ * Class for representing all element constants with type double.
+ * 
+ * @author Toni Polanec
+ */
 public class ElementConstantDouble extends Element {
 
 	/**<p> Value of ElementConstantDouble </p>*/
@@ -16,13 +21,7 @@ public class ElementConstantDouble extends Element {
 	public String asText() {
 		return value +"";
 	}
-
-	/** Returns variable value
-	 *  @return value
-	 */
-	public double getValue() {
-		return value;
-	}
+	
 	
 	@Override
 	public boolean equals(Element element) {

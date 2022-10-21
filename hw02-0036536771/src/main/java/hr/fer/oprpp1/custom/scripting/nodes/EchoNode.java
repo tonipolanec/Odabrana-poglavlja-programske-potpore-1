@@ -2,24 +2,30 @@ package hr.fer.oprpp1.custom.scripting.nodes;
 
 import hr.fer.oprpp1.custom.scripting.elems.*;
 
+/** Class for Echo nodes in document model.
+ * 
+ * @author Toni Polanec
+ */
 public class EchoNode extends Node {
 
+	/**<p> Array of elements in this node </p>*/
 	private Element[] elements;
+	
+	/**<p> Number of elements in this node </p>*/
 	private int size;
 	
 	public EchoNode() {
 		elements = new Element[5];
 		size = 0;
 	}
-	public EchoNode(Element... elems) {
-		elements = elems;
-		size = elems.length;
-	}
 
-	/**<p> Adds element to array of elements </p>*/
- 	public void addElement(Element e) {
+
+	/** Adds element to array of elements
+	 * @param element we want to add
+	 */
+ 	public void addElement(Element element) {
 		if (size < elements.length) {
-			elements[size++] = e;
+			elements[size++] = element;
 			
 		} else if (size <= elements.length) {
 			// Reallocating new bigger array
@@ -27,14 +33,14 @@ public class EchoNode extends Node {
 			for(int i=0; i<size; i++) {
 				newArray[i] = elements[i];
 			}
-			newArray[size++] = e;
+			newArray[size++] = element;
 			
 			elements = newArray;
 		}
 		
 	}
  	
- 	/**<p>Returns number of elements in node </p>*/
+ 	/**<p> Returns number of elements in node </p>*/
  	public int getSize() {
  		return size;
  	}
@@ -54,9 +60,9 @@ public class EchoNode extends Node {
 	}
 	
  	@Override
- 	public boolean equals(Node other) {
- 		if(other instanceof EchoNode) {
-	 		EchoNode otherNode = (EchoNode) other;
+ 	public boolean equals(Node node) {
+ 		if(node instanceof EchoNode) {
+	 		EchoNode otherNode = (EchoNode) node;
 	 		
 	 		if (!super.equals(otherNode)) return false;
 	 		if (size != otherNode.size) return false;

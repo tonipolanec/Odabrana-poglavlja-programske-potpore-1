@@ -1,5 +1,10 @@
 package hr.fer.oprpp1.custom.scripting.elems;
 
+/**
+ * Class for representing all operator elements.
+ * 
+ * @author Toni Polanec
+ */
 public class ElementOperator extends Element {
 
 	/**<p> Symbol of a object ElementOperator </p>*/
@@ -14,13 +19,6 @@ public class ElementOperator extends Element {
 	 */
 	@Override
 	public String asText() {
-		return symbol;
-	}
-	
-	/** Returns variable symbol
-	 *  @return symbol
-	 */
-	public String getName() {
 		return symbol;
 	}
 	

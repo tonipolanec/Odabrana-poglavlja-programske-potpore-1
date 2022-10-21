@@ -1,5 +1,10 @@
 package hr.fer.oprpp1.custom.scripting.elems;
 
+/**
+ * Class for representing all element constants with type integer.
+ * 
+ * @author Toni Polanec
+ */
 public class ElementConstantInteger extends Element {
 
 	/**<p> Value of ElementConstantInteger </p>*/
@@ -17,12 +22,6 @@ public class ElementConstantInteger extends Element {
 		return value +"";
 	}
 
-	/** Returns variable name
-	 *  @return name
-	 */
-	public int getValue() {
-		return value;
-	}
 
 	@Override
 	public boolean equals(Element element) {

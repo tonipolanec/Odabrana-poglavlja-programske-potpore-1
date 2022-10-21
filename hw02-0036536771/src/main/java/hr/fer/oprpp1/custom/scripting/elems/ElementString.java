@@ -1,5 +1,10 @@
 package hr.fer.oprpp1.custom.scripting.elems;
 
+/**
+ * Class for representing all string elements.
+ * 
+ * @author Toni Polanec
+ */
 public class ElementString extends Element {
 
 	/**<p> Value of ElementString </p>*/
@@ -9,7 +14,7 @@ public class ElementString extends Element {
 		this.value = value;
 	}
 	
-	/** Returns string representation of private variable value 
+	/** Returns string representation of private variable value. 
 	 * @return value
 	 */
 	@Override
@@ -20,12 +25,9 @@ public class ElementString extends Element {
 		return escapedString;
 	}
 	
-
-	/** Returns variable value
-	 *  @return value
-	 */
-	public String getPlainText() {
-		return unEscapeString(value);
+	/**<p> Returns private variable value </p>*/
+	public String getValue() {
+		return value;
 	}
 	
 	/**<p> Static function for printing all characters in string. </p>*/
