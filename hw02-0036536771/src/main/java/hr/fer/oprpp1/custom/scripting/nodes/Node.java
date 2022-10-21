@@ -46,8 +46,8 @@ public class Node {
 		return null;
 	}
 
-	@Override
-	public boolean equals(Object other) {
+	
+	public boolean equals(Node other) {
 		if(other instanceof Node) {
 			Node otherNode = (Node) other;
 			

@@ -128,7 +128,7 @@ public class Lexer {
 					}
 					else if (Character.isLetter(checkNextChar()) && checkNextChar() != '@') {
 						value += nextChar();
-						while(checkNextChar() != ' ' && checkNextChar() != '$' && checkNextChar() != '-' && checkNextChar() != '"') {
+						while(checkNextChar() != ' ' && checkNextChar() != '\t' && checkNextChar() != '$' && checkNextChar() != '-' && checkNextChar() != '"') {
 							if(Character.isLetter(checkNextChar()) || Character.isDigit(checkNextChar()) || checkNextChar() == '_')
 								value += nextChar();
 							else
@@ -149,7 +149,7 @@ public class Lexer {
 					// ELEMENT VARIABLE
 					if (Character.isLetter(checkNextChar()) && checkNextChar() != '@') {
 						value += nextChar();
-						while(checkNextChar() != ' ' && checkNextChar() != '$' && checkNextChar() != '-' && checkNextChar() != '"') {
+						while(checkNextChar() != ' ' && checkNextChar() != '\t' && checkNextChar() != '$' && checkNextChar() != '-' && checkNextChar() != '"') {
 							if(Character.isLetter(checkNextChar()) || Character.isDigit(checkNextChar()) || checkNextChar() == '_')
 								value += nextChar();
 							else
@@ -408,6 +408,7 @@ public class Lexer {
 	}
 	
 	
+	
 	/** Checks tag start symbols <code>{$</code>.
 	 * @param escaped boolean if we are currently in escape mode
 	 * @return <code>true</code> if next are tag symbols, <code>false</code> otherwise
@@ -434,6 +435,7 @@ public class Lexer {
 			throw new LexerException("Failed checking tag start symbols!");
 		}
 	}
+	
 	/** Checks tag end symbols <code>{$</code>.
 	 * @return <code>true</code> if next are tag symbols, <code>false</code> otherwise
 	 * @exception LexerException if we at the end of file

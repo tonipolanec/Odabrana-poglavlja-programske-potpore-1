@@ -1,28 +1,11 @@
 package hr.fer.oprpp1.custom.scripting.lexer;
 
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.fail;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
-
-import javax.swing.text.Document;
-
+import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
 
-import hr.fer.oprpp1.custom.collections.ArrayIndexedCollection;
 import hr.fer.oprpp1.custom.scripting.elems.Element;
 import hr.fer.oprpp1.custom.scripting.elems.ElementString;
-import hr.fer.oprpp1.custom.scripting.nodes.DocumentNode;
-import hr.fer.oprpp1.custom.scripting.nodes.EchoNode;
-import hr.fer.oprpp1.custom.scripting.nodes.Node;
-import hr.fer.oprpp1.custom.scripting.nodes.TextNode;
-import hr.fer.oprpp1.custom.scripting.parser.SmartScriptParser;
-import hr.fer.oprpp1.custom.scripting.parser.SmartScriptParserException;
+
 
 public class LexerTest {
 	
@@ -76,6 +59,8 @@ public class LexerTest {
 	private Element getSecondElement(String text) {
 		// Using for checking function names so we need to get '=' first, then test function name
 		Lexer lexer = new Lexer(text);
+		
+		@SuppressWarnings("unused")
 		Element e = lexer.getElement();
 		return lexer.getElement();
 	}

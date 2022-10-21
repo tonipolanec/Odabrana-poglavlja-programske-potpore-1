@@ -54,12 +54,13 @@ public class EchoNode extends Node {
 	}
 	
  	@Override
- 	public boolean equals(Object other) {
+ 	public boolean equals(Node other) {
  		if(other instanceof EchoNode) {
 	 		EchoNode otherNode = (EchoNode) other;
-	 		if (!super.equals(otherNode)) return false;
 	 		
+	 		if (!super.equals(otherNode)) return false;
 	 		if (size != otherNode.size) return false;
+	 		
 	 		for(int i=0; i<size; i++) {
 	 			if(!elements[i].equals(otherNode.elements[i])) return false;
 	 		}

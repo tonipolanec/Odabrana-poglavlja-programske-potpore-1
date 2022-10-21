@@ -26,7 +26,7 @@ public class TextNode extends Node {
 	}
 	
 	@Override
- 	public boolean equals(Object other) {
+ 	public boolean equals(Node other) {
  		if(other instanceof TextNode) {
  			TextNode otherNode = (TextNode) other;
 	 		if (!super.equals(otherNode)) return false;

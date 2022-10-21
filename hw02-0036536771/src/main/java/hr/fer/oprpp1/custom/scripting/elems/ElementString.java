@@ -14,8 +14,10 @@ public class ElementString extends Element {
 	 */
 	@Override
 	public String asText() {
-		//return unEscapeString(value); //if we want to see all hidden characters like \n, \r etc
-		return value;
+		// We need to again escape characters like "
+		String escapedString = value.replace("\"", "\\\"");
+		
+		return escapedString;
 	}
 	
 
@@ -55,7 +57,7 @@ public class ElementString extends Element {
 		if (element instanceof ElementString) {
 			ElementString e = (ElementString) element;
 			
-			if(!value.endsWith(e.value)) return false;
+			if(!value.equals(e.value)) return false;
 			return true;
 		}
 		return false;

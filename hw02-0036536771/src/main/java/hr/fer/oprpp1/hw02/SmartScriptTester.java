@@ -1,7 +1,5 @@
 package hr.fer.oprpp1.hw02;
 
-import hr.fer.oprpp1.custom.scripting.elems.Element;
-import hr.fer.oprpp1.custom.scripting.lexer.Lexer;
 import hr.fer.oprpp1.custom.scripting.nodes.*;
 import hr.fer.oprpp1.custom.scripting.parser.*;
 import java.nio.file.Files;
@@ -35,14 +33,14 @@ public class SmartScriptTester {
 				throw new SmartScriptParserException("Error with path!");
 			}
 				
-			System.out.println("--" + i + "--");
+			//System.out.println("--" + i + "--");
 			parser = new SmartScriptParser(docBody);
 			
-			System.out.println("1");
+			//System.out.println("1");
 			document = parser.getDocumentNode();
 			originalDocumentBody = document.toString();
 			
-			System.out.println("2");
+			//System.out.println("2");
 			parser2 = new SmartScriptParser(originalDocumentBody);
 			document2 = parser2.getDocumentNode();
 			

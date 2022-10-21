@@ -68,7 +68,7 @@ public class ForLoopNode extends Node {
 	
 	
 	@Override
- 	public boolean equals(Object other) {
+ 	public boolean equals(Node other) {
  		if(other instanceof ForLoopNode) {
  			ForLoopNode otherNode = (ForLoopNode) other;
 	 		if (!super.equals(otherNode)) return false;
@@ -84,9 +84,8 @@ public class ForLoopNode extends Node {
 	 		
 	 		if (startExpression == null)
 	 			if (otherNode.startExpression != null) return false;
-	 		if (otherNode.stepExpression == null)
-	 			if (startExpression != null) return false;
-	 		
+	 		if (startExpression != null)
+	 			if (otherNode.startExpression == null) return false;
 	 		
 	 		
 	 		return true;
