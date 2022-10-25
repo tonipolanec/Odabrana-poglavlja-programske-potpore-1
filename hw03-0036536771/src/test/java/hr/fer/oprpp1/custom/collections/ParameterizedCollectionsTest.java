@@ -8,7 +8,7 @@ public class ParameterizedCollectionsTest {
 
 	class P implements Processor<String> {
 		public void process(String o) {
-				System.out.println(o + "O");
+				;//System.out.println(o + "O");
 		}
 	};
 //	Processor<Integer> p = new P(); // Doesn't work
