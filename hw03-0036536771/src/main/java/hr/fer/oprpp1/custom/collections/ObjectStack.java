@@ -5,11 +5,13 @@ package hr.fer.oprpp1.custom.collections;
  * 
  * @see hr.fer.oprpp1.custom.collections.ArrayIndexedCollection
  * @author Toni Polanec
+ * @param <E>
+ * @param <E>
  */
-public class ObjectStack<T> {
+public class ObjectStack<E> {
 	
 	/**<p>ArrayIndexedCollection we use to implement stack.</p>*/
-	ArrayIndexedCollection<T> aic;
+	ArrayIndexedCollection<E> aic;
 
 	/**<p> Initializes new ArrayIndexedCollection.</p>*/
 	public ObjectStack() {
@@ -30,7 +32,7 @@ public class ObjectStack<T> {
 	 * @param value
 	 * @exception NullPointerException if given null as an argument
 	 */
-	public void push(T value) {
+	public void push(E value) {
 		aic.add(value);
 	}
 	
@@ -38,8 +40,8 @@ public class ObjectStack<T> {
 	 * @exception EmptyStackException if stack is empty
 	 * @return object at the top of the stack
 	 */
-	public T pop() {
-		T poppedObject;
+	public E pop() {
+		E poppedObject;
 		try {
 			poppedObject = aic.get(aic.size()-1);
 			aic.remove(aic.size()-1);
@@ -54,8 +56,8 @@ public class ObjectStack<T> {
 	 * @exception EmptyStackException if stack is empty
 	 * @return object at the top of the stack
 	 */
-	public T peek() {
-		T poppedObject;
+	public E peek() {
+		E poppedObject;
 		try {
 			poppedObject = aic.get(aic.size()-1);
 		} catch (IndexOutOfBoundsException ex) {

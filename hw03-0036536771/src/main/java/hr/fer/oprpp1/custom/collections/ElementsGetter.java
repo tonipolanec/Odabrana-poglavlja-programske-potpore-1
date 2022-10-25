@@ -19,7 +19,7 @@ public interface ElementsGetter<T> {
 	/** Process all remaining elements in collection
 	 * @param proccesor with which we process elements
 	 */
-	default void processRemaining(Processor<T> p) {
+	default void processRemaining(Processor<? super T> p) {
 		while(true) {
 			try {		
 				p.process(getNextElement());

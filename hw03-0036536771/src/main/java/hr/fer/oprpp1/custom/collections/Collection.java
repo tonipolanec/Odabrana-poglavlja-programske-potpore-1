@@ -7,7 +7,7 @@ import java.util.NoSuchElementException;
  * 
  * @author Toni Polanec
  */
-public interface Collection<T> {
+public interface Collection<E> {
 
 	
 	/** Returns the number of currently stored objects in this collections. 
@@ -30,7 +30,7 @@ public interface Collection<T> {
 	 * 
 	 * @param arr of element we want to add
 	 */
-	void add(T arr);
+	void add(E arr);
 	
 	
 	/** Returns true only if the collection contains given value, as determined by equals method. 
@@ -39,7 +39,7 @@ public interface Collection<T> {
 	 * @return <code>true</code> if it is in collection,
 	 * 		<code>false</code> otherwise 
 	 */
-	boolean contains(T value);
+	boolean contains(Object value);
 	
 	
 	/** Returns true only if the collection contains given value as determined by 
@@ -49,7 +49,7 @@ public interface Collection<T> {
 	 * @return <code>true</code> if it was successfully removed, 
 	 * 		<code>false</code> if it doesn't contain given value
 	 */
-	boolean remove(T value);
+	boolean remove(E value);
 	
 	
 	/** Allocates new array with size equals to the size of this collections, 
@@ -57,7 +57,14 @@ public interface Collection<T> {
 	 * 
 	 * @return array of type Object[]
 	 */
-	T[] toArray();
+	Object[] toArray();
+	
+	/** Allocates new array with size equals to the size of this collections, 
+	 * fills it with collection content and returns the array. 
+	 * 
+	 * @return array of type Object[]
+	 */
+	E[] toArray(E[] a);
 	
 	
 	/** Method calls processor.process(.) for each element of this collection. 
@@ -65,8 +72,8 @@ public interface Collection<T> {
 	 * 
 	 * @param processor with which we process each element in collection
 	 */
-	default void forEach(Processor<T> processor) {
-		ElementsGetter<T> getter = createElementsGetter();
+	default void forEach(Processor<? super E> processor) {
+		ElementsGetter<E> getter = createElementsGetter();
 		
 		while(true) {
 			try {
@@ -82,10 +89,11 @@ public interface Collection<T> {
 	 * 
 	 * @param other collection we want to add to this collection
 	 */
-	default void addAll(Collection<T> other) {
-		T[] arr = (T[])other.toArray();
+	@SuppressWarnings("unchecked")
+	default void addAll(Collection<? extends E> other) {
+		Object[] arr = other.toArray();
 		for (int i=0; i<other.size(); i++) {
-			add(arr[i]);
+			add((E)arr[i]);
 		}
 	}
 	
@@ -98,7 +106,7 @@ public interface Collection<T> {
 	 * 
 	 * @return new ElementsGetter for collection
 	 */
-	ElementsGetter<T> createElementsGetter();
+	ElementsGetter<E> createElementsGetter();
 
 	
 	/** Gets all elements of collection with ElementsGetter and adds at the end all elements
@@ -107,12 +115,12 @@ public interface Collection<T> {
 	 *  @param col other collection we want to add elements from
 	 *  @param tester for testing elements
 	 */
-	default void addAllSatisfying(Collection<T> col, Tester<T> tester) {
-		ElementsGetter<T> getter = col.createElementsGetter();
+	default void addAllSatisfying(Collection<? extends E> col, Tester<? super E> tester) {
+		ElementsGetter<? extends E> getter =  col.createElementsGetter();
 		
 		while(true) {
 			try {		
-				T element = getter.getNextElement();
+				E element = getter.getNextElement();
 				if (tester.test(element))
 					add(element);
 									

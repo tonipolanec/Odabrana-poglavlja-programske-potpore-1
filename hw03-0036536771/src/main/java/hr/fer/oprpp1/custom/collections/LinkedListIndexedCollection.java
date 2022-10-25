@@ -1,5 +1,6 @@
 package hr.fer.oprpp1.custom.collections;
 
+import java.util.Arrays;
 import java.util.ConcurrentModificationException;
 import java.util.NoSuchElementException;
 
@@ -12,31 +13,31 @@ import java.util.NoSuchElementException;
  * @see hr.fer.oprpp1.custom.collections.Collection
  * @see hr.fer.oprpp1.custom.collections.ArrayIndexedCollection
  */
-public class LinkedListIndexedCollection<T> implements List<T> {
+public class LinkedListIndexedCollection<E> implements List<E> {
 	
 	/** <p>Current numbers of elements in collection.</p>*/
 	int size;
 	
 	/** <p>Reference to the first node of the linked list.</p>*/
-	ListNode<T> first;
+	ListNode<E> first;
 	
 	/** <p>Reference to the last node of the linked list.</p>*/
-	ListNode<T> last;
+	ListNode<E> last;
 	
 	/** <p>Number used to check if collection was modified in mean time.</p>*/
 	long modificationCount;
 	
 	
 	/**<p>Local class for individual nodes in collection.</p>*/
-	private static class ListNode<T>{
+	private static class ListNode<E>{
 		/**<p>Value of object we want to store.</p>*/
-		T value;
+		E value;
 		
 		/**<p>Pointer to previous list node.</p>*/
-		ListNode<T> prev;
+		ListNode<E> prev;
 		
 		/**<p>Pointer to next list node.</p>*/
-		ListNode<T> next;
+		ListNode<E> next;
 	}
 	
 	/**<p>Initializes empty LinkedListIndexedCollection</p>
@@ -54,7 +55,7 @@ public class LinkedListIndexedCollection<T> implements List<T> {
 	 * @param other collection we want to copy in this new one
 	 * @exception NullPointerException if given null collection to copy
 	 */
-	public LinkedListIndexedCollection(Collection<T> other) {
+	public LinkedListIndexedCollection(Collection<E> other) {
 		if (other == null)
 			throw new NullPointerException();
 		
@@ -76,11 +77,11 @@ public class LinkedListIndexedCollection<T> implements List<T> {
 	 * @exception NullPointerExcpetion if given null as an argument
 	 * */
 	@Override
-	public void add(T value) {
+	public void add(E value) {
 		if (value == null)
 			throw new NullPointerException();
 		
-		ListNode<T> node = new ListNode<>();
+		ListNode<E> node = new ListNode<>();
 		node.value = value;
 		
 		// If first node
@@ -106,11 +107,11 @@ public class LinkedListIndexedCollection<T> implements List<T> {
 	 * 		<code>false</code> otherwise 
 	 */
 	@Override
-	public boolean contains(T value) {
+	public boolean contains(Object value) {
 		if (value == null)
 			return false;
 		
-		ListNode<T> node = first;
+		ListNode<E> node = first;
 		
 		for(int i=0; i<size; i++) {
 			if (node.value.equals(value)) 
@@ -129,7 +130,7 @@ public class LinkedListIndexedCollection<T> implements List<T> {
 	 * 		<code>false</code> if it doesn't contain given value
 	 */
 	@Override
-	public boolean remove(T value) {
+	public boolean remove(E value) {
 		if (!contains(value))
 			return false;
 		
@@ -143,9 +144,9 @@ public class LinkedListIndexedCollection<T> implements List<T> {
 	 * @return array of an collection
 	 */
 	@Override
-	public T[] toArray() {
-		ListNode<T> node = first;
-		T[] array = (T[])new Object[this.size()];
+	public Object[] toArray() {
+		ListNode<E> node = first;
+		Object[] array = new Object[this.size()];
 		
 		for(int i=0; i<size; i++) {
 			array[i] = node.value;
@@ -153,6 +154,24 @@ public class LinkedListIndexedCollection<T> implements List<T> {
 		}
 				
 		return array;
+	}
+	
+	/** Allocates new array with size equals to the size of this collections, 
+	 * fills it with collection content and returns the array.
+	 * 
+	 * @return array of an collection of type E
+	 */
+	@Override
+	@SuppressWarnings("unchecked")
+	public E[] toArray(E[] a) {
+		
+		 if (a.length < size)
+             return (E[]) Arrays.copyOfRange(toArray(), 0, size, a.getClass());
+         System.arraycopy(toArray(), 0, a, 0, size);
+         if (a.length > size)
+             a[size] = null;
+         return a;
+		
 	}
 
 
@@ -173,11 +192,11 @@ public class LinkedListIndexedCollection<T> implements List<T> {
 	 * @exception IndexOutOfBoundsException if given index is lower than zero 
 	 * 		or greater or equals than size of collection
 	 */
-	public T get(int index) {
+	public E get(int index) {
 		if (index < 0 || index >= size) 
 			throw new IndexOutOfBoundsException();
 		
-		ListNode<T> currNode = new ListNode<>();
+		ListNode<E> currNode = new ListNode<>();
 		if (index < size/2) {
 			// Start from beginning
 			currNode = first;
@@ -203,13 +222,13 @@ public class LinkedListIndexedCollection<T> implements List<T> {
 	 * @exception NullPointerException if given null as an argument
 	 * @exception IndexOutOfBoundsException if given index is lower than zero or greater than size of collection
 	 */
-	public void insert(T value, int position) {
+	public void insert(E value, int position) {
 		if (value == null)
 			throw new NullPointerException();
 		if (position < 0 || position > size) 
 			throw new IndexOutOfBoundsException();
 		
-		ListNode<T> node = new ListNode<>();
+		ListNode<E> node = new ListNode<>();
 		node.value = value;
 		
 		if (position == 0) {
@@ -225,8 +244,8 @@ public class LinkedListIndexedCollection<T> implements List<T> {
 			add(value);
 			
 		}else {
-			ListNode<T> currNode = first;
-			ListNode<T> nextNode;
+			ListNode<E> currNode = first;
+			ListNode<E> nextNode;
 			for(int i=0; i<position-1; i++) {
 				currNode = currNode.next;
 			}
@@ -250,11 +269,11 @@ public class LinkedListIndexedCollection<T> implements List<T> {
 	 * @param value
 	 * @return index at which is given value or -1 if it doesn't exists in collection
 	 */
-	public int indexOf(T value) {
+	public int indexOf(E value) {
 		if (value == null)
 			return -1;
 		
-		ListNode<T> node = first;
+		ListNode<E> node = first;
 		
 		for(int i=0; i<size; i++) {
 			if (node.value.equals(value)) 
@@ -287,12 +306,12 @@ public class LinkedListIndexedCollection<T> implements List<T> {
 			last.next = null;
 		
 		}else {	
-			ListNode<T> node = first;
+			ListNode<E> node = first;
 			for(int i=0; i<index; i++) {
 				node = node.next;
 			}
-			ListNode<T> prevNode = node.prev;
-			ListNode<T> nextNode = node.next;
+			ListNode<E> prevNode = node.prev;
+			ListNode<E> nextNode = node.next;
 			
 			prevNode.next = nextNode;
 			nextNode.prev = prevNode;
@@ -308,8 +327,8 @@ public class LinkedListIndexedCollection<T> implements List<T> {
 	 * 
 	 * @return new ElementsGetter for collection*/
 	@Override
-	public ElementsGetter<T> createElementsGetter() {
-		return new ElementsGetterLinkedList(this);
+	public ElementsGetter<E> createElementsGetter() {
+		return new ElementsGetterLinkedList<E>(this);
 	}
 	
 	
@@ -318,18 +337,18 @@ public class LinkedListIndexedCollection<T> implements List<T> {
 	 * 
 	 * @author Toni Polanec
 	 */
-	private static class ElementsGetterLinkedList<T> implements ElementsGetter<T> {
+	private static class ElementsGetterLinkedList<E> implements ElementsGetter<E> {
 		
 		/**<p>Reference to upper class <code>LinkedListIndexedCollection</code> </p>*/
-		LinkedListIndexedCollection<T> llic;
+		LinkedListIndexedCollection<E> llic;
 		
 		/**<p>Local reference to node we are currently getting. </p>*/
-		ListNode<T> currNode;
+		ListNode<E> currNode;
 		
 		/**<p>Copy of <code>modificationCount</code> at the time of defining <code>ElementsGetterArray</code> </p>*/
 		long savedModificationCount;
 		
-		public ElementsGetterLinkedList(LinkedListIndexedCollection<T> coll) {
+		public ElementsGetterLinkedList(LinkedListIndexedCollection<E> coll) {
 			llic = coll;
 			currNode = coll.first;
 			savedModificationCount = coll.modificationCount;
@@ -357,13 +376,13 @@ public class LinkedListIndexedCollection<T> implements List<T> {
 		 * @throws ConcurrentModificationException if collection was modified
 		 * 		and ElementsGetter refers to old collection
 		 */
-		public T getNextElement() {	
+		public E getNextElement() {	
 			if (savedModificationCount != llic.modificationCount)
 				throw new ConcurrentModificationException();
 			
 			if(currNode == null) throw new NoSuchElementException();
 			
-			ListNode<T> current = currNode;
+			ListNode<E> current = currNode;
 			currNode = currNode.next;
 			return current.value;			
 		}

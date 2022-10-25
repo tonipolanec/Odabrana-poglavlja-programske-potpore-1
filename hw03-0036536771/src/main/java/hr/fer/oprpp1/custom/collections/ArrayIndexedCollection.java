@@ -2,6 +2,7 @@ package hr.fer.oprpp1.custom.collections;
 
 import java.util.ConcurrentModificationException;
 import java.util.NoSuchElementException;
+import java.util.Arrays;
 
 /**
  * <p>Implementation of array indexed collection.</p>
@@ -34,6 +35,7 @@ public class ArrayIndexedCollection<T> implements List<T> {
 	 * @param initialCapacity we want to configure out collection with
 	 * @exception IllegalArgumentException if initialCapacity is lower than 1
 	 */
+	@SuppressWarnings("unchecked")
 	public ArrayIndexedCollection(int initialCapacity) {
 		if (initialCapacity < 1) 
 			throw new IllegalArgumentException();
@@ -60,6 +62,7 @@ public class ArrayIndexedCollection<T> implements List<T> {
 	 * @param initialCapacity we want to configure our collection with
 	 * @exception NullPointerException if given null collection to copy
 	 */
+	@SuppressWarnings("unchecked")
 	public ArrayIndexedCollection(Collection<T> other, int initialCapacity) {
 		if (other == null){
 			throw new NullPointerException();
@@ -101,10 +104,10 @@ public class ArrayIndexedCollection<T> implements List<T> {
 		
 		}else {
 			// Doubling the size
-			int arrSize = elements.length;
-			T[] newElements = (T[])new Object[arrSize*2];
+			@SuppressWarnings("unchecked")
+			T[] newElements = (T[])new Object[elements.length*2];
 			
-			for (int i=0; i<arrSize; i++) {
+			for (int i=0; i<elements.length*2; i++) {
 				newElements[i] = elements[i];
 			}
 			
@@ -125,7 +128,7 @@ public class ArrayIndexedCollection<T> implements List<T> {
 	 * 		<code>false</code> otherwise 
 	 */
 	@Override
-	public boolean contains(T value) {
+	public boolean contains(Object value) {
 		for(int i=0; i<size; i++) {
 			if (elements[i].equals(value))
 				return true;
@@ -154,8 +157,8 @@ public class ArrayIndexedCollection<T> implements List<T> {
 	 * @return array of an collection
 	 */
 	@Override
-	public T[] toArray() {
-		T[] array = (T[])new Object[this.size()];
+	public Object[] toArray() {
+		Object[] array = new Object[this.size()];
 		
 		for(int i=0; i<size; i++) {
 			array[i] = this.get(i);
@@ -163,6 +166,23 @@ public class ArrayIndexedCollection<T> implements List<T> {
 		return array;
 	}
 
+	/** Allocates new array with size equals to the size of this collections, 
+	 * fills it with collection content and returns the array.
+	 * 
+	 * @return array of an collection in type T
+	 */
+	@Override
+	@SuppressWarnings("unchecked")
+	public T[] toArray(T[] a) {
+		
+		 if (a.length < size)
+             return (T[]) Arrays.copyOfRange(toArray(), 0, size, a.getClass());
+         System.arraycopy(toArray(), 0, a, 0, size);
+         if (a.length > size)
+             a[size] = null;
+         return a;
+		
+	}
 
 
 	/** Removes all elements from this collection.
@@ -283,7 +303,7 @@ public class ArrayIndexedCollection<T> implements List<T> {
 	 */
 	@Override
 	public ElementsGetter<T> createElementsGetter() {
-		return new ElementsGetterArray(this);
+		return new ElementsGetterArray<T>(this);
 	}
 	
 	
