@@ -1,7 +1,13 @@
 package hr.fer.oprpp1.custom.collections;
 
 
-
+/** Dictionary class, data structure with pairs [KEY, VALUE]
+ * 
+ * @author Toni Polanec
+ *
+ * @param <K>
+ * @param <V>
+ */
 public class Dictionary<K, V> {
 
 	private ArrayIndexedCollection<Pair<K, V>> aic;
