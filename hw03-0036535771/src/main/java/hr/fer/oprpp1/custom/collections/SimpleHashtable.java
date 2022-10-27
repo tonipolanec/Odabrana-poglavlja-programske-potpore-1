@@ -70,11 +70,13 @@ public class SimpleHashtable<K, V> {
 		
 		int slot = Math.abs(key.hashCode()) % table.length;
 		
-		// If key doesn't exists we don't need to overwrite
+		// If key doesn't exist we don't need to overwrite
 		if (!containsKey(key)) {
 			
-			if (fillRatio() >= 0.75)
-				doubleTheTable();
+			if (fillRatio() >= 0.75) {
+				doubleTableSize();
+				slot = Math.abs(key.hashCode()) % table.length;
+			}
 			
 			TableEntry<K,V> newEntry = new TableEntry<>(key, value);
 			
@@ -149,14 +151,14 @@ public class SimpleHashtable<K, V> {
 		for(int i=0; i<table.length; i++) {
 			if (table[i] == null) continue;
 			
-			entry = null;
-			do {
-				if (entry == null) entry = table[i];
-				else entry = entry.next;
-				
+			entry = table[i];
+			
+			while(entry != null) {
 				if(entry.getKey().equals(key)) return true;
 				
-			} while(entry.next != null);
+				entry = entry.next;
+			}
+
 		}
 		
 		return false;
@@ -173,15 +175,15 @@ public class SimpleHashtable<K, V> {
 		for(int i=0; i<table.length; i++) {
 			if (table[i] == null) continue;
 			
-			entry = null;
-			do {
-				if (entry == null) entry = table[i];
-				else entry = entry.next;
-				
+			entry = table[i];
+			
+			while(entry != null) {
 				if (value == null && entry.getValue() == null) return true;
 				if(entry.getValue().equals(value)) return true;
 				
-			} while(entry.next != null);
+				entry = entry.next;
+			}
+
 		}
 		
 		return false;
@@ -201,37 +203,40 @@ public class SimpleHashtable<K, V> {
 		int slot = Math.abs(key.hashCode()) % table.length;
 		
 		// Only one entry in that slot
-		if(table[slot].next == null) 
+		if(table[slot].next == null) {
 			table[slot] = null;
 		
-		// Not the only one in slot
-		entry = table[slot];
-			
-		// First one in slot is the one we want to remove
-		if (entry.getKey().equals(key)) {
-			table[slot] = entry.next;
-		
 		} else {
-			
-			TableEntry<K,V> prev = entry;
-			entry = entry.next;
-			
-			// Iterate to entry with given key
-			while(!entry.getKey().equals(key)) {
-				prev = entry;
-				entry = entry.next;
-			}
-			
-			// Now in variable entry is entry we want to remove
-			if (entry.next == null) {
-				// Pointer from previous entry points to null (removed entry)
-				prev.next = null;
+		
+			// Not the only one in slot
+			entry = table[slot];
+				
+			// First one in slot is the one we want to remove
+			if (entry.getKey().equals(key)) {
+				table[slot] = entry.next;
 			
 			} else {
-				// We point previous entry to the one after removed one
-				prev.next = entry.next;
-			}		
-			
+				
+				TableEntry<K,V> prev = entry;
+				entry = entry.next;
+				
+				// Iterate to entry with given key
+				while(!entry.getKey().equals(key)) {
+					prev = entry;
+					entry = entry.next;
+				}
+				
+				// Now in variable entry is entry we want to remove
+				if (entry.next == null) {
+					// Pointer from previous entry points to null (removed entry)
+					prev.next = null;
+				
+				} else {
+					// We point previous entry to the one after removed one
+					prev.next = entry.next;
+				}		
+				
+			}
 		}
 		
 		
@@ -253,14 +258,12 @@ public class SimpleHashtable<K, V> {
 		for(int i=0; i<table.length; i++) {
 			if (table[i] == null) continue;
 			
-			entry = null;
-			do {
-				if (entry == null) entry = table[i];
-				else entry = entry.next;
-				
+			entry = table[i];
+			
+			while(entry != null) {
 				string += entry.getKey().toString() + "=" + entry.getValue().toString() + ", ";
-				
-			} while(entry.next != null);
+				entry = entry.next;
+			}
 		}
 		
 		string = string.substring(0, string.length() - 2); // Removes ", "
@@ -276,18 +279,16 @@ public class SimpleHashtable<K, V> {
 		TableEntry<K,V>[] arr = (TableEntry<K,V>[]) Array.newInstance((new TableEntry<K,V>()).getClass(), size);	
 		int index = 0;
 		
-		TableEntry<K,V> entry = null;
+		TableEntry<K,V> entry;
 		for(int i=0; i<table.length; i++) {
 			if (table[i] == null) continue;
 			
-			entry = null;
-			do {
-				if (entry == null) entry = table[i];
-				else entry = entry.next;
-				
+			entry = table[i];
+			
+			while(entry != null) {
 				arr[index++] = entry;
-				
-			} while(entry.next != null);
+				entry = entry.next;
+			}
 		}
 		
 		return arr;
@@ -295,17 +296,37 @@ public class SimpleHashtable<K, V> {
 	
 	
 	
+	public void clear() {
+		TableEntry<K, V>[] arr = toArray();
+		for(int i=0; i<arr.length; i++) {
+			remove(arr[i].getKey());
+		}		
+		size = 0;
+	}
+	
+	
+	
+	/**<p> Returns fill ratio of hashtable. </p>*/
 	private double fillRatio() {
 		double DSize = size;
 		return DSize / table.length;
 	}
 	
-	
-	public void doubleTheTable() {
+	/**<p> Doubles the internal table size. </p>*/
+	@SuppressWarnings("unchecked")
+	private void doubleTableSize() {
 		
+		TableEntry<K, V>[] array = toArray();
 		
+		int oldTableSize = table.length;
 		
+		table = (TableEntry<K,V>[]) Array.newInstance((new TableEntry<K,V>()).getClass(), oldTableSize*2);
+		size = 0;
 		
+		for(int i=0; i<array.length; i++) {
+			put(array[i].getKey(), array[i].getValue());
+		}
+
 	}
 	
 	

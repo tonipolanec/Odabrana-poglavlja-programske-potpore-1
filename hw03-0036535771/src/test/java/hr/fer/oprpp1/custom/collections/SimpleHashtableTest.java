@@ -163,8 +163,9 @@ public class SimpleHashtableTest {
 	@Test 
 	public void testToString() {
 		init();
-		String expected = "[one=1, two=2, three=3]";
+		String expected = "[two=2, one=1, three=3]";
 		
+		// It may break if in future hashCode is computed differently
 		assertEquals(expected, hashtable.toString());
 	}
 	
@@ -186,6 +187,25 @@ public class SimpleHashtableTest {
 		// It may break if in future hashCode is computed differently
 		assertEquals(4, arr[1].getValue());
 	}
+	
+	
+	@Test
+	public void testClear() {
+		init();
+		hashtable.clear();
+		
+		// Check if entry one=1 deleted
+		assertNull(hashtable.get("one"));
+		
+		// Check if all entries deleted
+		assertEquals(0, hashtable.size());
+	}
+	
+	
+	
+	
+	
+	
 	
 
 }
