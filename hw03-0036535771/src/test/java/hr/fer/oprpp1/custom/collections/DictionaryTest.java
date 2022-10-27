@@ -8,9 +8,9 @@ public class DictionaryTest {
 	Dictionary<Integer, String> dict;
 	public void init() {
 		dict = new Dictionary<>();
-		dict.put(1, "jedan");
-		dict.put(2, "dva");
-		dict.put(3, "tri");
+		dict.put(1, "one");
+		dict.put(2, "two");
+		dict.put(3, "three");
 	}
 	
 	@Test
@@ -45,16 +45,16 @@ public class DictionaryTest {
 	@Test
 	public void testPutNew() {
 		init();
-		dict.put(4, "cetiri");
+		dict.put(4, "four");
 		
-		assertEquals("cetiri", dict.get(4));	
+		assertEquals("four", dict.get(4));	
 	}
 	@Test
 	public void testPutOverwrite() {
 		init();
-		dict.put(2, "DVA");
+		dict.put(2, "TWO");
 		
-		assertEquals("DVA", dict.get(2));	
+		assertEquals("TWO", dict.get(2));	
 	}
 	
 	@Test
@@ -67,7 +67,7 @@ public class DictionaryTest {
 	public void testGetNormal() {
 		init();
 		
-		assertEquals("jedan", dict.get(1));
+		assertEquals("one", dict.get(1));
 	}
 	
 	@Test
@@ -89,7 +89,7 @@ public class DictionaryTest {
 		init();
 		String value = dict.remove(2);
 		
-		assertEquals("dva", value);
+		assertEquals("two", value);
 	}
 	
 	

@@ -110,15 +110,11 @@ public interface Collection {
 	default void addAllSatisfying(Collection col, Tester tester) {
 		ElementsGetter getter = col.createElementsGetter();
 		
-		while(true) {
-			try {		
-				Object element = getter.getNextElement();
-				if (tester.test(element))
-					add(element);
+		while(getter.hasNextElement()) {	
+			Object element = getter.getNextElement();
+			if (tester.test(element))
+				add(element);
 									
-			} catch (NoSuchElementException ex) {
-				break;
-			}
 		}
 	}
 

@@ -8,7 +8,7 @@ public class ParameterizedArrayIndexedCollectionTest {
 	ArrayIndexedCollection<String> aic;
 	public void  init() {
 		aic = new ArrayIndexedCollection<>();
-		aic.add("jedan"); aic.add("dva"); aic.add("tri");
+		aic.add("one"); aic.add("two"); aic.add("three");
 	}
 	
 //	@Test
@@ -30,13 +30,13 @@ public class ParameterizedArrayIndexedCollectionTest {
 	@Test
 	public void testContainsRightType() {
 		init();
-		assertTrue(aic.contains("jedan"));
+		assertTrue(aic.contains("one"));
 	}
 	
 	@Test
 	public void testToArrayNew() {
 		init();
-		String[] expected = {"jedan", "dva", "tri"};
+		String[] expected = {"one", "two", "three"};
 		
 		assertArrayEquals(expected, aic.toArray(new String[0]));	
 	}

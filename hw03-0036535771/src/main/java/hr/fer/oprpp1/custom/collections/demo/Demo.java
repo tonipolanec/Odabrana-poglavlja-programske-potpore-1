@@ -1,11 +1,15 @@
 package hr.fer.oprpp1.custom.collections.demo;
-import hr.fer.oprpp1.custom.collections.SimpleHashable;
+
+import hr.fer.oprpp1.custom.collections.SimpleHashtable;
+
+
 public class Demo {
 
 	public static void main(String[] args) {
+		
 		// create collection:
 		SimpleHashtable<String, Integer> examMarks = new SimpleHashtable<>(2);
-		
+
 		// fill data:
 		examMarks.put("Ivana", 2);
 		examMarks.put("Ante", 2);
@@ -19,6 +23,8 @@ public class Demo {
 		
 		// What is collection's size? Must be four!
 		System.out.println("Number of stored pairs: " + examMarks.size()); // writes: 4
+		
+		System.out.println(examMarks.toString());
 	}
 
 }

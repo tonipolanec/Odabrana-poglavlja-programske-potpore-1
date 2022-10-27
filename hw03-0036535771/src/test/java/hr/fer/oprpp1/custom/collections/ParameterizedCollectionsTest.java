@@ -17,10 +17,10 @@ public class ParameterizedCollectionsTest {
 	@Test
 	public void testProcessor() {
 		ArrayIndexedCollection<String> aic = new ArrayIndexedCollection<>();
-		aic.add("jedan"); aic.add("dva"); aic.add("tri");
+		aic.add("one"); aic.add("two"); aic.add("three");
 		aic.forEach(p);
 		
-		assertEquals("dva", aic.get(1));
+		assertEquals("two", aic.get(1));
 	}
 	
 	

@@ -9,7 +9,7 @@ public class ParameterizedLinkedListCollectionTest {
 	LinkedListIndexedCollection<String> llic;
 	public void  init() {
 		llic = new LinkedListIndexedCollection<>();
-		llic.add("jedan"); llic.add("dva"); llic.add("tri");
+		llic.add("one"); llic.add("two"); llic.add("three");
 	}
 	
 //	@Test
@@ -31,14 +31,14 @@ public class ParameterizedLinkedListCollectionTest {
 	@Test
 	public void testContainsRightType() {
 		init();
-		assertTrue(llic.contains("jedan"));
+		assertTrue(llic.contains("one"));
 	}
 	
 	
 	@Test
 	public void testToArrayNew() {
 		init();
-		String[] expected = {"jedan", "dva", "tri"};
+		String[] expected = {"one", "two", "three"};
 		
 		assertArrayEquals(expected, llic.toArray(new String[0]));	
 	}

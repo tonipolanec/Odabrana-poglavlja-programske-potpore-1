@@ -20,13 +20,8 @@ public interface ElementsGetter<T> {
 	 * @param proccesor with which we process elements
 	 */
 	default void processRemaining(Processor<? super T> p) {
-		while(true) {
-			try {		
-				p.process(getNextElement());
-				
-			} catch (NoSuchElementException ex) {
-				break;
-			}
+		while(hasNextElement()) {	
+				p.process(getNextElement());		
 		}
 	}
 
