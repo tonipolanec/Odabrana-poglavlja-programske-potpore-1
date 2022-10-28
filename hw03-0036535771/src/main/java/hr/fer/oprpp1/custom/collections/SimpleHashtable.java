@@ -1,6 +1,7 @@
 package hr.fer.oprpp1.custom.collections;
 
 import java.lang.reflect.Array;
+import java.util.Iterator;
 
 /** Implementation of hashtable. 
  * 
@@ -9,7 +10,7 @@ import java.lang.reflect.Array;
  * @param <K>
  * @param <V>
  */
-public class SimpleHashtable<K, V> {
+public class SimpleHashtable<K, V> implements Iterable<SimpleHashtable.TableEntry<K,V>> {
 
 	/**<p> Table for entries. </p>*/
 	private TableEntry<K, V>[] table;
@@ -57,8 +58,81 @@ public class SimpleHashtable<K, V> {
 		public void setValue(V value) {
 			this.value = value;
 		}
+	}
+	
+	private class IteratorImpl implements Iterator<SimpleHashtable.TableEntry<K,V>> {
+		int howManyIteratedAlready = 0;
+		int slotIndex = 0;
+		TableEntry<K, V> current = null;
+		TableEntry<K, V> prev = null;
+		boolean removable = false;
+		
+		
+		/**<p> Checks if there's more entries in hashtable. </p>*/
+		public boolean hasNext() {
+			if (howManyIteratedAlready < size)
+				return true;
+			return false;
+		}
+		
+		/** Returns next entry in hashtable.
+		 * 
+		 * @throws NullPointerException if no next element 
+		 */
+		public SimpleHashtable.TableEntry<K, V> next() {
+			removable = true;
+			howManyIteratedAlready++;
+			
+			// Means we are in some slot iterating through with .next pointer
+			if (current != null) {
+				prev = current;
+				current = current.next; // Go to next in line in this slot
+				
+				return prev;
+			
+			} else {
+				// If we already iterated through them all
+				if (howManyIteratedAlready > size)
+					throw new NullPointerException();
+				
+				// Check if we are at the end of table array
+				if (slotIndex >= table.length)
+					throw new NullPointerException();
+				
+				// Iterate through empty slots in table
+				while(table[slotIndex] == null) {
+					slotIndex++;
+					
+					if (slotIndex >= table.length) 
+						throw new NullPointerException();
+				}
+				
+				// In table[slotIndex] we have some entry
+				current = table[slotIndex++];
+				
+				prev = current;
+				current = current.next; // Go to next in line in this slot
+				
+				return prev;				
+			}	
+				
+		}
+		
+		/**<p> Removes from the underlying collection the last element returned by this iterator. </p>*/
+		public void remove() { 
+			if (removable) {
+				removable = false;
+				
+				SimpleHashtable.this.remove(prev.getKey());
+			}	
+		}
 		
 	}
+	
+	public Iterator<SimpleHashtable.TableEntry<K,V>> iterator() {
+		return new IteratorImpl();
+	}
+	
 	
 	/** Adds new entry in hashtable. 
 	 * 
