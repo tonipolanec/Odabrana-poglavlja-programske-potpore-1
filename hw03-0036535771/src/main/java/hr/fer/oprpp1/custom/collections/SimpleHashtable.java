@@ -1,6 +1,7 @@
 package hr.fer.oprpp1.custom.collections;
 
 import java.lang.reflect.Array;
+import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 
 /** Implementation of hashtable. 
@@ -17,6 +18,9 @@ public class SimpleHashtable<K, V> implements Iterable<SimpleHashtable.TableEntr
 	
 	/**<p> Number of entries in hashtable. </p>*/
 	private int size;
+	
+	/** <p>Number used to check if collection was modified in meantime.</p>*/
+	long modificationCount;
 
 	
 	public SimpleHashtable() {
@@ -29,6 +33,7 @@ public class SimpleHashtable<K, V> implements Iterable<SimpleHashtable.TableEntr
 		
 		table = (TableEntry<K,V>[]) Array.newInstance((new TableEntry<K,V>()).getClass(), initialCapacity);	
 		size = 0;
+		modificationCount = 0;
 	}
 	
 	public static class TableEntry<K, V>{	
@@ -60,16 +65,34 @@ public class SimpleHashtable<K, V> implements Iterable<SimpleHashtable.TableEntr
 		}
 	}
 	
+	/** Custom implementation of Iterator for SimpleHashtable<K,V>.
+	 * 
+	 * @author Toni Polanec
+	 */
 	private class IteratorImpl implements Iterator<SimpleHashtable.TableEntry<K,V>> {
+		
+		/**<p> Number of already iterated elements. </p>*/
 		int howManyIteratedAlready = 0;
+		/**<p> Slot index we are currently in. </p>*/
 		int slotIndex = 0;
+		/**<p> Current entry we process. </p>*/
 		TableEntry<K, V> current = null;
+		/**<p> Previous entry we returned. </p>*/
 		TableEntry<K, V> prev = null;
+		/**<p> Flag for remove function. </p>*/
 		boolean removable = false;
+		/**<p> Modification count of parent class. </p>*/
+		long modificationCount = SimpleHashtable.this.modificationCount;
 		
 		
-		/**<p> Checks if there's more entries in hashtable. </p>*/
+		/** Checks if there's more entries in hashtable. 
+		 * 
+		 * @throws ConcurrentModificationException if hashtable was modified in meantime
+		 */
 		public boolean hasNext() {
+			if (modificationCount != SimpleHashtable.this.modificationCount)
+				throw new ConcurrentModificationException();
+			
 			if (howManyIteratedAlready < size)
 				return true;
 			return false;
@@ -78,8 +101,12 @@ public class SimpleHashtable<K, V> implements Iterable<SimpleHashtable.TableEntr
 		/** Returns next entry in hashtable.
 		 * 
 		 * @throws NullPointerException if no next element 
+		 * @throws ConcurrentModificationException if hashtable was modified in meantime
 		 */
 		public SimpleHashtable.TableEntry<K, V> next() {
+			if (modificationCount != SimpleHashtable.this.modificationCount)
+				throw new ConcurrentModificationException();
+			
 			removable = true;
 			howManyIteratedAlready++;
 			
@@ -118,13 +145,24 @@ public class SimpleHashtable<K, V> implements Iterable<SimpleHashtable.TableEntr
 				
 		}
 		
-		/**<p> Removes from the underlying collection the last element returned by this iterator. </p>*/
+		/**Removes from the underlying collection the last element returned by this iterator. 
+		 * 
+		 * @throws ConcurrentModificationException if hashtable was modified in meantime
+		 */
 		public void remove() { 
+			if (modificationCount != SimpleHashtable.this.modificationCount)
+				throw new ConcurrentModificationException();
+			
 			if (removable) {
 				removable = false;
 				
 				SimpleHashtable.this.remove(prev.getKey());
-			}	
+				howManyIteratedAlready--; // We need to re adjust for removing through iterator
+				modificationCount = SimpleHashtable.this.modificationCount;
+			
+			} else {
+				throw new IllegalStateException();
+			}
 		}
 		
 	}
@@ -137,6 +175,7 @@ public class SimpleHashtable<K, V> implements Iterable<SimpleHashtable.TableEntr
 	/** Adds new entry in hashtable. 
 	 * 
 	 * @return <code>null</code> if key didn't already exist in collection or old value of given key
+	 * 
 	 * @throws NullPointerException if given <code>null</code> as key
 	 */
 	public V put(K key, V value) {
@@ -169,6 +208,8 @@ public class SimpleHashtable<K, V> implements Iterable<SimpleHashtable.TableEntr
 			}	
 			
 			size++;
+			modificationCount++;
+			
 			return null;
 		
 		// Entry with that key already exists, we need to overwrite and return old value
@@ -313,8 +354,9 @@ public class SimpleHashtable<K, V> implements Iterable<SimpleHashtable.TableEntr
 			}
 		}
 		
-		
 		size--;
+		modificationCount++;
+		
 		return value;
 	}
 	
@@ -376,6 +418,7 @@ public class SimpleHashtable<K, V> implements Iterable<SimpleHashtable.TableEntr
 			remove(arr[i].getKey());
 		}		
 		size = 0;
+		modificationCount++;
 	}
 	
 	

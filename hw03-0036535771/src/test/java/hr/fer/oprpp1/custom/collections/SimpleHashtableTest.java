@@ -1,12 +1,18 @@
 package hr.fer.oprpp1.custom.collections;
 
 import static org.junit.jupiter.api.Assertions.*;
+
+import java.util.ConcurrentModificationException;
+import java.util.Iterator;
+
 import org.junit.jupiter.api.Test;
 import hr.fer.oprpp1.custom.collections.SimpleHashtable.TableEntry;
 
 public class SimpleHashtableTest {
 	
 	SimpleHashtable<String, Integer> hashtable;
+	SimpleHashtable<String,Integer> examMarks;
+	Iterator<SimpleHashtable.TableEntry<String,Integer>> iter;
 	
 	public void init() {
 		hashtable = new SimpleHashtable<>(2);
@@ -14,6 +20,16 @@ public class SimpleHashtableTest {
 		hashtable.put("two", 2); 
 		hashtable.put("three", 3); 
 	}
+	
+	public void initIterator() {
+		examMarks = new SimpleHashtable<>(2);
+		examMarks.put("Ivana", 5);
+		examMarks.put("Ante", 2);
+		examMarks.put("Jasna", 2);
+		examMarks.put("Kristina", 5);
+		iter = examMarks.iterator();
+	}
+	
 	
 	@Test
 	public void testPutNormal() {
@@ -200,6 +216,65 @@ public class SimpleHashtableTest {
 		// Check if all entries deleted
 		assertEquals(0, hashtable.size());
 	}
+	
+	
+	@Test
+	public void testIteratorRemove() {
+		initIterator();
+		
+		while(iter.hasNext()) {
+			SimpleHashtable.TableEntry<String,Integer> pair = iter.next();
+			if(pair.getKey().equals("Ivana")) {
+				iter.remove(); // sam iterator kontrolirano uklanja trenutni element
+			}
+		}
+		
+		assertEquals(3, examMarks.size());
+	}	
+	@Test
+	public void testIteratorRemoveThrow() {
+		initIterator();
+		
+		while(iter.hasNext()) {
+			SimpleHashtable.TableEntry<String,Integer> pair = iter.next();
+			if(pair.getKey().equals("Ivana")) {
+				iter.remove();
+				assertThrows(IllegalStateException.class, () -> iter.remove());
+			}
+		}	
+	}
+
+	@Test
+	public void testIteratorModificationThrow() {
+		initIterator();
+	
+		try {
+			while(iter.hasNext()) {
+				SimpleHashtable.TableEntry<String,Integer> pair = iter.next();
+				if(pair.getKey().equals("Ivana")) {
+					examMarks.remove("Ivana"); // ConcurrentModificationException
+				}
+			}
+		} catch (ConcurrentModificationException ex) {
+			return;
+		} catch (Exception ex) {
+			fail();
+		}
+		fail();
+	}
+	
+	@Test
+	public void testIteratorRemoveAll() {
+		initIterator();
+	
+		while(iter.hasNext()) {
+			iter.next();
+			iter.remove();
+		}
+		
+		assertEquals(0, examMarks.size());
+	}
+	
 	
 	
 	

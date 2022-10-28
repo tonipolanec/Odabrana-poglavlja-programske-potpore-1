@@ -21,7 +21,7 @@ public class ArrayIndexedCollection<T> implements List<T> {
 	/** <p>Array of object references</p>*/
 	private T[] elements;
 	
-	/** <p>Number used to check if collection was modified in mean time.</p>*/
+	/** <p>Number used to check if collection was modified in meantime.</p>*/
 	long modificationCount;
 	
 	
