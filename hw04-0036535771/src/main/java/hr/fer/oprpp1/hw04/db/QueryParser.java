@@ -10,7 +10,12 @@ import java.util.List;
  */
 public class QueryParser {
 
+	private List<ConditionalExpression> expressions;
+	private boolean directQuery;
+
 	public QueryParser(String query) {
+		expressions = new ArrayList<>();
+		directQuery = false;
 		parseQuery(query);
 	}
 
@@ -21,8 +26,7 @@ public class QueryParser {
 	 *         otherwise
 	 */
 	public boolean isDirectQuery() {
-
-		return false;
+		return directQuery;
 	}
 
 	/**
@@ -31,8 +35,10 @@ public class QueryParser {
 	 * @throws IllegalStateException if this isn't direct query
 	 */
 	public String getQueriedJMBAG() {
+		if (directQuery)
+			throw new IllegalStateException("This was not direct query!");
 
-		return "";
+		return expressions.get(0).getStringLiteral();
 	}
 
 	/**
@@ -41,18 +47,64 @@ public class QueryParser {
 	 * @return list of conditional expressions
 	 */
 	public List<ConditionalExpression> getQuery() {
-
-		return new ArrayList<ConditionalExpression>();
+		return expressions;
 	}
 
 	/**
-	 * <p>
 	 * Parse query and disect it into elements for further processing.
-	 * </p>
+	 * 
+	 * @throws ParserException if error occurred
 	 */
 	private void parseQuery(String query) {
-		// TODO Auto-generated method stub
 
+		if (!query.startsWith("query "))
+			throw new ParserException("Invalid command!");
+
+		query = query.substring(5); // removes "query"
+		int index = 0;
+		int maxIndex = query.length()-1;
+		
+		while(index <= maxIndex) {
+			skipWhitespaces(query, index, maxIndex);
+			
+			String attribute = getAtribute(query, index, maxIndex);
+			index += attribute.length();
+		}
+		
+		
+		
+		
+		
+		
+		
+		
+
+	}
+	
+	private String getAtribute(String query, int index, int maxIndex) {
+		int startIndex = index;
+		while(index <= maxIndex) {
+			char c = query.toCharArray()[index];
+			
+			if (c=='\t' || c==' ') {
+				index++;
+				continue;
+			}
+		}
+		return index;
+	}
+
+	/**<p> Skips all whitespaces up to next element. </p>*/
+	private int skipWhitespaces(String query, int index, int maxIndex) {
+		while(index <= maxIndex) {
+			char c = query.toCharArray()[index];
+			
+			if (c=='\t' || c==' ') {
+				index++;
+				continue;
+			}
+		}
+		return index;
 	}
 
 }

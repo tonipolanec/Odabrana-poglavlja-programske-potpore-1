@@ -35,7 +35,7 @@ public class ComparisonOperators {
 		
 		// Checks for multiple *
 		if (indexOfWildcard != value2.lastIndexOf('*'))
-			throw new StudentRecordException("Multiple wildcards!");
+			throw new ParserException("Multiple wildcards!");
 		
 		if (indexOfWildcard == -1)
 			return value1.compareTo(value2) == 0 ? false : true;
