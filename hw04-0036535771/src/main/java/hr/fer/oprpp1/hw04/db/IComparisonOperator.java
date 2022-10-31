@@ -1,6 +1,8 @@
 package hr.fer.oprpp1.hw04.db;
 
-/** Functional interface for comparison operator with method <code>satisfied(String, String)</code>.
+/**
+ * Functional interface for comparison operator with method
+ * <code>satisfied(String, String)</code>.
  * 
  * @author Toni Polanec
  */

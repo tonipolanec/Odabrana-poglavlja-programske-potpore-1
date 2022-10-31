@@ -1,6 +1,7 @@
 package hr.fer.oprpp1.hw04.db;
 
-/** Class for all comparison operators with static final variables: <br>
+/** 
+ * Class for all comparison operators with static final variables: <br>
  * <code>LESS</code>, <code>LESS_OR_EQUALS</code>, <code>GREATER</code>, <code>GREATER_OR_EQUALS</code>, 
  * <code>EQUALS</code>, <code>NOT_EQUALS</code>, <code>LIKE</code>
  * 

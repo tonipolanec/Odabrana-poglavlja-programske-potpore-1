@@ -1,6 +1,8 @@
 package hr.fer.oprpp1.hw04.db;
 
-/** Functional interface for field value getter with method <code>get(StudentRecord)</code>.
+/**
+ * Functional interface for field value getter with method
+ * <code>get(StudentRecord)</code>.
  * 
  * @author Toni Polanec
  */

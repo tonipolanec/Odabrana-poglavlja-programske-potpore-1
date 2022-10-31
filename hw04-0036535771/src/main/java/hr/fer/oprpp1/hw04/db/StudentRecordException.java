@@ -11,5 +11,4 @@ public class StudentRecordException extends RuntimeException {
 		super(message);
 	}
 
-
 }
