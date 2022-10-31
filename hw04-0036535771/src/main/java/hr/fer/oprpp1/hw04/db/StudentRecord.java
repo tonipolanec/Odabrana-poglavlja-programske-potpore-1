@@ -2,6 +2,10 @@ package hr.fer.oprpp1.hw04.db;
 
 import java.util.Objects;
 
+/** Class for student record.
+ * 
+ * @author Toni Polanec
+ */
 public class StudentRecord {
 	
 	private String jmbag;

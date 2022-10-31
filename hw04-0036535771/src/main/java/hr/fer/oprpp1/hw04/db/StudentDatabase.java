@@ -2,8 +2,13 @@ package hr.fer.oprpp1.hw04.db;
 
 import java.util.*;
 
+/** Class for storage and indexing database of students.
+ * 
+ * @author Toni Polanec
+ */
 public class StudentDatabase {
 
+	
 	private List<String> lines;
 	private List<StudentRecord> records;
 	private Map<String, StudentRecord> index;
@@ -55,11 +60,18 @@ public class StudentDatabase {
 		
 	}
 	
+	/** Gets requested record with given JMBAG in O(1).
+	 * 
+	 * @return requested record or <code>null</code> if it doesn't exist*/
 	public StudentRecord forJMBAG(String jmbag) {
 		return index.get(jmbag);
 	}
 	
-	
+	/** Filters all records in database.
+	 * 
+	 * @param filter
+	 * @return List of StudentRecords which passed the filter.
+	 */
 	public List<StudentRecord> filter(IFilter filter){
 		List<StudentRecord> acceptedRecords = new ArrayList<>();
 		

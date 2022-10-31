@@ -1,5 +1,9 @@
 package hr.fer.oprpp1.hw04.db;
 
+/** Class for conditional expression.
+ * 
+ * @author Toni Polanec
+ */
 public class ConditionalExpression {
 	
 	private IFieldValueGetter fieldGetter;
