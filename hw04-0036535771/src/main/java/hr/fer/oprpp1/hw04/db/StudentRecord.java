@@ -22,6 +22,24 @@ public class StudentRecord {
 	
 	
 
+	public String getJmbag() {
+		return jmbag;
+	}
+
+	public String getLastName() {
+		return lastName;
+	}
+
+	public String getFirstName() {
+		return firstName;
+	}
+
+	public int getFinalGrade() {
+		return finalGrade;
+	}
+
+
+
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
