@@ -35,7 +35,7 @@ public class QueryParser {
 	 * @throws IllegalStateException if this isn't direct query
 	 */
 	public String getQueriedJMBAG() {
-		if (directQuery)
+		if (!directQuery)
 			throw new IllegalStateException("This was not direct query!");
 
 		return expressions.get(0).getStringLiteral();
@@ -57,54 +57,147 @@ public class QueryParser {
 	 */
 	private void parseQuery(String query) {
 
-		if (!query.startsWith("query "))
-			throw new ParserException("Invalid command!");
-
-		query = query.substring(5); // removes "query"
-		int index = 0;
-		int maxIndex = query.length()-1;
+		Lexer lexer = new Lexer(query);
+		List<Token> tokens = lexer.getTokens();
 		
-		while(index <= maxIndex) {
-			skipWhitespaces(query, index, maxIndex);
+		if (!getPossibleSizes().contains(tokens.size()))
+			throw new ParserException("Invalid query! Wrong number of tokens!");
+		
+		
+		// Only one expression, maybe a direct query
+		if (tokens.size() == 3) {
+			ConditionalExpression expr = getExpression(tokens, 0);
+			expressions.add(expr);
 			
-			String attribute = getAtribute(query, index, maxIndex);
-			index += attribute.length();
+			// Check for direct query
+			if (expr.getFieldGetter() == FieldValueGetters.JMBAG &&
+				expr.getComparisonOperator() == ComparisonOperators.EQUALS) {
+				directQuery = true;
+			}
+	
+		// More than 3 tokens aka more then 1 expression
+		} else {
+			int index = 0;
+			int maxIndex = tokens.size();
+			
+			while (index <= maxIndex-3) {
+				ConditionalExpression expr = getExpression(tokens, index);
+				expressions.add(expr);
+				
+				index += 3;
+				
+				if (index < maxIndex)
+					if (tokens.get(index).getType() != TokenType.OPERATOR_AND)
+						throw new ParserException("Invalid query! Expressions must be separated by AND operator!");
+					
+				index++;
+				
+			}
+			
+			
 		}
-		
-		
-		
-		
-		
 		
 		
 		
 
 	}
 	
-	private String getAtribute(String query, int index, int maxIndex) {
-		int startIndex = index;
-		while(index <= maxIndex) {
-			char c = query.toCharArray()[index];
-			
-			if (c=='\t' || c==' ') {
-				index++;
-				continue;
-			}
+	
+	/** Returns possible sizes for tokens list. */
+	private List<Integer> getPossibleSizes(){
+		List<Integer> sizes = new ArrayList<>();
+		for(int i=1; i<1000; i++) {
+			sizes.add(3*i+(i-1));
 		}
-		return index;
+		return sizes;
 	}
+	
+	
+	/** Gets immediately next expression from tokens from given index.
+	 * 
+	 * @param tokens
+	 * @param index
+	 * @return ConditionalExpression
+	 */
+	private ConditionalExpression getExpression(List<Token> tokens, int index) {
+		
+		// Attribute (index)
+		IFieldValueGetter fieldGetter;
+		
+		// String literal (index+2)
+		String stringLiteral;
+		
+		// Operator (index+1)
+		IComparisonOperator comparisonOperator;
+		
+		
+		// Getting fieldGetter
+		switch (tokens.get(index).getValue()) {
+		case "jmbag": {
+			fieldGetter = FieldValueGetters.JMBAG;
+			break;
+		}
+		case "firstName": {
+			fieldGetter = FieldValueGetters.FIRST_NAME;
+			break;
+		}
+		case "lastName": {
+			fieldGetter = FieldValueGetters.LAST_NAME;
+			break;
+		}
+		default:
+			throw new ParserException("Invalid attribute: " + tokens.get(index).getValue());
+		}
+		
+		
+		
+		// Getting comparison operator
+		switch (tokens.get(index+1).getValue()) {
+		case "<": {
+			comparisonOperator = ComparisonOperators.LESS;
+			break;
+		}
+		case "<=": {
+			comparisonOperator = ComparisonOperators.LESS_OR_EQUALS;
+			break;
+		}
+		case ">": {
+			comparisonOperator = ComparisonOperators.GREATER;
+			break;
+		}
+		case ">=": {
+			comparisonOperator = ComparisonOperators.GREATER_OR_EQUALS;
+			break;
+		}
+		case "=": {
+			comparisonOperator = ComparisonOperators.EQUALS;
+			break;
+		}
+		case "!=": {
+			comparisonOperator = ComparisonOperators.NOT_EQUALS;
+			break;
+		}
+		case "LIKE": {
+			comparisonOperator = ComparisonOperators.LIKE;
+			break;
+		}
+		default:
+			throw new ParserException("Invalid operator: " +  tokens.get(index+1).getValue());
+		}
+		
+		
+		// Getting string literal
+		String stringInToken = tokens.get(index+2).getValue();
+		stringLiteral = stringInToken.substring(1, stringInToken.length()-1);
+		
+		
 
-	/**<p> Skips all whitespaces up to next element. </p>*/
-	private int skipWhitespaces(String query, int index, int maxIndex) {
-		while(index <= maxIndex) {
-			char c = query.toCharArray()[index];
-			
-			if (c=='\t' || c==' ') {
-				index++;
-				continue;
-			}
-		}
-		return index;
+		return new ConditionalExpression(fieldGetter, stringLiteral, comparisonOperator);
 	}
+	
+	
+	
+	
+	
 
 }
