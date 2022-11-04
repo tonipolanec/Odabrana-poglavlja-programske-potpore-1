@@ -9,11 +9,17 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
+import hr.fer.oprpp1.hw04.db.ParserException;
 import hr.fer.oprpp1.hw04.db.QueryFilter;
 import hr.fer.oprpp1.hw04.db.QueryParser;
 import hr.fer.oprpp1.hw04.db.StudentDatabase;
 import hr.fer.oprpp1.hw04.db.StudentRecord;
 
+/**
+ * Main program mimicking student database application.
+ * 
+ * @author Toni Polanec
+ */
 public class StudentDB {
 
 	public static void main(String[] args) throws IOException{
@@ -32,13 +38,28 @@ public class StudentDB {
 				break;
 			}
 			
-			parser = new QueryParser(command);
+			try {
+				parser = new QueryParser(command);
+			
+			} catch (ParserException ex) {
+				System.out.println(ex.getMessage() + "\n");
+				continue;
+			}
+			
 			List<StudentRecord> acceptableRecords = new ArrayList<>();
 			List<String> output;
 			
+			
+			
 			if(parser.isDirectQuery()) {
 				
-				acceptableRecords = resultFromQuery(db, parser);
+				try {
+					acceptableRecords = resultFromQuery(db, parser);
+				} catch (ParserException|IllegalStateException ex) {
+					System.out.println(ex.getMessage() + "\n");
+					continue;
+				}
+				
 				output = formatRecords(acceptableRecords);
 				
 				System.out.println("Using index for record retrieval.");
@@ -52,7 +73,12 @@ public class StudentDB {
 			} else {
 				//acceptableRecords = db.filter(new QueryFilter(parser.getQuery()));
 				
-				acceptableRecords = resultFromQuery(db, parser);
+				try {
+					acceptableRecords = resultFromQuery(db, parser);
+				} catch (ParserException|IllegalStateException ex) {
+					System.out.println(ex.getMessage() + "\n");
+					continue;
+				}
 				output = formatRecords(acceptableRecords);
 
 				if (output.size() > 0)
@@ -67,6 +93,11 @@ public class StudentDB {
 	}
 		
 
+	/** 
+	 * Returns all records which are acceptable by query.
+	 * 
+	 * @return results from query
+	 */
 	private static List<StudentRecord> resultFromQuery(StudentDatabase db, QueryParser parser) {
 		List<StudentRecord> results = new ArrayList<>();
 		
@@ -75,6 +106,9 @@ public class StudentDB {
 		else {
 			results = db.filter(new QueryFilter(parser.getQuery()));
 		}
+		
+		if (results.size() == 1 && results.get(0) == null)
+			results = new ArrayList<>();
 		
 		return results;
 	}
@@ -90,7 +124,7 @@ public class StudentDB {
 		
 		List<String> outputLines = new ArrayList<>();
 		
-		if (acceptableRecords.size() == 0)
+		if (acceptableRecords.size() == 0 || acceptableRecords.get(0) == null)
 			return outputLines;
 		
 		int maxSizeJmbag = 0, maxSizeLastName = 0, maxSizeFirstName = 0;

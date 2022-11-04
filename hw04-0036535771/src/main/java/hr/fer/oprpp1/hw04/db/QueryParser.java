@@ -57,7 +57,7 @@ public class QueryParser {
 	 */
 	private void parseQuery(String query) {
 		
-		if (!query.startsWith("query"))
+		if (!query.startsWith("query ") && !query.startsWith("query\t"))
 			throw new ParserException("Wrong command!");
 		query = query.substring(5);
 

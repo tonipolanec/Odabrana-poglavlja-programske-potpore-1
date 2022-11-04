@@ -38,7 +38,7 @@ public class ComparisonOperators {
 			throw new ParserException("Multiple wildcards!");
 		
 		if (indexOfWildcard == -1)
-			return value1.compareTo(value2) == 0 ? false : true;
+			return value1.compareTo(value2) == 0 ? true : false;
 		
 		
 		// Wildcard at the beginning
