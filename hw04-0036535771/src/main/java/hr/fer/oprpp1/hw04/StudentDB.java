@@ -26,7 +26,6 @@ public class StudentDB {
 		
 		BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 		
-//		List<String> lines = getLines("database.txt");
 		StudentDatabase db = new StudentDatabase(getLines("database.txt"));
 		QueryParser parser;
 		
@@ -49,8 +48,6 @@ public class StudentDB {
 			List<StudentRecord> acceptableRecords = new ArrayList<>();
 			List<String> output;
 			
-			
-			
 			if(parser.isDirectQuery()) {
 				
 				try {
@@ -71,7 +68,6 @@ public class StudentDB {
 				System.out.println("Records selected: " + acceptableRecords.size() + "\n");
 		
 			} else {
-				//acceptableRecords = db.filter(new QueryFilter(parser.getQuery()));
 				
 				try {
 					acceptableRecords = resultFromQuery(db, parser);
@@ -87,9 +83,7 @@ public class StudentDB {
 				
 				System.out.println("Records selected: " + acceptableRecords.size() + "\n");
 			}
-			
 		}
-		
 	}
 		
 
@@ -140,8 +134,12 @@ public class StudentDB {
 		}
 		
 		// Formating horizontal edge
-		// added for jmbag initially
-		String horizontalLine = "+============+";
+		
+		String horizontalLine = "+";
+		// adding for jmbag 
+		for (int i=0; i<maxSizeJmbag+2; i++)
+			horizontalLine += "=";
+		horizontalLine += "+";
 		// adding for last name
 		for (int i=0; i<maxSizeLastName+2; i++)
 			horizontalLine += "=";

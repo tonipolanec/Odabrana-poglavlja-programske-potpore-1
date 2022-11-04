@@ -56,89 +56,76 @@ public class QueryParser {
 	 * @throws ParserException if error occurred
 	 */
 	private void parseQuery(String query) {
-		
+
 		if (!query.startsWith("query ") && !query.startsWith("query\t"))
 			throw new ParserException("Wrong command!");
 		query = query.substring(5);
 
 		Lexer lexer = new Lexer(query);
 		List<Token> tokens = lexer.getTokens();
-		
-//		System.out.println(tokens.size());
-//		for (Token t : tokens)
-//			System.out.println(t.toString());
-		
+
 		if (!getPossibleSizes().contains(tokens.size()))
 			throw new ParserException("Invalid query! Wrong number of tokens!");
-		
-		
+
 		// Only one expression, maybe a direct query
 		if (tokens.size() == 3) {
 			ConditionalExpression expr = getExpression(tokens, 0);
 			expressions.add(expr);
-			
+
 			// Check for direct query
-			if (expr.getFieldGetter() == FieldValueGetters.JMBAG &&
-				expr.getComparisonOperator() == ComparisonOperators.EQUALS) {
+			if (expr.getFieldGetter() == FieldValueGetters.JMBAG
+					&& expr.getComparisonOperator() == ComparisonOperators.EQUALS) {
 				directQuery = true;
 			}
-	
-		// More than 3 tokens aka more then 1 expression
+
+			// More than 3 tokens aka more then 1 expression
 		} else {
 			int index = 0;
 			int maxIndex = tokens.size();
-			
-			while (index <= maxIndex-3) {
+
+			while (index <= maxIndex - 3) {
 				ConditionalExpression expr = getExpression(tokens, index);
 				expressions.add(expr);
-				
+
 				index += 3;
-				
+
 				if (index < maxIndex)
 					if (tokens.get(index).getType() != TokenType.OPERATOR_AND)
 						throw new ParserException("Invalid query! Expressions must be separated by AND operator!");
-					
-				index++;
-				
-			}
-			
-			
-		}
-		
-		
-		
 
+				index++;
+
+			}
+		}
 	}
-	
-	
+
 	/** Returns possible sizes for tokens list. */
-	private List<Integer> getPossibleSizes(){
+	private List<Integer> getPossibleSizes() {
 		List<Integer> sizes = new ArrayList<>();
-		for(int i=1; i<1000; i++) {
-			sizes.add(3*i+(i-1));
+		for (int i = 1; i < 1000; i++) {
+			sizes.add(3 * i + (i - 1));
 		}
 		return sizes;
 	}
-	
-	
-	/** Gets immediately next expression from tokens from given index.
+
+	/**
+	 * Gets immediately next expression from tokens from given index.
 	 * 
 	 * @param tokens
 	 * @param index
 	 * @return ConditionalExpression
 	 */
 	private ConditionalExpression getExpression(List<Token> tokens, int index) {
-		
+
 		// Attribute (index)
 		IFieldValueGetter fieldGetter;
-		
+
 		// String literal (index+2)
 		String stringLiteral;
-		
+
 		// Operator (index+1)
 		IComparisonOperator comparisonOperator;
-		
-		
+
 		// Getting fieldGetter
 		switch (tokens.get(index).getValue()) {
 		case "jmbag": {
@@ -156,11 +143,9 @@ public class QueryParser {
 		default:
 			throw new ParserException("Invalid attribute: " + tokens.get(index).getValue());
 		}
-		
-		
-		
+
 		// Getting comparison operator
-		switch (tokens.get(index+1).getValue()) {
+		switch (tokens.get(index + 1).getValue()) {
 		case "<": {
 			comparisonOperator = ComparisonOperators.LESS;
 			break;
@@ -190,22 +175,14 @@ public class QueryParser {
 			break;
 		}
 		default:
-			throw new ParserException("Invalid operator: " +  tokens.get(index+1).getValue());
+			throw new ParserException("Invalid operator: " + tokens.get(index + 1).getValue());
 		}
-		
-		
+
 		// Getting string literal
-		String stringInToken = tokens.get(index+2).getValue();
-		stringLiteral = stringInToken.substring(1, stringInToken.length()-1);
-		
-		
+		String stringInToken = tokens.get(index + 2).getValue();
+		stringLiteral = stringInToken.substring(1, stringInToken.length() - 1);
 
 		return new ConditionalExpression(fieldGetter, stringLiteral, comparisonOperator);
 	}
-	
-	
-	
-	
-	
 
 }
