@@ -56,9 +56,17 @@ public class QueryParser {
 	 * @throws ParserException if error occurred
 	 */
 	private void parseQuery(String query) {
+		
+		if (!query.startsWith("query"))
+			throw new ParserException("Wrong command!");
+		query = query.substring(5);
 
 		Lexer lexer = new Lexer(query);
 		List<Token> tokens = lexer.getTokens();
+		
+//		System.out.println(tokens.size());
+//		for (Token t : tokens)
+//			System.out.println(t.toString());
 		
 		if (!getPossibleSizes().contains(tokens.size()))
 			throw new ParserException("Invalid query! Wrong number of tokens!");

@@ -34,11 +34,6 @@ public class Lexer {
 	 * Recognizes all tokens and storage them in private list <code>tokens</code>.
 	 */
 	private void processQuery() {
-//		if (!query.startsWith("query"))
-//			throw new ParserException("Wrong command!");
-//		
-//		input = query.substring(5).toCharArray();
-//		query = query.substring(5);
 		
 		input = query.toCharArray();
 		
