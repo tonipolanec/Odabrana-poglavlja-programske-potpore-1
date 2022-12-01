@@ -77,8 +77,8 @@ public class Dictionary<K, V> {
 		Pair<K,V> newPair = new Pair<>(key, value);
 		
 		// If key already exists overwrite value
-		if (contains(key)) {
-			int keyIndex = indexOf(key);
+		int keyIndex = indexOf(key);
+		if (keyIndex != -1) {
 			
 			V oldValue = aic.get(keyIndex).getValue();
 			
@@ -127,15 +127,9 @@ public class Dictionary<K, V> {
 	
 	/**<p> Checks if given key exists in directory. </p>*/
 	private boolean contains(Object key) {
-		ElementsGetter<Pair<K,V>> getter = aic.createElementsGetter();
-		
-		while(getter.hasNextElement()) {
-			Pair<K,V> element = getter.getNextElement();
-			if(element.key == key) return true;
-		}
-		
-		return false;
+		return indexOf(key) != -1;
 	}
+	
 	
 	/**<p> Returns index of given key, -1 if it doesn't exist. </p>*/
 	private int indexOf(Object key) {

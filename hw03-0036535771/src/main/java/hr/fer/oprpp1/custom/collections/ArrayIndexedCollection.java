@@ -360,14 +360,10 @@ public class ArrayIndexedCollection<T> implements List<T> {
 			if (savedModificationCount != aic.modificationCount)
 				throw new ConcurrentModificationException();
 			
-			try {
-				T element = aic.elements[index++];
-				if (element == null) throw new NoSuchElementException();
-				
-				return element;
-			} catch (IndexOutOfBoundsException ex) {
+			if(!hasNextElement()) 
 				throw new NoSuchElementException();
-			}	
+			
+			return aic.elements[index++];	
 		}
 		
 	}

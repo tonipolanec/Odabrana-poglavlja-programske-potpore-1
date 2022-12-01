@@ -6,7 +6,6 @@ package hr.fer.oprpp1.custom.collections;
  * @see hr.fer.oprpp1.custom.collections.ArrayIndexedCollection
  * @author Toni Polanec
  * @param <E>
- * @param <E>
  */
 public class ObjectStack<E> {
 	

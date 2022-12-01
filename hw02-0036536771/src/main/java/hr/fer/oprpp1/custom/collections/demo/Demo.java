@@ -30,8 +30,8 @@ public class Demo {
 //      ---------------------------------------------------------------------------
 		
 		
-//		//Collection col = new ArrayIndexedCollection();
-//		Collection col = new LinkedListIndexedCollection();
+//		Collection col = new ArrayIndexedCollection();
+////		Collection col = new LinkedListIndexedCollection();
 //		
 //		col.add("Ivo");
 //		col.add("Ana");
@@ -102,10 +102,10 @@ public class Demo {
 		
 		
 		
-//		//Collection col1 = new ArrayIndexedCollection();
-//		//Collection col2 = new ArrayIndexedCollection();
-//		Collection col1 = new LinkedListIndexedCollection();
-//		Collection col2 = new LinkedListIndexedCollection();
+//		Collection col1 = new ArrayIndexedCollection();
+//		Collection col2 = new ArrayIndexedCollection();
+////		Collection col1 = new LinkedListIndexedCollection();
+////		Collection col2 = new LinkedListIndexedCollection();
 //		
 //		col1.add("Ivo");
 //		col1.add("Ana");
@@ -175,21 +175,21 @@ public class Demo {
 //		System.out.println(t.test(3));
 		
 		
-		//Collection col1 = new LinkedListIndexedCollection();
-		//Collection col2 = new ArrayIndexedCollection();
-		Collection col1 = new ArrayIndexedCollection();
-		Collection col2 = new LinkedListIndexedCollection();
-		
-		col1.add(2);
-		col1.add(3);
-		col1.add(4);
-		col1.add(5);
-		col1.add(6);
-		
-		col2.add(12);
-		col2.addAllSatisfying(col1, new EvenIntegerTester());
-		
-		col2.forEach(System.out::println); // 12, 2, 4, 6
+//		//Collection col1 = new LinkedListIndexedCollection();
+//		//Collection col2 = new ArrayIndexedCollection();
+//		Collection col1 = new ArrayIndexedCollection();
+//		Collection col2 = new LinkedListIndexedCollection();
+//		
+//		col1.add(2);
+//		col1.add(3);
+//		col1.add(4);
+//		col1.add(5);
+//		col1.add(6);
+//		
+//		col2.add(12);
+//		col2.addAllSatisfying(col1, new EvenIntegerTester());
+//		
+//		col2.forEach(System.out::println); // 12, 2, 4, 6
 		
 		
 		

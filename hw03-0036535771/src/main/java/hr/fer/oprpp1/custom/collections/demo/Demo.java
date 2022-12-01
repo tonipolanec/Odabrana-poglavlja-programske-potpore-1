@@ -72,7 +72,7 @@ public class Demo {
 			System.out.printf("%s => %d%n", pair.getKey(), pair.getValue());
 			iter.remove();
 		}
-		System.out.printf("Velicina: %d%n", examMarks.size());
+		System.out.printf("Velicina: %d%n", examMarks.size()); // Velicina: 0
 		
 		
 		

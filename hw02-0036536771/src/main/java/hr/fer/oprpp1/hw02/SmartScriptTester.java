@@ -32,19 +32,22 @@ public class SmartScriptTester {
 			} catch (IOException e1) {
 				throw new SmartScriptParserException("Error with path!");
 			}
+			
+			
 				
-			//System.out.println("--" + i + "--");
 			parser = new SmartScriptParser(docBody);
 			
-			//System.out.println("1");
+			
 			document = parser.getDocumentNode();
 			originalDocumentBody = document.toString();
 			
-			//System.out.println("2");
+
 			parser2 = new SmartScriptParser(originalDocumentBody);
 			document2 = parser2.getDocumentNode();
 			
 			System.out.println(document.equals(document2));
+				
+			
 			
 		}
 	

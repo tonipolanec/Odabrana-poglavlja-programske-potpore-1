@@ -361,7 +361,7 @@ public class LinkedListIndexedCollection implements List {
 			if (savedModificationCount != llic.modificationCount)
 				throw new ConcurrentModificationException();
 			
-			if(currNode == null) throw new NoSuchElementException();
+			if(!hasNextElement()) throw new NoSuchElementException();
 			
 			ListNode current = currNode;
 			currNode = currNode.next;
