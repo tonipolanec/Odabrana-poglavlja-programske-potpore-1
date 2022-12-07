@@ -1,18 +1,15 @@
 package hr.fer.oprpp1.hw05.crypto;
 
 
-import java.io.BufferedInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.nio.file.*;
-import java.security.InvalidAlgorithmParameterException;
-import java.security.InvalidKeyException;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
+import java.security.*;
 import java.security.spec.AlgorithmParameterSpec;
 import java.util.Scanner;
 
+import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
@@ -24,47 +21,62 @@ public class Crypto {
 		// TODO Auto-generated constructor stub
 	}
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws InvalidKeyException, InvalidAlgorithmParameterException, NoSuchAlgorithmException, NoSuchPaddingException {
 		Scanner scanner = new Scanner(System.in);
 		
-		// checksha, encrypt, decrypt 
-		String action = args[0];
+		
+		String action = args[0];	// checksha, encrypt, decrypt 	
+		
+		if (action.equals("checksha")) {
+			checksha(args[1]);
+		
+		
+		} else {
+			
+			if (!(action.equals("encrypt") || action.equals("decrypt"))) {
+				System.out.println("Invalid arguments given!");
+				scanner.close();
+				return;
+			}
+				
+			
+			System.out.println("Please provide password as hex-encoded text (16 bytes, i.e. 32 hex-digits):");
+			System.out.print("> ");
+			String keyText = scanner.nextLine();
+			
+			System.out.println("Please provide initialization vector as hex-encoded text (32 hex-digits):");
+			System.out.print("> ");
+			String ivText = scanner.nextLine();
+			
+			scanner.close();
+			
+			boolean encrypt = action.equals("encrypt");
+			
+			
+			SecretKeySpec keySpec = new SecretKeySpec(Util.hextobyte(keyText), "AES");
+			AlgorithmParameterSpec paramSpec = new IvParameterSpec(Util.hextobyte(ivText));
+			Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
+			cipher.init(encrypt ? Cipher.ENCRYPT_MODE : Cipher.DECRYPT_MODE, keySpec, paramSpec);
+			
+			
+			try {
+				encrypt_decrypt(cipher, Paths.get(args[1]), Paths.get(args[2]));
+				
+				if (encrypt)
+					System.out.println("Encyption completed. Generated file "+ args[2] +" based on file "+ args[1] +".");
+				else
+					System.out.println("Decryption completed. Generated file "+ args[2] +" based on file "+ args[1] +".");
+				
+			} catch (IllegalBlockSizeException | BadPaddingException | IOException e) {
+				e.printStackTrace();
+			}
 
-		
-		
-		switch(action) {
-		
-			case "checksha":
-				checksha(args[1]);
-				break;
-				
-			case "encrypt":
-				try {
-					encrypt(Paths.get(args[1]), Paths.get(args[2]));
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-				break;
-				
-			case "decrypt":
-				decrypt(Paths.get(args[1]), Paths.get(args[2]));
-				break;
-				
-			default:
-				System.out.println("Wrong input!");
+			
 		}
 		
 		
 		
 
-		
-		
-		
-		
-		
-		
-
-		
 		
 
 
@@ -92,9 +104,8 @@ public class Crypto {
 		
 		String hexUserDigest = Util.bytetohex(Util.hextobyte(digest));
 		
-		InputStream inputStream;
-		try {
-			inputStream = Files.newInputStream(Paths.get(fileName));
+		
+		try(InputStream inputStream = new BufferedInputStream(Files.newInputStream(Paths.get(fileName)), 1024)) {
 			
 			while(inputStream.available() > 0) {
 				byte[] someData = inputStream.readNBytes(1024);
@@ -103,13 +114,10 @@ public class Crypto {
 					sha.update(someData[i]);
 				}
 			}
-			inputStream.close();
-			
 		} catch (IOException e) {
-			//e.printStackTrace();
 			System.out.println("Error while reading file.");
-			return;
 		}
+
 		
 		
 		byte[] computedDigest = sha.digest();
@@ -128,52 +136,48 @@ public class Crypto {
 	
 	
 
-	private static void encrypt(Path origFile, Path newCyptedFile) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, InvalidAlgorithmParameterException {
-		Scanner scanner = new Scanner(System.in);
+	private static void encrypt_decrypt(Cipher cipher, Path oldFile, Path newFile) throws IOException, IllegalBlockSizeException, BadPaddingException {
 		
-		System.out.println("Please provide password as hex-encoded text (16 bytes, i.e. 32 hex-digits):");
-		System.out.print("> ");
-		String keyText = scanner.nextLine();
-		
-		System.out.println("Please provide initialization vector as hex-encoded text (32 hex-digits):");
-		System.out.print("> ");
-		String ivText = scanner.nextLine();
-		
-		scanner.close();
+		InputStream inputStream = new BufferedInputStream(Files.newInputStream(oldFile), 1024);
+		OutputStream outputStream = new BufferedOutputStream(Files.newOutputStream(newFile));
 		
 		
-		SecretKeySpec keySpec = new SecretKeySpec(Util.hextobyte(keyText), "AES");
-		AlgorithmParameterSpec paramSpec = new IvParameterSpec(Util.hextobyte(ivText));
-		Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
-		cipher.init(Cipher.ENCRYPT_MODE, keySpec, paramSpec);
-
-		
-		InputStream inputStream;
-		try {
-			inputStream = Files.newInputStream(origFile);
+		while(inputStream.available() > 1024) {
+			byte[] someData = inputStream.readNBytes(1024);
+			byte[] cryptedData = cipher.update(someData);
 			
-			while(inputStream.available() > 0) {
-				byte[] someData = inputStream.readNBytes(1024);
-				cipher.update(someData);
-			}
-			inputStream.close();
-			
-		} catch (IOException e) {
-			System.out.println("Error while reading file.");
-			return;
+			outputStream.write(cryptedData);
 		}
 		
+		byte[] cryptedData = cipher.doFinal(inputStream.readNBytes(1024));
+		outputStream.write(cryptedData);
 		
-		
+		inputStream.close();
+		outputStream.close();
 		
 		
 		
 	}
 	
 	
-	private static void decrypt(Path cryptedFile, Path newFile) {
-		// TODO Auto-generated method stub
-		
-	}
+//	private static void decrypt(Cipher cipher, Path cryptedFile, Path newFile) throws IOException, IllegalBlockSizeException, BadPaddingException {
+//		
+//		InputStream inputStream = new BufferedInputStream(Files.newInputStream(cryptedFile), 1024);
+//		OutputStream outputStream = new BufferedOutputStream(Files.newOutputStream(newFile));
+//		
+//		while(inputStream.available() > 1024) {
+//			byte[] someData = inputStream.readNBytes(1024);
+//			byte[] cryptedData = cipher.update(someData);
+//			
+//			outputStream.write(cryptedData);
+//		}
+//		
+//		byte[] cryptedData = cipher.doFinal(inputStream.readNBytes(1024));
+//		outputStream.write(cryptedData);
+//		
+//		inputStream.close();
+//		outputStream.close();
+//		
+//	}
 
 }

@@ -64,12 +64,11 @@ public class Util {
 	
 	
 	private static int giveBits(char c) {		
-		int cint = (int) c;
+		int cint = (int) c;	
 		
 		// c is numeric
 		if (cint <= '9') 
 			return cint - '0';
-
 		// c is alpha
 		return cint - 'a' + 10;
 	}
