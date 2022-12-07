@@ -74,12 +74,6 @@ public class Crypto {
 			
 		}
 		
-		
-		
-
-		
-
-
 	}
 	
 
@@ -156,28 +150,8 @@ public class Crypto {
 		outputStream.close();
 		
 		
-		
 	}
 	
-	
-//	private static void decrypt(Cipher cipher, Path cryptedFile, Path newFile) throws IOException, IllegalBlockSizeException, BadPaddingException {
-//		
-//		InputStream inputStream = new BufferedInputStream(Files.newInputStream(cryptedFile), 1024);
-//		OutputStream outputStream = new BufferedOutputStream(Files.newOutputStream(newFile));
-//		
-//		while(inputStream.available() > 1024) {
-//			byte[] someData = inputStream.readNBytes(1024);
-//			byte[] cryptedData = cipher.update(someData);
-//			
-//			outputStream.write(cryptedData);
-//		}
-//		
-//		byte[] cryptedData = cipher.doFinal(inputStream.readNBytes(1024));
-//		outputStream.write(cryptedData);
-//		
-//		inputStream.close();
-//		outputStream.close();
-//		
-//	}
+
 
 }
