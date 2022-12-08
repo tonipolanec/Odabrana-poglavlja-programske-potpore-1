@@ -14,7 +14,7 @@ public class SymbolShellCommand implements ShellCommand {
 	public ShellStatus executeCommand(Environment env, String arguments) {
 		String[] args = arguments.split(" ");
 		
-		if (args.length == 1) { // Only one argument
+		if (args.length == 1 && args[0] != "") { // Only one argument
 			switch (args[0]) {
 				case "PROMPT":
 					System.out.println("Symbol for PROMPT is '"+ env.getPromptSymbol() +"'");

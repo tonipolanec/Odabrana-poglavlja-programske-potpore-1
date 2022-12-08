@@ -7,6 +7,7 @@ import java.util.TreeMap;
 import hr.fer.oprpp1.hw05.shell.commands.CharsetsShellCommand;
 import hr.fer.oprpp1.hw05.shell.commands.ExitShellCommand;
 import hr.fer.oprpp1.hw05.shell.commands.SymbolShellCommand;
+import hr.fer.oprpp1.hw05.shell.commands.TreeShellCommand;
 
 public class MyShell implements Environment{
 	
@@ -99,6 +100,7 @@ public class MyShell implements Environment{
 		commands.put("charsets", new CharsetsShellCommand());
 		commands.put("exit", new ExitShellCommand());
 		commands.put("symbol", new SymbolShellCommand());
+		commands.put("tree", new TreeShellCommand());
 		
 		return commands;
 	}
