@@ -63,7 +63,17 @@ public class LsShellCommand implements ShellCommand {
 				// size in bytes
 				long size = 0;
 				if (file.isDirectory())
-					size += getFolderSize(file);
+					try {
+						size += Files.walk(file.toPath())
+						        .map(f -> f.toFile())
+						        .filter(f -> f.isFile())
+						        .mapToLong(f -> f.length())
+						        .sum();
+						
+					} catch (IOException e) {
+						env.writeln("Error while calculating folder size.");
+						return ShellStatus.CONTINUE;
+					}
 				else
 					size += file.length();
 				
