@@ -4,6 +4,7 @@ import java.util.List;
 
 public interface ShellCommand {
 
+	/** Executes command in given environment. */
 	ShellStatus executeCommand(Environment env, String arguments);
 	
 	/** Returns command name. */

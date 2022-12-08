@@ -2,20 +2,32 @@ package hr.fer.oprpp1.hw05.shell;
 
 import java.util.Scanner;
 import java.util.SortedMap;
+import java.util.TreeMap;
+
+import hr.fer.oprpp1.hw05.shell.commands.CharsetsShellCommand;
+import hr.fer.oprpp1.hw05.shell.commands.ExitShellCommand;
 
 public class MyShell implements Environment{
 	
 	private char PROMPTSYMBOL;
 	private char MORELINESYMBOL;
 	private char MULTILINESYMBOL;
+	
+	SortedMap<String, ShellCommand> commands;
+	
+	Scanner scanner;
 
 	public MyShell() {
+		scanner = new Scanner(System.in);
+		
 		PROMPTSYMBOL = '>';
 		MORELINESYMBOL = '\\';
 		MULTILINESYMBOL = '|';
 		
+		commands = commands();
 		
 		writeln("Welcome to MyShell v 1.0");
+		
 	}
 
 	
@@ -24,13 +36,14 @@ public class MyShell implements Environment{
 		MyShell shell = new MyShell();
 		
 		ShellStatus status = ShellStatus.CONTINUE;
+		String line;
 		
 		do {
 			
-			String line = shell.readLine();
+			line = shell.readLine();
 			
-			String commandName = ""; // extract from line
-			String arguments = ""; // extract from line
+			String commandName = shell.getCommandFromLine(line);
+			String arguments = shell.getArgumentsFromLine(line);
 
 			SortedMap<String, ShellCommand> commands = shell.commands();
 			ShellCommand command = commands.get(commandName);
@@ -47,12 +60,13 @@ public class MyShell implements Environment{
 	@Override
 	public String readLine() throws ShellIOException {
 		
-		try (Scanner scanner = new Scanner(System.in)){
+		try {
 			write("" + PROMPTSYMBOL + " ");
 			String line = scanner.nextLine();
 			
 			return line;
 		} catch (Exception e) {
+			e.printStackTrace();
 			throw new ShellIOException("Error with reading from console!");
 		}
 	}
@@ -79,8 +93,12 @@ public class MyShell implements Environment{
 	
 	@Override
 	public SortedMap<String, ShellCommand> commands() {
-		// TODO Auto-generated method stub
-		return null;
+		SortedMap<String, ShellCommand> commands = new TreeMap<>();
+		
+		commands.put("charsets", new CharsetsShellCommand());
+		commands.put("exit", new ExitShellCommand());
+		
+		return commands;
 	}
 
 
@@ -116,6 +134,30 @@ public class MyShell implements Environment{
 		System.out.println("Symbol for MORELINES changed from '"+ MORELINESYMBOL +"' to '"+ symbol +"'");
 		MORELINESYMBOL = symbol;
 	}
+	
+	private String getCommandFromLine(String line) {
+		
+		int index = line.indexOf(' ');
+		if (index > -1) 
+			return line.substring(0, index).trim();
+		else 
+			return line; 
+	}
+	
+	private String getArgumentsFromLine(String line) {
+		
+		int index = line.indexOf(' ');
+		if (index > -1) 
+			return line.substring(index, line.length()).trim();
+		else 
+			return "";
+	}
+	
+	
+	
+	
+	
+	
 	
 
 }
