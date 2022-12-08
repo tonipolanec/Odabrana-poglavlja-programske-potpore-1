@@ -1,0 +1,1 @@
+This is demo tekšt file for hex dumping. Some spešial characters may be in this file.

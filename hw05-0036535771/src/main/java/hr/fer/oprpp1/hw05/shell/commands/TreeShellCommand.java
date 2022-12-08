@@ -19,21 +19,21 @@ public class TreeShellCommand implements ShellCommand {
 
 			File dir = new File(args[0]);
 			if(!dir.exists() || !dir.isDirectory()) { 
-			    System.out.println("Invalid folder name given.");
+			    env.writeln("Invalid folder name given.");
 			    return ShellStatus.CONTINUE;
 			}
-			goThroughFolder(dir, "");
+			goThroughFolder(env, dir, "");
 			
 			return ShellStatus.CONTINUE;
 		} else {
-			System.out.println("Wrong number of arguments (must have only one)");
+			env.writeln("Wrong number of arguments (must have only one)");
 			return ShellStatus.CONTINUE;
 		}
 		
 	}
 	
 	
-	private void goThroughFolder(File dir, String indent) {
+	private void goThroughFolder(Environment env, File dir, String indent) {
 		
 		File files[] = dir.listFiles();
 	    if (files != null) {
@@ -41,10 +41,10 @@ public class TreeShellCommand implements ShellCommand {
 	        	String pointer = i==files.length-1 ? "└─" : "├──";
 	        	
 	            if (files[i].isDirectory()) {
-	              System.out.println(indent + pointer + files[i].getName()); 
-	              goThroughFolder(files[i], indent+"  ");
+	            	env.writeln(indent + pointer + files[i].getName()); 
+	              goThroughFolder(env, files[i], indent+"  ");
 	            } else {
-	                System.out.println(indent + pointer + files[i].getName().toString());
+	            	env.writeln(indent + pointer + files[i].getName().toString());
 	            }
 	        }
 	    }

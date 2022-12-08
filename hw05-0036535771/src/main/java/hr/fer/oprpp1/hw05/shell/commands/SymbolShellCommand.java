@@ -17,21 +17,21 @@ public class SymbolShellCommand implements ShellCommand {
 		if (args.length == 1 && args[0] != "") { // Only one argument
 			switch (args[0]) {
 				case "PROMPT":
-					System.out.println("Symbol for PROMPT is '"+ env.getPromptSymbol() +"'");
+					env.writeln("Symbol for PROMPT is '"+ env.getPromptSymbol() +"'");
 					break;
 				case "MORELINES":
-					System.out.println("Symbol for MORELINES is '"+ env.getMorelinesSymbol() +"'");
+					env.writeln("Symbol for MORELINES is '"+ env.getMorelinesSymbol() +"'");
 					break;
 				case "MULTILINE":
-					System.out.println("Symbol for MULTILINE is '"+ env.getMultilineSymbol() +"'");
+					env.writeln("Symbol for MULTILINE is '"+ env.getMultilineSymbol() +"'");
 					break;
 				default:
-					System.out.println("Invalid symbol requested.");
+					env.writeln("Invalid symbol requested.");
 			}
 		} else if(args.length == 2) { // 2 arguments
 			
 			if (args[1].length() > 1) {
-				System.out.println("Invalid new symbol given.");
+				env.writeln("Invalid new symbol given.");
 				return ShellStatus.CONTINUE;
 			}
 			char newSymbol = args[1].charAt(0);
@@ -47,11 +47,11 @@ public class SymbolShellCommand implements ShellCommand {
 				env.setMultilineSymbol(newSymbol);
 				break;
 			default:
-				System.out.println("Invalid type of symbol given.");
+				env.writeln("Invalid type of symbol given.");
 			}
 			
 		} else {
-			System.out.println("Too many arguments.");
+			env.writeln("Too many arguments.");
 			return ShellStatus.CONTINUE;
 		}
 		

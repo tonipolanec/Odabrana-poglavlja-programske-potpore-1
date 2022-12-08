@@ -22,7 +22,7 @@ public class CharsetsShellCommand implements ShellCommand {
 		}
 		
 		SortedMap<String, Charset> charsets = Charset.availableCharsets();
-		charsets.forEach((s,c) -> System.out.println(s));
+		charsets.forEach((s,c) -> env.writeln(s));
 		
 		return ShellStatus.CONTINUE;
 	}
