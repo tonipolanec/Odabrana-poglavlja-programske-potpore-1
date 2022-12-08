@@ -46,7 +46,10 @@ public class HexdumpShellCommand implements ShellCommand {
 			}
 			
 			for (int i=0; i<input.length; i+= 16) {
-				env.write(intTo8Hex(i) + ": ");//Util.bytetohex(new byte[] {(byte)i}) + ": ");
+				
+				StringBuilder resultLine = new StringBuilder();
+				
+				resultLine.append(intTo8Hex(i) + ": ");
 				
 				byte[] first8 = new byte[8];
 				byte[] last8 = new byte[8];
@@ -66,7 +69,7 @@ public class HexdumpShellCommand implements ShellCommand {
 				}
 				
 				String hexLine = giveHexLineFor16bytes(first8, last8);
-				env.write(hexLine + " | ");
+				resultLine.append(hexLine + " | ");
 				
 				byte[] lineBytes = new byte[16];
 				for(int j=i; j<i+16; j++) {
@@ -84,7 +87,8 @@ public class HexdumpShellCommand implements ShellCommand {
 						standardWriting += new String(duoBytes, Charset.defaultCharset());
 				}
 				
-				env.writeln(standardWriting);
+				resultLine.append(standardWriting);
+				env.writeln(resultLine.toString());
 				
 			}
 			
@@ -95,7 +99,7 @@ public class HexdumpShellCommand implements ShellCommand {
 			
 		
 		} else {
-			System.out.println("Command hexdump takes one argument.");
+			env.writeln("Command hexdump takes one argument.");
 			return ShellStatus.CONTINUE;
 		}
 		

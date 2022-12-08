@@ -7,6 +7,7 @@ import java.util.TreeMap;
 import hr.fer.oprpp1.hw05.shell.commands.CharsetsShellCommand;
 import hr.fer.oprpp1.hw05.shell.commands.ExitShellCommand;
 import hr.fer.oprpp1.hw05.shell.commands.HexdumpShellCommand;
+import hr.fer.oprpp1.hw05.shell.commands.LsShellCommand;
 import hr.fer.oprpp1.hw05.shell.commands.SymbolShellCommand;
 import hr.fer.oprpp1.hw05.shell.commands.TreeShellCommand;
 
@@ -103,6 +104,7 @@ public class MyShell implements Environment{
 		commands.put("symbol", new SymbolShellCommand());
 		commands.put("tree", new TreeShellCommand());
 		commands.put("hexdump", new HexdumpShellCommand());
+		commands.put("ls", new LsShellCommand());
 		
 		return commands;
 	}
