@@ -46,7 +46,7 @@ public class HexdumpShellCommand implements ShellCommand {
 			}
 			
 			for (int i=0; i<input.length; i+= 16) {
-				env.write(Util.bytetohex(new byte[] {(byte)i}) + ": ");
+				env.write(intTo8Hex(i) + ": ");//Util.bytetohex(new byte[] {(byte)i}) + ": ");
 				
 				byte[] first8 = new byte[8];
 				byte[] last8 = new byte[8];
@@ -100,6 +100,14 @@ public class HexdumpShellCommand implements ShellCommand {
 		}
 		
 		return ShellStatus.CONTINUE;
+	}
+
+	private String intTo8Hex(int i) {
+		String hex = Integer.toHexString(i);
+		int diff = 8 - hex.length();
+		
+		String res = "0".repeat(diff) + hex;
+		return res;
 	}
 
 	private String giveHexLineFor16bytes(byte[] first8, byte[] last8) {
