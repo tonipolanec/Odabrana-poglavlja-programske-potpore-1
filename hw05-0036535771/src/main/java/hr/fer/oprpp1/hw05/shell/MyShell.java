@@ -5,6 +5,7 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 import hr.fer.oprpp1.hw05.shell.commands.CharsetsShellCommand;
+import hr.fer.oprpp1.hw05.shell.commands.CopyShellCommand;
 import hr.fer.oprpp1.hw05.shell.commands.ExitShellCommand;
 import hr.fer.oprpp1.hw05.shell.commands.HexdumpShellCommand;
 import hr.fer.oprpp1.hw05.shell.commands.LsShellCommand;
@@ -107,6 +108,7 @@ public class MyShell implements Environment{
 		commands.put("hexdump", new HexdumpShellCommand());
 		commands.put("ls", new LsShellCommand());
 		commands.put("mkdir", new MkdirShellCommand());
+		commands.put("copy", new CopyShellCommand());
 		
 		return commands;
 	}

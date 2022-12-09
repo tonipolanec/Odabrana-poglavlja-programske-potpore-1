@@ -2,12 +2,9 @@ package hr.fer.oprpp1.hw05.shell.commands;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.LinkOption;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributeView;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.nio.file.attribute.FileTime;
@@ -77,8 +74,6 @@ public class LsShellCommand implements ShellCommand {
 				else
 					size += file.length();
 				
-				
-				
 				String sizeString = "" + size;
 				
 				// date and time
@@ -134,22 +129,4 @@ public class LsShellCommand implements ShellCommand {
 		return Collections.unmodifiableList(descriptions);
 	}
 	
-	
-	private long getFolderSize(File dir) {
-		long size = 0;
-		
-		File files[] = dir.listFiles();
-	    if (files != null) {
-	        for (int i=0; i<files.length; i++) {
-	        	
-	            if (files[i].isDirectory()) {
-	            	size += getFolderSize(files[i]);
-	            } else {
-	            	size += files[i].length();
-	            }
-	        }
-	    }
-	    
-	    return size;
-	}
 }

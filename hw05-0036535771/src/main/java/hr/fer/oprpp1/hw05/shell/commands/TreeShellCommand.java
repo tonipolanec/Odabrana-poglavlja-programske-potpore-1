@@ -38,7 +38,7 @@ public class TreeShellCommand implements ShellCommand {
 		File files[] = dir.listFiles();
 	    if (files != null) {
 	        for (int i=0; i<files.length; i++) {
-	        	String pointer = i==files.length-1 ? "└─" : "├──";
+	        	String pointer = i==files.length-1 ? "└─" : "├─";
 	        	
 	            if (files[i].isDirectory()) {
 	            	env.writeln(indent + pointer + files[i].getName()); 
