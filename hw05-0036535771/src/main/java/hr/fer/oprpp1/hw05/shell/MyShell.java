@@ -4,6 +4,9 @@ import java.util.Scanner;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+import javax.xml.catalog.Catalog;
+
+import hr.fer.oprpp1.hw05.shell.commands.CatShellCommand;
 import hr.fer.oprpp1.hw05.shell.commands.CharsetsShellCommand;
 import hr.fer.oprpp1.hw05.shell.commands.CopyShellCommand;
 import hr.fer.oprpp1.hw05.shell.commands.ExitShellCommand;
@@ -109,6 +112,7 @@ public class MyShell implements Environment{
 		commands.put("ls", new LsShellCommand());
 		commands.put("mkdir", new MkdirShellCommand());
 		commands.put("copy", new CopyShellCommand());
+		commands.put("cat", new CatShellCommand());
 		
 		return commands;
 	}
