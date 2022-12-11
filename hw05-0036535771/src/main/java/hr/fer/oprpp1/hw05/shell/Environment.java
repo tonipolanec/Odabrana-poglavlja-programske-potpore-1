@@ -7,10 +7,10 @@ public interface Environment {
 	/** Reads line from console. */
 	String readLine() throws ShellIOException;
 	
-	/** Writes line on console. */
+	/** Writes given string on console. */
 	void write(String text) throws ShellIOException;
 	
-	/** Writes line on console and adds newline. */
+	/** Writes given string on console and adds newline. */
 	void writeln(String text) throws ShellIOException;
 	
 	SortedMap<String, ShellCommand> commands();

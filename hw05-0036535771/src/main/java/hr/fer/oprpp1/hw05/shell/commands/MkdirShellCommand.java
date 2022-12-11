@@ -3,6 +3,8 @@ package hr.fer.oprpp1.hw05.shell.commands;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -25,14 +27,15 @@ public class MkdirShellCommand implements ShellCommand {
 		if (args.length == 1 && args[0] != "") { 
 				
 			File dir = new File(args[0]);
+							
 			if (dir.exists()) {
 				env.writeln("Directory with that name already exists.");
 				return ShellStatus.CONTINUE;
 			
 			} else {
-				try {
-					Files.createDirectory(dir.toPath());
-					
+				try {					
+					makeDirectories(dir);			
+							
 				} catch (IOException e) {
 					env.writeln("Failed at creating directory.");
 					return ShellStatus.CONTINUE;
@@ -50,6 +53,7 @@ public class MkdirShellCommand implements ShellCommand {
 		return ShellStatus.CONTINUE;
 	}
 
+
 	@Override
 	public String getCommandName() {
 		return "mkdir";
@@ -66,5 +70,35 @@ public class MkdirShellCommand implements ShellCommand {
 				
 		return Collections.unmodifiableList(descriptions);
 	}
+	
+	
+	private void makeDirectories(File dir) throws IOException {
+		
+		String dirPath = dir.toPath().toString();	
+		String[] folders = dirPath.split("\\\\");
+		
+		String stringPath = "";
+
+		for(int i=0; i<folders.length; i++) {
+			
+			stringPath += folders[i] + "/";
+			Path currentPath = Paths.get(stringPath);
+
+			
+			// directory doesn't exist
+			if(!currentPath.toFile().exists() || currentPath.toFile().isFile()) {
+				Files.createDirectory(currentPath);
+			}			
+		}
+
+	}
+	
+	
+	
+	
+	
+	
+	
+	
 
 }

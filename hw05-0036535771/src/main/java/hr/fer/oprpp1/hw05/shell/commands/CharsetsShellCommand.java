@@ -24,6 +24,8 @@ public class CharsetsShellCommand implements ShellCommand {
 		SortedMap<String, Charset> charsets = Charset.availableCharsets();
 		charsets.forEach((s,c) -> env.writeln(s));
 		
+		env.writeln("Active charset is: " + Charset.defaultCharset().displayName());
+		
 		return ShellStatus.CONTINUE;
 	}
 

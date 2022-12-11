@@ -49,7 +49,9 @@ public class CopyShellCommand implements ShellCommand {
 				String answer = env.readLine();
 				
 				if(answer.equals("y")) {	
-					destFile.delete();
+					if(sourceFile.equals(destFile))
+						return ShellStatus.CONTINUE;//destFile.delete();
+					
 					success = cleanCopy(env, sourceFile, destFile);
 				} else {
 					env.writeln("Aborting copy.");

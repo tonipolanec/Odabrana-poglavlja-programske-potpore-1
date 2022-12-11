@@ -59,10 +59,8 @@ public class CatShellCommand implements ShellCommand {
 			contents = new String(input, Charset.forName(args[1]));
 		}
 		
-		
 		env.writeln(contents);
 		return ShellStatus.CONTINUE;
-		
 		
 	}
 

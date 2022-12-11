@@ -50,7 +50,6 @@ public class LsShellCommand implements ShellCommand {
 					return ShellStatus.CONTINUE;
 				}
 				
-				
 				// directory readable writable executable
 				char d = attributes.isDirectory() ? 'd' : '-';
 				char r = file.canRead() ? 'r' : '-';

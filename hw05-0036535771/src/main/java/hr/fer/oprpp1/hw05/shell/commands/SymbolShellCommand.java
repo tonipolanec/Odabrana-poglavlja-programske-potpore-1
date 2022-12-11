@@ -51,7 +51,7 @@ public class SymbolShellCommand implements ShellCommand {
 			}
 			
 		} else {
-			env.writeln("Too many arguments.");
+			env.writeln("Command symbol takes 1 or 2 arguments.");
 			return ShellStatus.CONTINUE;
 		}
 		

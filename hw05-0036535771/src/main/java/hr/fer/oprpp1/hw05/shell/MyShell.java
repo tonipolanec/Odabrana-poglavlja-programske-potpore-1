@@ -4,8 +4,6 @@ import java.util.Scanner;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-import javax.xml.catalog.Catalog;
-
 import hr.fer.oprpp1.hw05.shell.commands.CatShellCommand;
 import hr.fer.oprpp1.hw05.shell.commands.CharsetsShellCommand;
 import hr.fer.oprpp1.hw05.shell.commands.CopyShellCommand;
@@ -36,7 +34,6 @@ public class MyShell implements Environment{
 		commands = commands();
 		
 		writeln("Welcome to MyShell v 1.0");
-		
 	}
 
 	
@@ -45,37 +42,42 @@ public class MyShell implements Environment{
 		MyShell shell = new MyShell();
 		
 		ShellStatus status = ShellStatus.CONTINUE;
-		String line;
+		String commandLine;
 		
 		do {
 			
-			line = shell.readLine();
+			commandLine = shell.readCommand();
 			
-			String commandName = shell.getCommandFromLine(line);
-			String arguments = shell.getArgumentsFromLine(line);
+			String commandName = shell.getCommandNameFromLine(commandLine);
+			String arguments = shell.getArgumentsFromLine(commandLine);
 
 			SortedMap<String, ShellCommand> commands = shell.commands();
-			ShellCommand command = commands.get(commandName);
 			
-			status = command.executeCommand(shell, arguments);
+			if (commands.containsKey(commandName)) {
+				ShellCommand command = commands.get(commandName);
+				
+				status = command.executeCommand(shell, arguments);
+			
+			} else {
+				shell.writeln("Not supported command entered.");
+			}
+			
+
 			
 		} while(status != ShellStatus.TERMINATE);
 		
 
 	}
 	
-	
+
 
 	@Override
 	public String readLine() throws ShellIOException {
 		
 		try {
-			write("" + PROMPTSYMBOL + " ");
-			String line = scanner.nextLine();
+			return scanner.nextLine();
 			
-			return line;
 		} catch (Exception e) {
-			e.printStackTrace();
 			throw new ShellIOException("Error with reading from console!");
 		}
 	}
@@ -151,7 +153,38 @@ public class MyShell implements Environment{
 		MORELINESYMBOL = symbol;
 	}
 	
-	private String getCommandFromLine(String line) {
+	
+	private String readCommand() {
+		write("" + PROMPTSYMBOL + " ");
+		
+		String command = "";
+		String currentLine;	
+		
+		boolean moreLines = false;
+		
+		do {
+			if (moreLines)
+				write("" + MULTILINESYMBOL + " ");
+			
+			currentLine = readLine();
+			
+			if (currentLine.endsWith(" "+ MORELINESYMBOL)) {
+				currentLine = currentLine.substring(0, currentLine.length() -2);
+				moreLines = true;
+			} else {
+				moreLines = false;
+			}
+			command += " " + currentLine;
+			
+		} while(moreLines);
+
+		
+		return command.strip();		
+	}
+	
+	
+	
+	private String getCommandNameFromLine(String line) {
 		
 		int index = line.indexOf(' ');
 		if (index > -1) 
