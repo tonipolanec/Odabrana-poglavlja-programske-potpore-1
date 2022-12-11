@@ -1,5 +1,6 @@
 package hr.fer.oprpp1.hw05.shell;
 
+import java.util.Collections;
 import java.util.Scanner;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -8,6 +9,7 @@ import hr.fer.oprpp1.hw05.shell.commands.CatShellCommand;
 import hr.fer.oprpp1.hw05.shell.commands.CharsetsShellCommand;
 import hr.fer.oprpp1.hw05.shell.commands.CopyShellCommand;
 import hr.fer.oprpp1.hw05.shell.commands.ExitShellCommand;
+import hr.fer.oprpp1.hw05.shell.commands.HelpShellCommand;
 import hr.fer.oprpp1.hw05.shell.commands.HexdumpShellCommand;
 import hr.fer.oprpp1.hw05.shell.commands.LsShellCommand;
 import hr.fer.oprpp1.hw05.shell.commands.MkdirShellCommand;
@@ -115,8 +117,9 @@ public class MyShell implements Environment{
 		commands.put("mkdir", new MkdirShellCommand());
 		commands.put("copy", new CopyShellCommand());
 		commands.put("cat", new CatShellCommand());
+		commands.put("help", new HelpShellCommand());
 		
-		return commands;
+		return Collections.unmodifiableSortedMap(commands);
 	}
 
 
