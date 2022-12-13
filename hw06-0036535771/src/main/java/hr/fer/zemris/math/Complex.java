@@ -30,6 +30,13 @@ public class Complex {
 	}
 	
 	
+	public double getRe() {
+		return re;
+	}
+	public double getIm() {
+		return im;
+	}
+	
 	/** Returns module of complex number */
 	public double module() {
 		return Math.sqrt(re*re + im*im);
@@ -100,7 +107,7 @@ public class Complex {
         List<Complex> results = new ArrayList<>();
         
         Complex first = new Complex(nthRootR * Math.cos(nthRootTheta), nthRootR * Math.sin(nthRootTheta));
-        Complex second = first.negate();
+        Complex second = new Complex(first.re, -first.im);
         
         results.add(first);
         results.add(second);     
@@ -110,10 +117,21 @@ public class Complex {
 	
 	@Override
 	public String toString() {
-		if (im == 0) return re + "";
-        if (re == 0) return im + "i";
-        if (im <  0) return re + " - " + (-im) + "i";
-        return re + " + " + im + "i";
+		if (im == 0) return re + "i0.0";
+        if (re == 0) return "0.0+i" +im;
+        if (im <  0) return re + "-i" + (-im);
+        return re + "+i" + im;
+	}
+	
+	@Override
+	public boolean equals(Object o) {
+		if (!(o instanceof Complex)) 
+            return false;
+	
+		Complex c = (Complex) o;
+		if(this.re == c.re && this.im == c.im) 
+			return true;
+		return false;
 	}
 
 }
