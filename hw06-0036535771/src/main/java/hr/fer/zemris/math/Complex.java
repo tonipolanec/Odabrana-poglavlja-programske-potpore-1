@@ -117,10 +117,12 @@ public class Complex {
 	
 	@Override
 	public String toString() {
-		if (im == 0) return re + "i0.0";
-        if (re == 0) return "0.0+i" +im;
-        if (im <  0) return re + "-i" + (-im);
-        return re + "+i" + im;
+		if(Math.abs(re) < 0.00001) re = 0;
+		String reStr = "" +re;
+		String imStr = im<0 ? "-i"+(-im) : "+i"+im; 
+		
+		return reStr + imStr;
+		
 	}
 	
 	@Override
