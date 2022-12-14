@@ -6,7 +6,6 @@ import java.util.List;
 public class Complex {
 	// help with mathematical expressions: https://algs4.cs.princeton.edu/99scientific/Complex.java.html
 	
-	
 	public static final Complex ZERO 	= new Complex(0, 0);
 	public static final Complex ONE 	= new Complex(1, 0);
 	public static final Complex ONE_NEG = new Complex(-1,0);
@@ -52,12 +51,6 @@ public class Complex {
 	
 	/** Returns this/c */
 	public Complex divide(Complex c) {		
-		
-//		double scale = c.re*c.re + c.im*c.im; 
-//		Complex cReciprocal = new Complex(re / scale, -im / scale);
-//		
-//		double re = this.re * cReciprocal.re - this.im * cReciprocal.im;
-//	    double im = this.re * cReciprocal.im + this.im * cReciprocal.re;
 	    
 		Complex conjugate = new Complex(c.re, -c.im);
 		Complex up = this.multiply(conjugate);
@@ -105,14 +98,10 @@ public class Complex {
 		
 		double r = Math.sqrt(this.re*this.re + this.im*this.im);
         double theta = Math.atan2(this.im, this.re);
-        System.out.println("r: " + r + " theta: " + theta);
         
         int k = n-1;
         
-        //double nthRootR = Math.round(Math.pow(r, 1.0 / n)); // https://www.baeldung.com/java-nth-root
         double nthRootR = Math.pow(r, 1.0 / n); 
-        //double nthRootTheta = theta / n;
-        //System.out.println("nth root r: " + nthRootR);
         
         List<Complex> results = new ArrayList<>();
         
