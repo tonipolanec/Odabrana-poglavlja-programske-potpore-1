@@ -1,7 +1,6 @@
 package hr.fer.zemris.math;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class ComplexRootedPolynomial {
@@ -41,20 +40,17 @@ public class ComplexRootedPolynomial {
 				currentFactor = Complex.ONE_NEG;
 				poz = true;		
 			}
-
-			System.out.println("---");
 			
 			currentFactor = currentFactor.multiply(constant);
-			System.out.println("poslje mnozenja s const: " +currentFactor);
 			
 			Complex[] multipliedCombs = giveMultipliedCombs(order-i, roots);
+			
 			Complex addedCombs = Complex.ZERO;
 			for(int j=0; j<multipliedCombs.length; j++) {
 				addedCombs = addedCombs.add(multipliedCombs[j]);
 			}
-			currentFactor = currentFactor.multiply(addedCombs);
-			System.out.println("poslje zbrajanja: " +currentFactor);
-			factors[i] = currentFactor;
+			
+			factors[i] = currentFactor.multiply(addedCombs);;
 		}
 				
 		return new ComplexPolynomial(factors);
@@ -102,13 +98,12 @@ public class ComplexRootedPolynomial {
 		
 		for(int i=0; i<combinations.size(); i++) {
 			Complex currentMult = Complex.ONE;
+			
 			for(int j=0; j<combinations.get(i).length; j++) {
-				System.out.print(combinations.get(i)[j] + " ");
 				currentMult = currentMult.multiply(numbers[combinations.get(i)[j]]);
 			}
-			System.out.print("currentMult: " + currentMult);
+			
 			multipliedCombs[i] = currentMult;
-			System.out.println("");
 		}
 		
 		return multipliedCombs;

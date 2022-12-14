@@ -52,13 +52,19 @@ public class Complex {
 	
 	/** Returns this/c */
 	public Complex divide(Complex c) {		
-		double scale = c.re*c.re + c.im*c.im; 
-		Complex cReciprocal = new Complex(re / scale, -im / scale);
 		
-		double re = this.re * cReciprocal.re - this.im * cReciprocal.im;
-	    double im = this.re * cReciprocal.im + this.im * cReciprocal.re;
+//		double scale = c.re*c.re + c.im*c.im; 
+//		Complex cReciprocal = new Complex(re / scale, -im / scale);
+//		
+//		double re = this.re * cReciprocal.re - this.im * cReciprocal.im;
+//	    double im = this.re * cReciprocal.im + this.im * cReciprocal.re;
 	    
-	    return new Complex(re, im);	
+		Complex conjugate = new Complex(c.re, -c.im);
+		Complex up = this.multiply(conjugate);
+		Complex down = c.multiply(conjugate);
+		double downDouble = down.re;
+		
+	    return new Complex(up.re/downDouble, up.im/downDouble);	
 	}
 	
 	/** Returns this+c */
@@ -99,25 +105,34 @@ public class Complex {
 		
 		double r = Math.sqrt(this.re*this.re + this.im*this.im);
         double theta = Math.atan2(this.im, this.re);
+        System.out.println("r: " + r + " theta: " + theta);
         
-        double nthRootR = Math.round(Math.pow(r, 1.0 / n)); // https://www.baeldung.com/java-nth-root
         int k = n-1;
-        double nthRootTheta = (theta + 2*k*Math.PI)/ n;
+        
+        //double nthRootR = Math.round(Math.pow(r, 1.0 / n)); // https://www.baeldung.com/java-nth-root
+        double nthRootR = Math.pow(r, 1.0 / n); 
+        //double nthRootTheta = theta / n;
+        //System.out.println("nth root r: " + nthRootR);
         
         List<Complex> results = new ArrayList<>();
         
-        Complex first = new Complex(nthRootR * Math.cos(nthRootTheta), nthRootR * Math.sin(nthRootTheta));
-        Complex second = new Complex(first.re, -first.im);
+        for(int i=0; i<=k; i++) {
+        	double real = nthRootR * Math.cos(theta/n + 2*i*Math.PI/n);
+        	double imag = nthRootR * Math.sin(theta/n + 2*i*Math.PI/n);
+        	
+        	results.add(new Complex(real, imag));
+        }
+
         
-        results.add(first);
-        results.add(second);     
-       
+        // not used: https://github.com/makesmatheasy/makesmatheasy/blob/main/library/complexlogic.js
         return results;
 	}
 	
 	@Override
 	public String toString() {
 		if(Math.abs(re) < 0.00001) re = 0;
+		if(Math.abs(im) < 0.00001) im = 0;
+		
 		String reStr = "" +re;
 		String imStr = im<0 ? "-i"+(-im) : "+i"+im; 
 		
@@ -131,9 +146,12 @@ public class Complex {
             return false;
 	
 		Complex c = (Complex) o;
-		if(this.re == c.re && this.im == c.im) 
+		if(Math.abs(this.re - c.re) < 0.00001 && Math.abs(this.im - c.im) < 0.00001) 
 			return true;
 		return false;
 	}
+	
+	
+	
 
 }
