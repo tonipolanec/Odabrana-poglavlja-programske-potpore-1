@@ -52,7 +52,7 @@ public class ComplexPolynomial {
 	
 	// computes polynomial value at given point z
 	public Complex apply(Complex z) {
-		Complex res = Complex.ONE;
+		Complex res = Complex.ZERO;
 		for(int i=0; i<factors.length; i++) {
 			res = res.add(factors[i].multiply(z.power(i)));
 		}

@@ -75,9 +75,7 @@ public class ComplexRootedPolynomial {
 		double minDistance = treshold +1;
 		
 		for(int i=0; i<roots.length; i++) {
-			double reDist = Math.abs(z.getRe() - roots[i].getRe());
-			double imDist = Math.abs(z.getIm() - roots[i].getIm());
-			double distance = Math.sqrt(reDist*reDist + imDist*imDist);
+			double distance = z.sub(roots[i]).module();
 			
 			if(distance <= treshold && distance < minDistance) {
 				minDistance = distance;

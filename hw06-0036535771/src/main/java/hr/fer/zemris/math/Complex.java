@@ -119,8 +119,8 @@ public class Complex {
 	
 	@Override
 	public String toString() {
-		if(Math.abs(re) < 0.00001) re = 0;
-		if(Math.abs(im) < 0.00001) im = 0;
+		if(Math.abs(re) < 0.000000001) re = 0;
+		if(Math.abs(im) < 0.000000001) im = 0;
 		
 		String reStr = "" +re;
 		String imStr = im<0 ? "-i"+(-im) : "+i"+im; 
