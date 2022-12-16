@@ -46,16 +46,16 @@ public class Newton {
 		
 		System.out.println("Image of fractal will appear shortly. Thank you.");
 		ComplexRootedPolynomial crp = new ComplexRootedPolynomial(new Complex(2, 0), arrayC);
-		FractalViewer.show(new MojProducer(crp));
+		FractalViewer.show(new MyProducer(crp));
 	}
 	
 	
 	
-	public static class MojProducer implements IFractalProducer {
+	public static class MyProducer implements IFractalProducer {
 		
 		private ComplexRootedPolynomial crp;
 		
-		public MojProducer(ComplexRootedPolynomial crp) {
+		public MyProducer(ComplexRootedPolynomial crp) {
 			this.crp = crp;
 		}
 		
@@ -108,7 +108,7 @@ public class Newton {
 	
 	
 	
-	private static Complex stringToComplex(String input) {
+	public static Complex stringToComplex(String input) {
 		
 		double real, imag;
 		int indOfSpace = input.indexOf(' ');
