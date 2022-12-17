@@ -11,9 +11,13 @@ import hr.fer.zemris.math.Complex;
 import hr.fer.zemris.math.ComplexPolynomial;
 import hr.fer.zemris.math.ComplexRootedPolynomial;
 
+/**
+ * Class for visualizing Newton-Raphsons fractal using only one thread.
+ * 
+ * @author Toni Polanec
+ */
 public class Newton {
 
-	
 	public static void main(String[] args) {
 		Scanner scanner = new Scanner(System.in);
 		
@@ -29,7 +33,13 @@ public class Newton {
 			if(input.equals("done"))
 				break;
 			
+			try {
 			listC.add(stringToComplex(input));
+			} catch(NumberFormatException e) {
+				System.out.println("Invalid inputs!");
+				scanner.close();
+				return;
+			}
 				
 		} while(true);
 		scanner.close();

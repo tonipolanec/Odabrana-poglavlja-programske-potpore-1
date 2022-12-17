@@ -14,15 +14,27 @@ import hr.fer.zemris.math.Complex;
 import hr.fer.zemris.math.ComplexPolynomial;
 import hr.fer.zemris.math.ComplexRootedPolynomial;
 
+
+/**
+ * Class for visualizing Newton-Raphsons fractal using multi-threading for faster computing.
+ * 
+ * @author Toni Polanec
+ */
 public class NewtonParallel {
 	
-
-	
 	public static void main(String[] args) {
-		Scanner scanner = new Scanner(System.in);
+		int workers;
+		int tracks;
 		
-		int workers = getWorkers(args);
-		int tracks = getTracks(args);
+		try {
+			workers = getWorkers(args);
+			tracks = getTracks(args);
+		} catch(IllegalArgumentException e) {
+			System.out.println(e.getMessage());
+			return;
+		}
+		
+		Scanner scanner = new Scanner(System.in);
 		
 		System.out.println("Welcome to Newton-Raphson parallel-based fractal viewer.\n" +
 				"Please enter at least two roots, one root per line. Enter 'done' when done.");
@@ -52,7 +64,7 @@ public class NewtonParallel {
 			arrayC[i] = listC.get(i);
 		
 		System.out.println("Image of fractal will appear shortly. Thank you.");
-		ComplexRootedPolynomial crp = new ComplexRootedPolynomial(new Complex(2, 0), arrayC);
+		ComplexRootedPolynomial crp = new ComplexRootedPolynomial(new Complex(1, 0), arrayC);
 		System.out.println(crp.toString());
 		FractalViewer.show(new MyProducer(crp, workers, tracks));
 		
@@ -61,7 +73,13 @@ public class NewtonParallel {
 	}
 	
 
-
+	/**
+	 * Return number of workers given by program arguments.
+	 * 
+	 * @param args
+	 * @return number of workers
+	 * @throws IllegalArgumentException if number of workers were set more than once
+	 */
 	private static int getWorkers(String[] args) {
 		int numOfWorkers = Runtime.getRuntime().availableProcessors();
 		
@@ -72,22 +90,31 @@ public class NewtonParallel {
 			
 			if(arg.startsWith("--w")) {
 				if(alreadySet)
-					throw new IllegalArgumentException("Already got number of workers!");
+					throw new IllegalArgumentException("Double workers arguments!");
 				
 				int indOfEquals = arg.indexOf('=');	
 				numOfWorkers = Integer.parseInt(arg.substring(indOfEquals+1));
+				alreadySet = true;
 			
 			} else if(arg.equals("-w")) {
 				if(alreadySet)
-					throw new IllegalArgumentException("Already got number of workers!");
+					throw new IllegalArgumentException("Double tracks arguments!");
 				
 				numOfWorkers = Integer.parseInt(args[i+1]);
+				alreadySet = true;
 			}
 		}
 	
 		return numOfWorkers;
 	}
 	
+	/**
+	 * Return number of tracks given by program arguments.
+	 * 
+	 * @param args
+	 * @return number of tracks
+	 * @throws IllegalArgumentException if number of tracks were set more than once
+	 */
 	private static int getTracks(String[] args) {
 		int numOfTracks = Runtime.getRuntime().availableProcessors() * 4;
 		
@@ -162,9 +189,9 @@ public class NewtonParallel {
 		public void run() {
 			
 			ComplexPolynomial polynom = crp.toComplexPolynom();
-			int offset = 0;
+			int offset = yMin * width;
 			
-			for(int y = 0; y < height; y++) {
+			for(int y = yMin; y <= yMax; y++) {
 				if(cancel.get()) break;
 				for(int x = 0; x < width; x++) {
 					
@@ -279,12 +306,8 @@ public class NewtonParallel {
 			}
 			
 			System.out.println("Racunanje gotovo. Idem obavijestiti promatraca tj. GUI!");
-			observer.acceptResult(data, (short)m, requestNo);
+			observer.acceptResult(data, (short)(crp.toComplexPolynom().order()+1), requestNo);
 		}
 	}
-	
-	
-	
-	
 
 }

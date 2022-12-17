@@ -113,7 +113,6 @@ public class Complex {
         }
 
         
-        // not used: https://github.com/makesmatheasy/makesmatheasy/blob/main/library/complexlogic.js
         return results;
 	}
 	
@@ -135,7 +134,7 @@ public class Complex {
             return false;
 	
 		Complex c = (Complex) o;
-		if(Math.abs(this.re - c.re) < 0.00001 && Math.abs(this.im - c.im) < 0.00001) 
+		if(Math.abs(this.re - c.re) < 0.000001 && Math.abs(this.im - c.im) < 0.000001) 
 			return true;
 		return false;
 	}
