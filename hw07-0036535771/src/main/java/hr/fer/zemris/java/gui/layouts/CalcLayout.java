@@ -7,7 +7,8 @@ import java.awt.LayoutManager2;
 
 public class CalcLayout implements LayoutManager2 {
 
-	int gap;
+	private int gap;
+	private float compHeight, compWidth; 
 
 	public CalcLayout(int gap) {
 		this.gap = gap;
@@ -65,6 +66,7 @@ public class CalcLayout implements LayoutManager2 {
 		}
 		
 		
+		
 
 		
 	}
@@ -84,8 +86,5 @@ public class CalcLayout implements LayoutManager2 {
 
 	}
 
-	public static void main(String[] args) {
-
-	}
 
 }
