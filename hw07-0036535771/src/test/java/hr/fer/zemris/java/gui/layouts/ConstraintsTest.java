@@ -14,9 +14,11 @@ public class ConstraintsTest {
 		JPanel p = new JPanel(new CalcLayout());
 		// r<1
 		assertThrows(CalcLayoutException.class, () -> p.add(new JLabel("x"), "-1,2"));
-		
-		// r>5 or s<1
+
+		// r>5
 		assertThrows(CalcLayoutException.class, () -> p.add(new JLabel("x"), "6,2"));
+		
+		// s<1
 		assertThrows(CalcLayoutException.class, () -> p.add(new JLabel("x"), "2,-1"));
 		
 		//s>7
