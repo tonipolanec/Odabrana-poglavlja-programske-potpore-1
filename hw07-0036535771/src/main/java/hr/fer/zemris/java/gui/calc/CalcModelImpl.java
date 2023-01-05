@@ -14,17 +14,15 @@ public class CalcModelImpl implements CalcModel {
 		model.insertDigit(1);
 		model.insertDigit(1);
 		model.insertDigit(9);
-		model.insertDecimalPoint();
-		model.insertDigit(3);
-		model.insertDigit(2);
+		//model.insertDecimalPoint();
+		//model.insertDigit(3);
+		//model.insertDigit(2);
 		
 		double d = model.getValue();
 		System.out.println(d);
 	}
 	
-	
-	
-	
+
 	/** Flag is <code>true</code> if we can add inputs. */
 	private boolean editable;
 	/** Flag for negative values. */
@@ -67,20 +65,24 @@ public class CalcModelImpl implements CalcModel {
 	}
 	
 	public String toString() {
-		if(frozenInput == null) return negative ? "-0" : "0";
+		if(frozenInput != null) return frozenInput;
+		if(input == "")	return negative ? "-0" : "0";
 		
-		return frozenInput;
+		String str = (number % 1 == 0) ? ""+(int)number : ""+number;
+		
+		return negative ? "-"+str : str;
+		
 		//return negative ? "-"+frozenInput : frozenInput;
 	}
 
 	@Override
 	public double getValue() {
-		return number;
+		return negative ? -number : number;
 	}
 
 	@Override
 	public void setValue(double value) {		
-		number = value;
+		number = value < 0 ? -value : value;
 		input = ""+ number;
 		
 		negative = value < 0 ? true : false;			
@@ -98,6 +100,7 @@ public class CalcModelImpl implements CalcModel {
 		negative = false;
 		input = "";
 		number = 0;
+		editable = true;
 	}
 
 	@Override
@@ -105,8 +108,9 @@ public class CalcModelImpl implements CalcModel {
 		negative = false;
 		input = "";
 		number = 0;
+		editable = true;
 		
-		setActiveOperand = false;
+		clearActiveOperand();
 		pendingOperation = null; 
 		
 	}
@@ -118,32 +122,39 @@ public class CalcModelImpl implements CalcModel {
 		
 		negative = !negative;
 		
-		number = -1 * number;
-		input = ""+ number;		
+//		number = -1 * number;
+//		input = ""+ number;		
 	}
 
 	@Override
 	public void insertDecimalPoint() throws CalculatorInputException {
 		if(!editable) throw new CalculatorInputException("Model is currently not editable!");
-		frozenInput = null;
-		
 		if(number % 1 != 0) throw new CalculatorInputException("Decimal point already exists!");
+		if (input.isEmpty()) throw new CalculatorInputException("No number had been entered!");
 		
-		input += ".";
-		number = Double.parseDouble(input);		
+		input += input.isBlank() ? "0." : ".";
 		
+		try {
+			number = Double.parseDouble(input);
+			frozenInput = null;
+			
+		} catch(NumberFormatException e) {
+			throw new CalculatorInputException("Cannot parse!");
+		}
 	}
 
 	@Override
 	public void insertDigit(int digit) throws CalculatorInputException, IllegalArgumentException {
-		if(!editable) throw new CalculatorInputException("Model is currently not editable!");
-		frozenInput = null;
-		
+		if(!isEditable()) throw new CalculatorInputException("Model is currently not editable!");
+		if(input.length() == 308) throw new CalculatorInputException("Number is too big!");
+			
+		input += digit;
 		try {
-			input += digit;
 			number = Double.parseDouble(input);
+			frozenInput = null;
+			
 		} catch(NumberFormatException e) {
-			throw new IllegalArgumentException();
+			throw new IllegalArgumentException("Cannot parse!");
 		}
 	}
 
@@ -185,7 +196,7 @@ public class CalcModelImpl implements CalcModel {
 	}
 	
 	public boolean hasFrozenValue() {
-		return frozenInput == null;
+		return frozenInput != null;
 	}
 	
 	

@@ -2,6 +2,7 @@ package hr.fer.zemris.java.gui.calc;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -16,15 +17,14 @@ public class CalcModelTest {
 	private CalcModel model;
 	
 	private static CalcModel newCalcModel() {
-		// Zamijenite ovo tako da vraća primjerak Vaše implementacije modela.
 		return new CalcModelImpl();
 	}
 
 	@BeforeEach
 	public void setup() {
-		model = newCalcModel();
+		model = new CalcModelImpl();//newCalcModel();
 	}
-
+	
 	@Test
 	public void testvalueOfNewModel() {
 		assertEquals(0.0, model.getValue(), 1E-10); 
@@ -292,7 +292,7 @@ public class CalcModelTest {
 		model.setPendingBinaryOperation(null);
 		
 		assertEquals(72.0, model.getValue(), 1E-10); 
-		assertEquals("72.0", model.toString()); 
+		assertEquals("72", model.toString()); 
 	}
 
 	/*
