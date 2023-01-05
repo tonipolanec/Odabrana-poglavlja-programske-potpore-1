@@ -1,5 +1,7 @@
 package hr.fer.zemris.java.gui.calc;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.DoubleBinaryOperator;
 
 import hr.fer.zemris.java.gui.calc.model.CalcModel;
@@ -40,6 +42,9 @@ public class CalcModelImpl implements CalcModel {
 	private boolean setActiveOperand;
 	/** Stores operation waiting to finish. */
 	private DoubleBinaryOperator pendingOperation;
+	
+	/** List of Event Listeners for changes in states. */
+	private final List<CalcValueListener> listeners;
 
 	public CalcModelImpl() {
 		editable = true;
@@ -50,18 +55,22 @@ public class CalcModelImpl implements CalcModel {
 		
 		setActiveOperand = false;
 		pendingOperation = null;
+		
+		listeners = new ArrayList<>();
 	}
 
 	@Override
 	public void addCalcValueListener(CalcValueListener l) {
-		// TODO Auto-generated method stub
-		
+		if(l != null) listeners.add(l);		
 	}
 
 	@Override
 	public void removeCalcValueListener(CalcValueListener l) {
-		// TODO Auto-generated method stub
-		
+		listeners.remove(l);		
+	}
+	
+	public void notifyCalcValueListeners() {
+		listeners.forEach(l -> l.valueChanged(this));
 	}
 	
 	public String toString() {
@@ -70,9 +79,8 @@ public class CalcModelImpl implements CalcModel {
 		
 		String str = (number % 1 == 0) ? ""+(int)number : ""+number;
 		
-		return negative ? "-"+str : str;
-		
 		//return negative ? "-"+frozenInput : frozenInput;
+		return negative ? "-"+str : str;	
 	}
 
 	@Override
@@ -88,6 +96,8 @@ public class CalcModelImpl implements CalcModel {
 		negative = value < 0 ? true : false;			
 		
 		editable = false;		
+		
+		notifyCalcValueListeners();
 	}
 
 	@Override
@@ -101,6 +111,8 @@ public class CalcModelImpl implements CalcModel {
 		input = "";
 		number = 0;
 		editable = true;
+		
+		notifyCalcValueListeners();
 	}
 
 	@Override
@@ -113,6 +125,7 @@ public class CalcModelImpl implements CalcModel {
 		clearActiveOperand();
 		pendingOperation = null; 
 		
+		notifyCalcValueListeners();		
 	}
 
 	@Override
@@ -121,6 +134,8 @@ public class CalcModelImpl implements CalcModel {
 		frozenInput = null;
 		
 		negative = !negative;
+		
+		notifyCalcValueListeners();
 		
 //		number = -1 * number;
 //		input = ""+ number;		
@@ -138,9 +153,13 @@ public class CalcModelImpl implements CalcModel {
 			number = Double.parseDouble(input);
 			frozenInput = null;
 			
+			notifyCalcValueListeners();
+			
 		} catch(NumberFormatException e) {
 			throw new CalculatorInputException("Cannot parse!");
 		}
+		
+
 	}
 
 	@Override
@@ -153,9 +172,12 @@ public class CalcModelImpl implements CalcModel {
 			number = Double.parseDouble(input);
 			frozenInput = null;
 			
+			notifyCalcValueListeners();
+			
 		} catch(NumberFormatException e) {
 			throw new IllegalArgumentException("Cannot parse!");
 		}
+		
 	}
 
 	@Override
@@ -174,11 +196,15 @@ public class CalcModelImpl implements CalcModel {
 	public void setActiveOperand(double activeOperand) {
 		this.activeOperand = activeOperand;
 		setActiveOperand = true;
+		
+		notifyCalcValueListeners();
 	}
 
 	@Override
 	public void clearActiveOperand() {
 		setActiveOperand = false;
+		
+		notifyCalcValueListeners();
 	}
 
 	@Override
@@ -188,7 +214,9 @@ public class CalcModelImpl implements CalcModel {
 
 	@Override
 	public void setPendingBinaryOperation(DoubleBinaryOperator op) {
-		pendingOperation = op;		
+		pendingOperation = op;	
+		
+		notifyCalcValueListeners();
 	}
 	
 	public void freezeValue(String value) {
