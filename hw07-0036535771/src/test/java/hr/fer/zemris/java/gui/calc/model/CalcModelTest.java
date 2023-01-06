@@ -1,4 +1,4 @@
-package hr.fer.zemris.java.gui.calc;
+package hr.fer.zemris.java.gui.calc.model;
 
 import static org.junit.jupiter.api.Assertions.*;
 

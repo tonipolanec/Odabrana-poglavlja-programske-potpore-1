@@ -1,29 +1,12 @@
-package hr.fer.zemris.java.gui.calc;
+package hr.fer.zemris.java.gui.calc.model;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.DoubleBinaryOperator;
 
-import hr.fer.zemris.java.gui.calc.model.CalcModel;
-import hr.fer.zemris.java.gui.calc.model.CalcValueListener;
-import hr.fer.zemris.java.gui.calc.model.CalculatorInputException;
 
 public class CalcModelImpl implements CalcModel {
-	
-	public static void main(String args[]) {
-		CalcModel model = new CalcModelImpl();
 		
-		model.insertDigit(1);
-		model.insertDigit(1);
-		model.insertDigit(9);
-		//model.insertDecimalPoint();
-		//model.insertDigit(3);
-		//model.insertDigit(2);
-		
-		double d = model.getValue();
-		System.out.println(d);
-	}
-	
 
 	/** Flag is <code>true</code> if we can add inputs. */
 	private boolean editable;
@@ -225,6 +208,10 @@ public class CalcModelImpl implements CalcModel {
 	
 	public boolean hasFrozenValue() {
 		return frozenInput != null;
+	}
+	
+	public String getInput() {
+		return input;
 	}
 	
 	
