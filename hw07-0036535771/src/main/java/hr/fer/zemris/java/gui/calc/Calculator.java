@@ -2,19 +2,25 @@ package hr.fer.zemris.java.gui.calc;
 
 import java.awt.Checkbox;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Container;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.function.DoubleBinaryOperator;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
 
+import hr.fer.zemris.java.gui.calc.buttons.CalculatorButton;
+import hr.fer.zemris.java.gui.calc.buttons.InvertibleButton;
 import hr.fer.zemris.java.gui.calc.model.*;
 import hr.fer.zemris.java.gui.layouts.CalcLayout;
 import hr.fer.zemris.java.gui.layouts.RCPosition;
@@ -23,10 +29,19 @@ public class Calculator extends JFrame {
 	private static final long serialVersionUID = 9123592806395228283L;
 	
 	/** Model of calculator (all needed methods for functionalities). */
-	CalcModelImpl model;
+	private CalcModelImpl model;
+	
+	/** Map of all buttons which can be inverted. */
+	private Map<RCPosition, InvertibleButton> invertedButtons;
+	
+	/** Map of all digit buttons */
+	//private Map<RCPosition, Calc>
+	
 	
 	public Calculator() {
 		model = new CalcModelImpl();
+		
+		invertedButtons = new HashMap<>();
 		
 		setLocation(20, 50);
 		//setSize(300, 200);
@@ -53,7 +68,6 @@ public class Calculator extends JFrame {
 		
 		// ROW 2
 		cp.add(newButton("1/x"), new RCPosition(2,1));
-		cp.add(newButton("sin"), new RCPosition(2,2));
 		cp.add(newButton("7"), new RCPosition(2,3));
 		cp.add(newButton("8"), new RCPosition(2,4));
 		cp.add(newButton("9"), new RCPosition(2,5));
@@ -61,8 +75,7 @@ public class Calculator extends JFrame {
 		cp.add(newButton("reset"), new RCPosition(2,7));
 		
 		// ROW 3
-		cp.add(newButton("log"), new RCPosition(3,1));
-		cp.add(newButton("cos"), new RCPosition(3,2));
+		
 		cp.add(newButton("4"), new RCPosition(3,3));
 		cp.add(newButton("5"), new RCPosition(3,4));
 		cp.add(newButton("6"), new RCPosition(3,5));
@@ -70,8 +83,7 @@ public class Calculator extends JFrame {
 		cp.add(newButton("push"), new RCPosition(3,7));
 		
 		// ROW 4
-		cp.add(newButton("ln"), new RCPosition(4,1));
-		cp.add(newButton("tan"), new RCPosition(4,2));
+		
 		cp.add(newButton("1"), new RCPosition(4,3));
 		cp.add(newButton("2"), new RCPosition(4,4));
 		cp.add(newButton("3"), new RCPosition(4,5));
@@ -79,13 +91,20 @@ public class Calculator extends JFrame {
 		cp.add(newButton("pop"), new RCPosition(4,7));
 
 		// ROW 5
-		cp.add(newButton("x^n"), new RCPosition(5,1));
-		cp.add(newButton("ctg"), new RCPosition(5,2));
+		
 		cp.add(newButton("0"), new RCPosition(5,3));
 		cp.add(newButton("+/-"), new RCPosition(5,4));
 		cp.add(newButton("."), new RCPosition(5,5));
 		cp.add(newButton("+"), new RCPosition(5,6));
-		cp.add(new Checkbox("Inv"), new RCPosition(5, 7));
+		cp.add(newCheckbox("Inv", cp), new RCPosition(5, 7));
+		
+		// INVERTED BUTTONS
+		initializeInvertedButtons();
+		for (Map.Entry<RCPosition,InvertibleButton> invButton : invertedButtons.entrySet()) {
+			cp.add(invButton.getValue().getJButton(), invButton.getKey());
+		}
+
+		
 	}
 	
 	/**
@@ -143,39 +162,43 @@ public class Calculator extends JFrame {
 		
 		// DIGIT
 		if(text.length() == 1 && Character.isDigit(text.charAt(0))) {
-			al = new ActionListener(){  
-					public void actionPerformed(ActionEvent e){  
-						if(model.hasFrozenValue())
-							model.setValue(0);
-						model.insertDigit(Integer.parseInt(text));  
-					}  
-				};
+			al = e -> {
+				if(model.hasFrozenValue())
+					model.setValue(0);
+				model.insertDigit(Integer.parseInt(text));
+			};
 		
 		// OPERATIONS		
 		} else if(text.equals("+") || text.equals("-") || text.equals("*") || text.equals("/")){	
-			al = new ActionListener(){  
-				public void actionPerformed(ActionEvent e){  
-					model.freezeValue(model.toString());
-					model.setActiveOperand(model.getValue());
-							
-					switch(text) {
-						case "+":
-							model.setPendingBinaryOperation((a,b) -> a+b);
-						break;
-						case "-":
-							model.setPendingBinaryOperation((a,b) -> a-b);	
-						break;
-						case "*":
-							model.setPendingBinaryOperation((a,b) -> a*b);
-						break;
-						case "/":
-							model.setPendingBinaryOperation((a,b) -> a/b);
-						break;
-					}
+			al = e -> {  
+				
+				if(model.isActiveOperandSet()) {
 					
-					model.clear();
-				} 
+				}
+				
+				model.setActiveOperand(model.getValue());
+						
+				switch(text) {
+					case "+":
+						model.setPendingBinaryOperation((a,b) -> a+b);
+					break;
+					case "-":
+						model.setPendingBinaryOperation((a,b) -> a-b);	
+					break;
+					case "*":
+						model.setPendingBinaryOperation((a,b) -> a*b);
+					break;
+					case "/":
+						model.setPendingBinaryOperation((a,b) -> a/b);
+					break;
+				}
+				
+				model.clear();
 			};
+		
+		// EQUALS
+		} else if(text.equals("=")) {
+			
 		}
 		
 		
@@ -189,8 +212,15 @@ public class Calculator extends JFrame {
 	 * @param text
 	 * @return instance of <code>Checkbox</code>
 	 */
-	private Checkbox getCheckBox(String text) {
-		Checkbox c = new Checkbox(text);
+	private JCheckBox newCheckbox(String text, Container cp) {
+		JCheckBox c = new JCheckBox(text);
+		c.addActionListener(e ->{
+			for (Map.Entry<RCPosition,InvertibleButton> invButton : invertedButtons.entrySet()) {
+				invButton.getValue().invert();
+			}
+			cp.repaint();
+			//setInvertedButtons(cp);
+		});
 		
 		return c;
 	}
@@ -203,6 +233,59 @@ public class Calculator extends JFrame {
 //	}
 	
 
+	private void initializeInvertedButtons() {
+		
+		// sin, arcsin
+		invertedButtons.put(new RCPosition(2,2), 
+				new InvertibleButton("sin", "arcsin", 
+						e -> model.setValue(Math.sin(model.getValue())),
+						e -> model.setValue(Math.asin(model.getValue()))
+						));
+		// log, 10^x
+		invertedButtons.put(new RCPosition(3,1), 
+				new InvertibleButton("log", "10^x", 
+						e -> model.setValue(Math.log10(model.getValue())),
+						e -> model.setValue(Math.pow(10, model.getValue()))
+						));
+
+		// cos, arccos
+		invertedButtons.put(new RCPosition(3,2), 
+				new InvertibleButton("cos", "arccos", 
+						e -> model.setValue(Math.cos(model.getValue())),
+						e -> model.setValue(Math.acos(model.getValue()))
+						));
+		
+		// ln, e^x
+		invertedButtons.put(new RCPosition(4,1), 
+				new InvertibleButton("ln", "e^x", 
+						e -> model.setValue(Math.log(model.getValue())),
+						e -> model.setValue(Math.pow(Math.E, model.getValue()))
+						));
+		
+		// tan, arctan
+		invertedButtons.put(new RCPosition(4,2), 
+				new InvertibleButton("tan", "arctan", 
+						e -> model.setValue(Math.tan(model.getValue())),
+						e -> model.setValue(Math.atan(model.getValue()))
+						));
+		
+		// x^n, x^(1/n)
+		invertedButtons.put(new RCPosition(5,1), 
+				new InvertibleButton("x^n", "x^(1/n)", 
+						e -> model.setValue(Math.tan(model.getValue())),
+						e -> model.setValue(Math.atan(model.getValue()))
+						));
+		
+		// ctg, arcctg
+		invertedButtons.put(new RCPosition(5,2), 
+				new InvertibleButton("ctg", "arcctg", 
+						e -> model.setValue(1. / Math.tan(model.getValue())),
+						e -> model.setValue(Math.atan(1. / (1. / Math.tan(model.getValue()))))
+						));
+	}
+
+	
+	
 
 	public static void main(String[] args) {
 
