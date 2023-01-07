@@ -1,26 +1,23 @@
 package hr.fer.zemris.java.gui.calc;
 
-import java.awt.Checkbox;
+
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Container;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Stack;
-import java.util.function.DoubleBinaryOperator;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
 
-import hr.fer.zemris.java.gui.calc.buttons.CalculatorButton;
 import hr.fer.zemris.java.gui.calc.buttons.InvertibleButton;
 import hr.fer.zemris.java.gui.calc.model.*;
 import hr.fer.zemris.java.gui.layouts.CalcLayout;
@@ -124,13 +121,12 @@ public class Calculator extends JFrame {
 		l.setBackground(new Color(204, 219, 220));
 		l.setOpaque(true);
 		
-		model.addCalcValueListener(new CalcValueListener() {
-			@Override
-			public void valueChanged(CalcModel m) {
-				CalcModelImpl model = (CalcModelImpl) m;
-				l.setText(model.getInput());				
-			}
+		model.addCalcValueListener( m -> {
+			CalcModelImpl model = (CalcModelImpl) m;
+			l.setText(model.getInput());
 		});
+				
+
 		
 		return l;
 	}
@@ -181,7 +177,7 @@ public class Calculator extends JFrame {
 				
 				model.freezeValue(model.toString());
 				
-				if(model.isActiveOperandSet()) {
+				if(model.isActiveOperandSet() && model.getPendingBinaryOperation() == null) {
 					double result = model.getPendingBinaryOperation().applyAsDouble(model.getActiveOperand(), model.getValue());
 					model.setValue(result);
 					model.setActiveOperand(result);
@@ -349,7 +345,7 @@ public class Calculator extends JFrame {
 						e -> {
 							model.freezeValue(model.toString());
 							
-							if(model.isActiveOperandSet()) {s
+							if(model.isActiveOperandSet()) {
 								double result = model.getPendingBinaryOperation().applyAsDouble(model.getActiveOperand(), model.getValue());
 								model.setValue(result);
 								model.setActiveOperand(result);	
@@ -369,10 +365,13 @@ public class Calculator extends JFrame {
 						e -> model.setValue(Math.atan(1. / (1. / Math.tan(model.getValue()))))
 						));
 	}
-
+	
+	
 	
 	
 	public static void main(String[] args) {
+		Thread.setDefaultUncaughtExceptionHandler(new ExceptionHandler());
+        System.setProperty("sun.awt.exception.handler", ExceptionHandler.class.getName());
 
 		SwingUtilities.invokeLater(() -> {
 			JFrame frame = new Calculator();
@@ -380,5 +379,20 @@ public class Calculator extends JFrame {
 			frame.setVisible(true);
 		});
 	}
+	
+	
+    public static class ExceptionHandler implements Thread.UncaughtExceptionHandler {
+        public void handle(Throwable thrown) {
+            handleException(Thread.currentThread().getName(), thrown);
+        }
+
+        public void uncaughtException(Thread thread, Throwable thrown) {
+            handleException(thread.getName(), thrown);
+        }
+
+        protected void handleException(String threadName, Throwable thrown) {
+            JOptionPane.showMessageDialog(null, thrown.getMessage(), "Warning", JOptionPane.WARNING_MESSAGE);
+        }
+    }
 
 }

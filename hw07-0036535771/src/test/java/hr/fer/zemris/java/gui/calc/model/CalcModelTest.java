@@ -2,15 +2,9 @@ package hr.fer.zemris.java.gui.calc.model;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import hr.fer.zemris.java.gui.calc.model.CalcModel;
-import hr.fer.zemris.java.gui.calc.model.CalcValueListener;
-import hr.fer.zemris.java.gui.calc.model.CalculatorInputException;
-
-import java.util.function.DoubleBinaryOperator;
 
 public class CalcModelTest {
 	
@@ -22,7 +16,7 @@ public class CalcModelTest {
 
 	@BeforeEach
 	public void setup() {
-		model = new CalcModelImpl();//newCalcModel();
+		model = newCalcModel();//newCalcModel();
 	}
 	
 	@Test

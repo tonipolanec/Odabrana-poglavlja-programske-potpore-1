@@ -172,7 +172,7 @@ public class CalcModelImpl implements CalcModel {
 
 	@Override
 	public double getActiveOperand() throws IllegalStateException {
-		if(!isActiveOperandSet()) throw new IllegalStateException("Active operand is yet not set!");
+		if(!isActiveOperandSet()) throw new IllegalStateException("Active operand is not set!");
 		
 		return activeOperand;
 	}

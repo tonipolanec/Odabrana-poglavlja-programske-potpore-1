@@ -3,8 +3,6 @@ package hr.fer.zemris.java.gui.calc.buttons;
 import java.awt.Color;
 import java.awt.event.ActionListener;
 
-import javax.swing.Action;
-import javax.swing.Icon;
 import javax.swing.JButton;
 
 public class InvertibleButton extends CalculatorButton {
