@@ -8,6 +8,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Stack;
 import java.util.function.DoubleBinaryOperator;
 
 import javax.swing.BorderFactory;
@@ -37,11 +38,14 @@ public class Calculator extends JFrame {
 	/** Map of all digit buttons */
 	//private Map<RCPosition, Calc>
 	
+	private Stack<Double> stack;
+	
 	
 	public Calculator() {
 		model = new CalcModelImpl();
 		
 		invertedButtons = new HashMap<>();
+		stack = new Stack<>();
 		
 		setLocation(20, 50);
 		//setSize(300, 200);
@@ -198,7 +202,11 @@ public class Calculator extends JFrame {
 		
 		// EQUALS
 		} else if(text.equals("=")) {
-			
+			al = e -> {
+				double result = model.getPendingBinaryOperation().applyAsDouble(model.getActiveOperand(), model.getValue());
+				model.setValue(result);
+				model.setActiveOperand(result);
+			};
 		}
 		
 		
@@ -210,15 +218,19 @@ public class Calculator extends JFrame {
 	 * Creates new checkbox for calculator.	
 	 * 
 	 * @param text
-	 * @return instance of <code>Checkbox</code>
+	 * @return instance of <code>JCheckbox</code>
 	 */
 	private JCheckBox newCheckbox(String text, Container cp) {
 		JCheckBox c = new JCheckBox(text);
 		c.addActionListener(e ->{
 			for (Map.Entry<RCPosition,InvertibleButton> invButton : invertedButtons.entrySet()) {
+				invButton.getValue().removeActionListener(invButton.getValue().getActionListener());
 				invButton.getValue().invert();
+				invButton.getValue().addActionListener(invButton.getValue().getActionListener());
 			}
 			cp.repaint();
+			pack();
+			setMinimumSize(this.getSize());
 			//setInvertedButtons(cp);
 		});
 		
