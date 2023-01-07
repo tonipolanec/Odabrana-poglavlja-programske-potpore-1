@@ -17,7 +17,7 @@ public class CalcModelImpl implements CalcModel {
 	/** Double representation of an input. */
 	private double number;
 	/** String representation of an input we froze for display purposes. */
-	private String frozenInput = null;	
+	private String frozenInput;	
 	
 	/** Stores currently active operand. */
 	private double activeOperand;
@@ -118,6 +118,8 @@ public class CalcModelImpl implements CalcModel {
 		
 		negative = !negative;
 		
+		//input = "-" + input;
+		
 		notifyCalcValueListeners();
 		
 //		number = -1 * number;
@@ -128,7 +130,7 @@ public class CalcModelImpl implements CalcModel {
 	public void insertDecimalPoint() throws CalculatorInputException {
 		if(!editable) throw new CalculatorInputException("Model is currently not editable!");
 		if(number % 1 != 0) throw new CalculatorInputException("Decimal point already exists!");
-		if (input.isEmpty()) throw new CalculatorInputException("No number had been entered!");
+		//if (input.isEmpty()) throw new CalculatorInputException("No number had been entered!");
 		
 		input += input.isBlank() ? "0." : ".";
 		
@@ -204,6 +206,10 @@ public class CalcModelImpl implements CalcModel {
 	
 	public void freezeValue(String value) {
 		frozenInput = value;
+	}
+	
+	public void unfreezeValue() {
+		frozenInput = null;
 	}
 	
 	public boolean hasFrozenValue() {

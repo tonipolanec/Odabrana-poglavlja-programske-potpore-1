@@ -167,8 +167,10 @@ public class Calculator extends JFrame {
 		// DIGIT
 		if(text.length() == 1 && Character.isDigit(text.charAt(0))) {
 			al = e -> {
-				if(model.hasFrozenValue())
-					model.setValue(0);
+				if(model.hasFrozenValue()) {
+					model.unfreezeValue();
+					model.clear();
+				}
 				model.insertDigit(Integer.parseInt(text));
 			};
 		
@@ -176,18 +178,28 @@ public class Calculator extends JFrame {
 		} else if(text.equals("+") || text.equals("-") || text.equals("*") || text.equals("/")){	
 			al = e -> {  
 				
-				if(model.isActiveOperandSet()) {
-					
-				}
+				model.freezeValue(model.toString());
 				
-				model.setActiveOperand(model.getValue());
+				if(model.isActiveOperandSet()) {
+					double result = model.getPendingBinaryOperation().applyAsDouble(model.getActiveOperand(), model.getValue());
+					model.setValue(result);
+					model.setActiveOperand(result);
+					
+				
+				} else {
+					model.setActiveOperand(model.getValue());
+				}
 						
 				switch(text) {
 					case "+":
 						model.setPendingBinaryOperation((a,b) -> a+b);
 					break;
 					case "-":
-						model.setPendingBinaryOperation((a,b) -> a-b);	
+						// if not then is unary operation
+						if(!model.isActiveOperandSet())
+							model.swapSign();
+						else
+							model.setPendingBinaryOperation((a,b) -> a-b);	
 					break;
 					case "*":
 						model.setPendingBinaryOperation((a,b) -> a*b);
@@ -197,7 +209,9 @@ public class Calculator extends JFrame {
 					break;
 				}
 				
-				model.clear();
+				
+				//model.clear();
+				
 			};
 		
 		// EQUALS
@@ -205,11 +219,57 @@ public class Calculator extends JFrame {
 			al = e -> {
 				double result = model.getPendingBinaryOperation().applyAsDouble(model.getActiveOperand(), model.getValue());
 				model.setValue(result);
+				model.clearActiveOperand();
+			};
+		
+		// 1/X
+		} else if(text.equals("1/x")) {
+			al = e -> {
+				double result = 1. / model.getValue();
+				model.setValue(result);
 				model.setActiveOperand(result);
 			};
+		
+		// DECIMAL POINT .
+		} else if(text.equals(".")) {
+			al = e -> {
+				model.insertDecimalPoint();
+			};
+		
+		// SWAP SIGN +/-
+		} else if(text.equals(".")) {
+			al = e -> {
+				model.swapSign();
+			};
+		
+		// PUSH or POP
+		} else if(text.equals("push") || text.equals("pop")) {
+			al = e -> {
+				if(text.equals("push")) {
+					stack.add(model.getValue());
+					
+				} else {
+					if(!stack.empty()) {
+						double popped = stack.pop();
+						model.setValue(popped);
+					}
+				}
+			};
+		
+		
+		// CLEAR
+		} else if(text.equals("clr")) {
+			al = e -> {
+				model.clear();
+			};
+		
+		
+		// RESET
+		} else if(text.equals("reset")) {
+			al = e -> {
+				model.clearAll();
+			};
 		}
-		
-		
 		
 		return al;
 	}
@@ -231,20 +291,15 @@ public class Calculator extends JFrame {
 			cp.repaint();
 			pack();
 			setMinimumSize(this.getSize());
-			//setInvertedButtons(cp);
 		});
 		
 		return c;
 	}
 	
-//	private class insertDigitActionListener implements ActionListener{
-//		@Override
-//		public void actionPerformed(ActionEvent e) {
-//			
-//		}	
-//	}
 	
-
+	/**
+	 * Initializes all buttons that can be inverted with checkbox.
+	 */
 	private void initializeInvertedButtons() {
 		
 		// sin, arcsin
@@ -298,7 +353,6 @@ public class Calculator extends JFrame {
 
 	
 	
-
 	public static void main(String[] args) {
 
 		SwingUtilities.invokeLater(() -> {
