@@ -74,7 +74,7 @@ public class CalcModelImpl implements CalcModel {
 	@Override
 	public void setValue(double value) {		
 		number = value < 0 ? -value : value;
-		input = ""+ number;
+		input = ""+ value;
 		
 		negative = value < 0 ? true : false;			
 		

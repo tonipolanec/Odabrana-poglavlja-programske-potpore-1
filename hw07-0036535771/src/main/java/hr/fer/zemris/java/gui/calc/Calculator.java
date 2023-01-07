@@ -176,6 +176,7 @@ public class Calculator extends JFrame {
 		
 		// OPERATIONS		
 		} else if(text.equals("+") || text.equals("-") || text.equals("*") || text.equals("/")){	
+			
 			al = e -> {  
 				
 				model.freezeValue(model.toString());
@@ -185,7 +186,6 @@ public class Calculator extends JFrame {
 					model.setValue(result);
 					model.setActiveOperand(result);
 					
-				
 				} else {
 					model.setActiveOperand(model.getValue());
 				}
@@ -195,11 +195,7 @@ public class Calculator extends JFrame {
 						model.setPendingBinaryOperation((a,b) -> a+b);
 					break;
 					case "-":
-						// if not then is unary operation
-						if(!model.isActiveOperandSet())
-							model.swapSign();
-						else
-							model.setPendingBinaryOperation((a,b) -> a-b);	
+						model.setPendingBinaryOperation((a,b) -> a-b);	
 					break;
 					case "*":
 						model.setPendingBinaryOperation((a,b) -> a*b);
@@ -209,8 +205,6 @@ public class Calculator extends JFrame {
 					break;
 				}
 				
-				
-				//model.clear();
 				
 			};
 		
@@ -237,7 +231,7 @@ public class Calculator extends JFrame {
 			};
 		
 		// SWAP SIGN +/-
-		} else if(text.equals(".")) {
+		} else if(text.equals("+/-")) {
 			al = e -> {
 				model.swapSign();
 			};
@@ -339,11 +333,36 @@ public class Calculator extends JFrame {
 		// x^n, x^(1/n)
 		invertedButtons.put(new RCPosition(5,1), 
 				new InvertibleButton("x^n", "x^(1/n)", 
-						e -> model.setValue(Math.tan(model.getValue())),
-						e -> model.setValue(Math.atan(model.getValue()))
+						e -> {
+							model.freezeValue(model.toString());
+	
+							if(model.isActiveOperandSet()) {
+								double result = model.getPendingBinaryOperation().applyAsDouble(model.getActiveOperand(), model.getValue());
+								model.setValue(result);
+								model.setActiveOperand(result);	
+							} else {
+								model.setActiveOperand(model.getValue());
+							}
+							
+							model.setPendingBinaryOperation((a,b) -> Math.pow(a, b));
+						},
+						e -> {
+							model.freezeValue(model.toString());
+							
+							if(model.isActiveOperandSet()) {s
+								double result = model.getPendingBinaryOperation().applyAsDouble(model.getActiveOperand(), model.getValue());
+								model.setValue(result);
+								model.setActiveOperand(result);	
+							} else {
+								model.setActiveOperand(model.getValue());
+							}
+							model.setPendingBinaryOperation((a,b) -> Math.pow(a, 1./b));
+						}
 						));
 		
 		// ctg, arcctg
+
+
 		invertedButtons.put(new RCPosition(5,2), 
 				new InvertibleButton("ctg", "arcctg", 
 						e -> model.setValue(1. / Math.tan(model.getValue())),
