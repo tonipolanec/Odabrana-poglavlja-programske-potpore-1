@@ -1,5 +1,7 @@
 package hr.fer.zemris.java.gui.charts;
 
+import java.awt.Graphics;
+
 import javax.swing.JComponent;
 
 public class BarChartComponent extends JComponent {
@@ -9,6 +11,11 @@ public class BarChartComponent extends JComponent {
 	
 	public BarChartComponent(BarChart barchart) {
 		this.barchart = barchart;
+	}
+	
+	public void paint() {
+		
+		
 	}
 	
 	

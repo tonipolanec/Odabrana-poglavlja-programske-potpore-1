@@ -33,7 +33,24 @@ public class BarChart {
 		
 	}
 	
-	
+	public List<XYValue> getValues() {
+		return values;
+	}
+	public String getxDescription() {
+		return xDescription;
+	}
+	public String getyDescription() {
+		return yDescription;
+	}
+	public double getMinY() {
+		return minY;
+	}
+	public double getMaxY() {
+		return maxY;
+	}
+	public double getSpaceY() {
+		return spaceY;
+	}
 	
 	
 
