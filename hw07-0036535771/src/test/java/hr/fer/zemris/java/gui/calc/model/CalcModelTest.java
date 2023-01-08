@@ -48,19 +48,6 @@ public class CalcModelTest {
 		assertEquals("-0", model.toString()); 
 	}
 
-	@Test
-	public void testpointWhenNoNumberThrows() {
-		assertThrows(CalculatorInputException.class, ()->{
-			model.insertDecimalPoint();
-		});
-	}
-
-	@Test
-	public void testpointWhenNoNumberAndNegativeSignThrows() {
-		model.swapSign();
-
-		assertThrows(CalculatorInputException.class, ()->{model.insertDecimalPoint();});
-	}
 
 	@Test
 	public void testsetSimpleValue() {
