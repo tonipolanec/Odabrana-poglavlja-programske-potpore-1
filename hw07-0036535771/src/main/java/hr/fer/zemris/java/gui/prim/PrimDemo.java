@@ -13,7 +13,9 @@ import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
 
 public class PrimDemo extends JFrame{
+	private static final long serialVersionUID = -5545212011418477343L;
 	
+	/** Model for prime numbers list. */
 	PrimListModel model;
 
 	public PrimDemo() {

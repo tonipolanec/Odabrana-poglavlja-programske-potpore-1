@@ -4,15 +4,22 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.ListModel;
-import javax.swing.SwingUtilities;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 
+/**
+ * List model implementation for list with prime numbers.
+ * 
+ * @author Toni Polanec
+ */
 public class PrimListModel implements ListModel<Integer>{
 	
+	/** List for storing prime numbers. */
 	List<Integer> primNumbers;
+	/** Last generated prime number. */
 	private int last;
 	
+	/** List for Listener for change in lists. */
 	private List<ListDataListener> listeners = new ArrayList<>();
 
 	public PrimListModel() {		
@@ -21,6 +28,9 @@ public class PrimListModel implements ListModel<Integer>{
 		last = 1;
 	}
 	
+	/**
+	 * Generation of next prime number.
+	 */
 	public void next() {
 		int current = last +1;
 		
@@ -69,20 +79,6 @@ public class PrimListModel implements ListModel<Integer>{
 	public void removeListDataListener(ListDataListener l) {
 		listeners.remove(l);
 	}
-	
-	
-	
-	public static void main(String[] args) {
-	
-		
-//		PrimListModel list = new PrimListModel();
-//		list.next();
-//		list.next();
-//		list.next();
-//		list.next();
-//		
-//		for(Integer n : list.getList()) 
-//			System.out.println(n);
-	}
+
 
 }
