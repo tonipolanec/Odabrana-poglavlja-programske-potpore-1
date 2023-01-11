@@ -31,18 +31,15 @@ public class DefaultSingleDocumentModel implements SingleDocumentModel {
 		
 		listeners = new ArrayList<>();
 		textAreaComponent.getDocument().addDocumentListener(new DocumentListener() {
-			private boolean isModified = !originalContent.equals(textAreaComponent.getText());
-	
+			private boolean isModified = originalContent.equals(textAreaComponent.getText());
 	        @Override
 	        public void insertUpdate(DocumentEvent e) {
                 setModified(isModified);
             }
-
             @Override
             public void removeUpdate(DocumentEvent e) {
                 setModified(isModified);
             }
-
             @Override
             public void changedUpdate(DocumentEvent e) {
                 setModified(isModified);
@@ -63,6 +60,8 @@ public class DefaultSingleDocumentModel implements SingleDocumentModel {
 
 	@Override
 	public void setFilePath(Path path) {
+		if(path == null) throw new NullPointerException("Given path cannot be null!");
+		
 		this.path = path.toAbsolutePath().normalize();
 		notifyRegisteredListeners(l -> l.documentFilePathUpdated(this));
 	}

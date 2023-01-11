@@ -34,8 +34,8 @@ public class DefaultMultipleDocumentModel extends JTabbedPane implements Multipl
 	private SingleDocumentModel currentDocument;
 	private List<MultipleDocumentListener> listeners;
 	
-	private static final String NOT_MODIFIED_ICON_PATH = "../../icons/modifiedGreen.png";
-	private static final String MODIFIED_ICON_PATH = "../../icons/modifiedRed.png";
+	private static final String NOT_MODIFIED_ICON_PATH = "../icons/modifiedGreen.png";
+	private static final String MODIFIED_ICON_PATH = "../icons/modifiedRed.png";
 	private final ImageIcon notModifiedIcon;
 	private final ImageIcon modifiedIcon;
 
@@ -221,10 +221,10 @@ public class DefaultMultipleDocumentModel extends JTabbedPane implements Multipl
 		
 		InputStream is = this.getClass().getResourceAsStream(iconPath);
 		try {
-			return new ImageIcon(is.readAllBytes());
-			//ImageIcon icon = new Image()// is.readAllBytes()
-//			Image imageFromIcon = new ImageIcon(is.readAllBytes()).getImage();
-//			return new ImageIcon(imageFromIcon.getScaledInstance(20, 20, Image.SCALE_SMOOTH));
+			ImageIcon imageIcon = new ImageIcon(is.readAllBytes()); 
+			Image image = imageIcon.getImage().getScaledInstance(15, 15,  Image.SCALE_SMOOTH); 
+
+			return new ImageIcon(image);			
 		} catch (Exception e) {
 			JOptionPane.showMessageDialog(null, e.getMessage(), "Warning", JOptionPane.WARNING_MESSAGE);
 		}
