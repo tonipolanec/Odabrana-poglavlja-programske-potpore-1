@@ -4,6 +4,7 @@ import java.awt.Image;
 import java.io.IOError;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -12,10 +13,14 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
 
+import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
+import javax.swing.text.DefaultCaret;
 
 import hr.fer.oprpp1.hw08.jnotepadpp.model.interfaces.MultipleDocumentListener;
 import hr.fer.oprpp1.hw08.jnotepadpp.model.interfaces.MultipleDocumentModel;
@@ -47,10 +52,10 @@ public class DefaultMultipleDocumentModel extends JTabbedPane implements Multipl
 		addChangeListener(e -> {
             SingleDocumentModel previousDocument = currentDocument;
 
-            int newTabIndex = getSelectedIndex();
-            this.currentDocument = newTabIndex != -1 ? documents.get(newTabIndex) : null;
+            int tabIndex = getSelectedIndex();
+            currentDocument = tabIndex != -1 ? documents.get(tabIndex) : null;
 
-            this.notifyRegisteredListeners(listener -> listener.currentDocumentChanged(previousDocument, currentDocument));
+            notifyRegisteredListeners(l -> l.currentDocumentChanged(previousDocument, currentDocument));
         });
 			
 	}
@@ -64,14 +69,20 @@ public class DefaultMultipleDocumentModel extends JTabbedPane implements Multipl
 
 	@Override
 	public JComponent getVisualComponent() {
-		// TODO Auto-generated method stub
-		return null;
+		return this;
 	}
 
 	@Override
 	public SingleDocumentModel createNewDocument() {
-		// TODO Auto-generated method stub
-		return null;
+		SingleDocumentModel previousModel = currentDocument;
+		
+		currentDocument = new DefaultSingleDocumentModel(null, "");
+		initializeNewDocument(null);
+		currentDocument.addSingleDocumentListener(getBasicDocumentListener());
+		
+		notifyRegisteredListeners(l -> l.currentDocumentChanged(previousModel, currentDocument));
+		
+		return currentDocument;
 	}
 
 	@Override
@@ -81,8 +92,37 @@ public class DefaultMultipleDocumentModel extends JTabbedPane implements Multipl
 
 	@Override
 	public SingleDocumentModel loadDocument(Path path) {
-		// TODO Auto-generated method stub
-		return null;
+		SingleDocumentModel previousModel = currentDocument;
+		
+		path = path.toAbsolutePath().normalize();
+		
+		SingleDocumentModel newModel = null;
+		
+		for(SingleDocumentModel document : documents) {
+			if(path.equals(document.getFilePath())) {
+				newModel = document;
+			}
+		}
+		if(newModel != null) currentDocument = newModel;
+		else {
+			byte[] fileBytes;
+			try {
+				fileBytes = Files.readAllBytes(path);
+			} catch(IOException e) {
+				JOptionPane.showMessageDialog(null, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+				return null;
+			}	
+			
+			currentDocument = new DefaultSingleDocumentModel(path, new String(fileBytes, StandardCharsets.UTF_8));
+			initializeNewDocument(path);		
+			
+			notifyRegisteredListeners(l -> l.documentAdded(currentDocument));
+		}
+		
+		currentDocument.addSingleDocumentListener(getBasicDocumentListener());
+		notifyRegisteredListeners(l -> l.currentDocumentChanged(previousModel, currentDocument));
+		
+		return currentDocument;		
 	}
 
 	@Override
@@ -129,6 +169,7 @@ public class DefaultMultipleDocumentModel extends JTabbedPane implements Multipl
 			currentDocument = null;
 		else 
 			currentDocument = documents.get(0);
+		
 		notifyRegisteredListeners(l -> l.currentDocumentChanged(model, currentDocument));
 	}
 
@@ -155,6 +196,8 @@ public class DefaultMultipleDocumentModel extends JTabbedPane implements Multipl
 
 	@Override
 	public SingleDocumentModel findForPath(Path path) {
+		if(path == null) throw new NullPointerException("Path to document cannot be null!");
+		
 		for(SingleDocumentModel document : documents) {
 			if(document.getFilePath().equals(path.toAbsolutePath().normalize()))
 				return document;
@@ -167,26 +210,74 @@ public class DefaultMultipleDocumentModel extends JTabbedPane implements Multipl
 		return documents.indexOf(doc);
 	}
 	
+	
+	/**
+	 * Reads image from given path and returns it as an {@code ImageIcon}
+	 * @param iconPath path to image
+	 * @return icon
+	 */
 	private ImageIcon getIcon(String iconPath) {
 		if(iconPath == null) throw new NullPointerException("Icon path cannot be null!");
 		
 		InputStream is = this.getClass().getResourceAsStream(iconPath);
 		try {
-			Image imageFromIcon = new ImageIcon(is.readAllBytes()).getImage();
-			return new ImageIcon(imageFromIcon.getScaledInstance(20, 20, Image.SCALE_SMOOTH));
+			return new ImageIcon(is.readAllBytes());
+			//ImageIcon icon = new Image()// is.readAllBytes()
+//			Image imageFromIcon = new ImageIcon(is.readAllBytes()).getImage();
+//			return new ImageIcon(imageFromIcon.getScaledInstance(20, 20, Image.SCALE_SMOOTH));
 		} catch (Exception e) {
 			JOptionPane.showMessageDialog(null, e.getMessage(), "Warning", JOptionPane.WARNING_MESSAGE);
 		}
 		
-		return null;
-		
+		return null;	
 	}
 	
 
+	/**
+	 * Notifies all registered listeners on given action.
+	 */
 	private void notifyRegisteredListeners(Consumer<MultipleDocumentListener> action) {
         this.listeners.forEach(action);
     }
 	
+	/**
+	 * Creates and return basic DocumentListener.
+	 * Listens for modifying and set proper icon.
+	 * If file path changes, changes tooltip and title of a tab.
+	 * 
+	 * @return instance of {@code SingleDocumentListener}
+	 */
+	private SingleDocumentListener getBasicDocumentListener() {
+		return new SingleDocumentListener() {
+			@Override
+			public void documentModifyStatusUpdated(SingleDocumentModel model) {
+				if(model.isModified()) setIconAt(getSelectedIndex(), modifiedIcon);
+				else setIconAt(getSelectedIndex(), notModifiedIcon);
+			}
+			@Override
+			public void documentFilePathUpdated(SingleDocumentModel model) {
+				setToolTipTextAt(getSelectedIndex(), model.getFilePath().toString());
+				setTitleAt(getSelectedIndex(), model.getFilePath().getFileName().toString());
+			}
+		};
+	}
+	
+	/**
+	 * Sets up SingleDocumentModel and adds it like a tab to MultipleDocumentModel
+	 */
+	private void initializeNewDocument(Path path) {
+		boolean noPath = path == null;
+		
+		documents.add(currentDocument);
+		int tabInd = documents.indexOf(currentDocument);
+		
+		addTab(noPath ? "(unnamed)" : path.getFileName().toString(), new JPanel().add(new JScrollPane(currentDocument.getTextComponent())));
+		setToolTipTextAt(tabInd, noPath ? "(unnamed)" : path.toString());
+		setIconAt(tabInd, notModifiedIcon);
+		setSelectedIndex(tabInd);
+		
+
+	}
 	
 	
 	
