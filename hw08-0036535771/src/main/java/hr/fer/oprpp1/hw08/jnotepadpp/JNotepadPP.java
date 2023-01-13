@@ -3,13 +3,17 @@ package hr.fer.oprpp1.hw08.jnotepadpp;
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
 import java.io.File;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import javax.swing.Timer;
-
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.JToolBar;
@@ -17,6 +21,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
 
 import hr.fer.oprpp1.hw08.jnotepadpp.local.FormLocalizationProvider;
+import hr.fer.oprpp1.hw08.jnotepadpp.local.LocalizableAction;
 import hr.fer.oprpp1.hw08.jnotepadpp.local.LocalizableLabel;
 import hr.fer.oprpp1.hw08.jnotepadpp.local.LocalizationProvider;
 import hr.fer.oprpp1.hw08.jnotepadpp.model.DefaultMultipleDocumentModel;
@@ -35,6 +40,8 @@ public class JNotepadPP extends JFrame{
 	private Timer clock;
 	
 	private FormLocalizationProvider flp;
+	
+	private LocalizableAction fileMenu, createBlankDocument, openDocument, saveDocument, saveAsDocument;
 	
 	
 	public JNotepadPP() {
@@ -63,12 +70,16 @@ public class JNotepadPP extends JFrame{
 		
 		cp.add(model.getVisualComponent(), BorderLayout.CENTER);
 		
-		setupToolBar(cp);
+		
+		setupActions();
+		
+		setupMenuBar(cp);
 		setupStatusBar(cp);
 		
 		
 	}
-	
+
+
 	/**
 	 * Sets up listeners for change in document.
 	 */
@@ -124,18 +135,84 @@ public class JNotepadPP extends JFrame{
 		
 		model.addMultipleDocumentListener(mdl);
 		
+	}
+	
+	
+	
+	/** 
+	 * Sets up all needed actions.
+	 */
+	private void setupActions() {
 		
+		fileMenu = new LocalizableAction("fileMenu", flp) {
+			private static final long serialVersionUID = 3349379860571948582L;
+			@Override
+			public void actionPerformed(ActionEvent e) {				
+			}
+		};
 		
+		createBlankDocument = new LocalizableAction("createBlank", flp) {
+			private static final long serialVersionUID = 8267260492556719217L;
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				model.createNewDocument();
+			}
+		};
+		
+		openDocument = new LocalizableAction("open", flp) {
+			private static final long serialVersionUID = 8267260492556319217L;
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				JFileChooser fileChooser = new JFileChooser();
+				fileChooser.showOpenDialog(JNotepadPP.this);
+				File file = fileChooser.getSelectedFile();
+				
+				model.loadDocument(file.toPath());
+			}
+		}; 
+		
+		saveDocument = new LocalizableAction("save", flp) {
+			private static final long serialVersionUID = 8267260491556319217L;
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// save it
+			}
+		}; 
+		
+		saveAsDocument = new LocalizableAction("saveAs", flp) {
+			private static final long serialVersionUID = 8267260491556319217L;
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// save it as
+			}
+		}; 
 		
 	}
+	
+	
 
-	private void setupToolBar(Container cp) {
-		JToolBar toolbar = new JToolBar();
-		//Action a = new Action();
+	private void setupMenuBar(Container cp) {
+		JMenuBar toolbar = new JMenuBar();
+		
+		JMenu file = new JMenu(fileMenu);
+		file.add(new JMenuItem(createBlankDocument));
+		file.add(new JMenuItem(openDocument));
+		file.add(new JMenuItem(saveDocument));
+		file.add(new JMenuItem(saveAsDocument));
+		toolbar.add(file);
+
+		
+		
 		
 		cp.add(toolbar, BorderLayout.PAGE_START);
 	}
 	
+	
+	
+	/**
+	 * Sets up and adds all components of status bar.
+	 */
 	private void setupStatusBar(Container cp) {
 		JToolBar statusBar = new JToolBar();
 		statusBar.setLayout(new BorderLayout());
@@ -160,7 +237,6 @@ public class JNotepadPP extends JFrame{
 	
 
 	private void updateCaretInfoLabel() {
-		System.out.println("chanhadhs");
 		SingleDocumentModel currModel = model.getCurrentDocument();
 	
 		if(currModel == null) {
