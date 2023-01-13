@@ -3,25 +3,11 @@ package hr.fer.oprpp1.hw08.jnotepadpp;
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.GridLayout;
-import java.awt.Point;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.beans.PropertyChangeListener;
 import java.io.File;
-import java.io.IOException;
-import java.net.URI;
-import java.nio.file.FileSystem;
-import java.nio.file.LinkOption;
-import java.nio.file.Path;
-import java.nio.file.WatchKey;
-import java.nio.file.WatchService;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Timer;
-import java.nio.file.WatchEvent.Kind;
-import java.nio.file.WatchEvent.Modifier;
+import javax.swing.Timer;
 
-import javax.swing.Action;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -29,10 +15,10 @@ import javax.swing.JTextArea;
 import javax.swing.JToolBar;
 import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
-import javax.swing.event.CaretEvent;
-import javax.swing.event.CaretListener;
-import javax.swing.text.Caret;
 
+import hr.fer.oprpp1.hw08.jnotepadpp.local.FormLocalizationProvider;
+import hr.fer.oprpp1.hw08.jnotepadpp.local.LocalizableLabel;
+import hr.fer.oprpp1.hw08.jnotepadpp.local.LocalizationProvider;
 import hr.fer.oprpp1.hw08.jnotepadpp.model.DefaultMultipleDocumentModel;
 import hr.fer.oprpp1.hw08.jnotepadpp.model.interfaces.MultipleDocumentListener;
 import hr.fer.oprpp1.hw08.jnotepadpp.model.interfaces.SingleDocumentListener;
@@ -43,10 +29,13 @@ public class JNotepadPP extends JFrame{
 
 	private DefaultMultipleDocumentModel model;
 	
-	private JLabel lengthLabel;
-	private JLabel caretInfoLabel;
+	private LocalizableLabel lengthLabel,
+							 caretInfoLabel;
 	private JLabel clockLabel;
-	private javax.swing.Timer clock;
+	private Timer clock;
+	
+	private FormLocalizationProvider flp;
+	
 	
 	public JNotepadPP() {
 		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
@@ -67,7 +56,7 @@ public class JNotepadPP extends JFrame{
 	private void initGUI() {
 		
 		model = new DefaultMultipleDocumentModel();
-		
+		flp = new FormLocalizationProvider(LocalizationProvider.getInstance(), this);
 		
 		Container cp = getContentPane();
 		cp.setLayout(new BorderLayout());
@@ -153,17 +142,15 @@ public class JNotepadPP extends JFrame{
 		statusBar.setFloatable(false);
 		
 		JPanel docInfoPanel = new JPanel(new GridLayout(1,2));
-		lengthLabel = new JLabel();
-		caretInfoLabel = new JLabel();
+		lengthLabel = new LocalizableLabel("length", flp);
+		caretInfoLabel = new LocalizableLabel("caretInfo", flp);;
 		docInfoPanel.add(lengthLabel);
 		docInfoPanel.add(caretInfoLabel);
 		
 		updateLengthLabel();
 		updateCaretInfoLabel();
 
-		
 		clockLabel = new JLabel();
-		
 		updateClock();
 		
 		statusBar.add(clockLabel, BorderLayout.LINE_END);
@@ -173,6 +160,7 @@ public class JNotepadPP extends JFrame{
 	
 
 	private void updateCaretInfoLabel() {
+		System.out.println("chanhadhs");
 		SingleDocumentModel currModel = model.getCurrentDocument();
 	
 		if(currModel == null) {
@@ -188,22 +176,27 @@ public class JNotepadPP extends JFrame{
             int caretpos = editArea.getCaretPosition();
             row = editArea.getLineOfOffset(caretpos);
 
-            column = caretpos - editArea.getLineStartOffset(row);
+            column = caretpos - editArea.getLineStartOffset(row) +1;
             row++;
         }
         catch(Exception ex) { 
         	System.out.println("err");
         }
 		
+		// Ln : #  Col : $  Sel : %
+		String info = flp.getString("caretInfo");
+		info = info.replace("#", ""+row);
+		info = info.replace("$", ""+column);
+		info = info.replace("%", "");
 		
-		String info = String.format("Ln : %d  Col : %d  Sel : %d", row, column+1, 0);
+		//String.format("Ln : %d  Col : %d  Sel : %d", row, column+1, 0);
 		caretInfoLabel.setText(info);
 	}
 
 	private void updateLengthLabel() {
 		SingleDocumentModel currModel = model.getCurrentDocument();
 		
-		String info = "length : ";
+		String info = flp.getString("length");
 		if(currModel == null) {
 			info += "-";
 			return;
