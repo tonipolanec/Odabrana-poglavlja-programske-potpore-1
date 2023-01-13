@@ -5,6 +5,7 @@ import java.awt.Container;
 import java.awt.GridLayout;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.IOException;
@@ -14,12 +15,16 @@ import java.nio.file.LinkOption;
 import java.nio.file.Path;
 import java.nio.file.WatchKey;
 import java.nio.file.WatchService;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Timer;
 import java.nio.file.WatchEvent.Kind;
 import java.nio.file.WatchEvent.Modifier;
 
 import javax.swing.Action;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.JToolBar;
 import javax.swing.SwingUtilities;
@@ -40,6 +45,8 @@ public class JNotepadPP extends JFrame{
 	
 	private JLabel lengthLabel;
 	private JLabel caretInfoLabel;
+	private JLabel clockLabel;
+	private javax.swing.Timer clock;
 	
 	public JNotepadPP() {
 		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
@@ -103,7 +110,7 @@ public class JNotepadPP extends JFrame{
 				 model.getTextComponent().getCaret().addChangeListener(e -> {
 //	                    Caret caret = model.getTextComponent().getCaret();
 //	                    setDocumentModificationActionEnablement(caret.getDot() != caret.getMark());
-					 	System.out.println("caret changed");
+//					 	System.out.println("caret changed");
 	                    updateCaretInfoLabel();
 	                    updateLengthLabel();
 	             });
@@ -128,6 +135,9 @@ public class JNotepadPP extends JFrame{
 		
 		model.addMultipleDocumentListener(mdl);
 		
+		
+		
+		
 	}
 
 	private void setupToolBar(Container cp) {
@@ -139,17 +149,25 @@ public class JNotepadPP extends JFrame{
 	
 	private void setupStatusBar(Container cp) {
 		JToolBar statusBar = new JToolBar();
-		statusBar.setLayout(new GridLayout(1,2));
+		statusBar.setLayout(new BorderLayout());
 		statusBar.setFloatable(false);
 		
+		JPanel docInfoPanel = new JPanel(new GridLayout(1,2));
 		lengthLabel = new JLabel();
 		caretInfoLabel = new JLabel();
+		docInfoPanel.add(lengthLabel);
+		docInfoPanel.add(caretInfoLabel);
 		
-		statusBar.add(lengthLabel);
-		statusBar.add(caretInfoLabel);
 		updateLengthLabel();
 		updateCaretInfoLabel();
+
 		
+		clockLabel = new JLabel();
+		
+		updateClock();
+		
+		statusBar.add(clockLabel, BorderLayout.LINE_END);
+		statusBar.add(docInfoPanel, BorderLayout.LINE_START);
 		cp.add(statusBar, BorderLayout.PAGE_END);
 	}
 	
@@ -178,18 +196,28 @@ public class JNotepadPP extends JFrame{
         }
 		
 		
-		String info = String.format("Ln : %d  Col : %d  Sel : %d", row, column, 0);
-		System.out.println(info);
-		lengthLabel.setText(info);
+		String info = String.format("Ln : %d  Col : %d  Sel : %d", row, column+1, 0);
+		caretInfoLabel.setText(info);
 	}
 
 	private void updateLengthLabel() {
 		SingleDocumentModel currModel = model.getCurrentDocument();
 		
 		String info = "length : ";
-		info += currModel != null ? currModel.getTextComponent().toString().length() : "-";
+		if(currModel == null) {
+			info += "-";
+			return;
+		}
+		info += currModel.getTextComponent().getText().length();
 		
 		lengthLabel.setText(info);		
+	}
+	
+	private void updateClock() {
+		   DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");  
+		   
+		   clock = new javax.swing.Timer(500, e -> clockLabel.setText(dtf.format(LocalDateTime.now())));
+		   clock.start();
 	}
 
 	
