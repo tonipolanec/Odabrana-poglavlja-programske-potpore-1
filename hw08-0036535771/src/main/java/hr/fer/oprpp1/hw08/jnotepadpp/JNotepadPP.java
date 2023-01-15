@@ -135,6 +135,7 @@ public class JNotepadPP extends JFrame{
 	 * Function for closing application.
 	 */
 	private void exit() {
+		
 		this.clock.stop();
         this.dispose();
 	}
@@ -145,25 +146,11 @@ public class JNotepadPP extends JFrame{
 	 */
 	private void setupMultipleDocumentModelListeners() {
 		
-		SingleDocumentListener currentSingleDocListener = new SingleDocumentListener() {	
-			@Override
-			public void documentModifyStatusUpdated(SingleDocumentModel model) {
-				
-			}
-			@Override
-			public void documentFilePathUpdated(SingleDocumentModel model) {
-				// TODO Auto-generated method stub
-				
-			}
-		}; 
 		
 		MultipleDocumentListener mdl = new MultipleDocumentListener() {
 			
 			@Override
-			public void documentRemoved(SingleDocumentModel model) {
-				// TODO Auto-generated method stub
-				
-			}
+			public void documentRemoved(SingleDocumentModel model) {}
 			
 			@Override
 			public void documentAdded(SingleDocumentModel model) {
@@ -175,10 +162,6 @@ public class JNotepadPP extends JFrame{
 			
 			@Override
 			public void currentDocumentChanged(SingleDocumentModel previousModel, SingleDocumentModel currentModel) {
-//				if(previousModel != null)
-//					previousModel.removeSingleDocumentListener(currentSingleDocListener);
-//				if(currentModel != null)
-//					currentModel.addSingleDocumentListener(currentSingleDocListener);
 				
 				if(currentModel != null) {
 					updateCaretInfoLabel();
@@ -740,4 +723,5 @@ public class JNotepadPP extends JFrame{
 		SwingUtilities.invokeLater(() -> new JNotepadPP().setVisible(true));
 	}
 
+	
 }
