@@ -4,10 +4,12 @@ import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.File;
+import java.nio.file.Path;
 import java.text.Collator;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -26,6 +28,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javax.swing.Timer;
+import javax.swing.Action;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -36,6 +39,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.JToolBar;
+import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
 import javax.swing.text.BadLocationException;
@@ -67,7 +71,7 @@ public class JNotepadPP extends JFrame{
 	
 	private LocalizableAction 
 		fileMenu, 
-			createBlankDocument, openDocument, saveDocument, saveAsDocument, 
+			createBlankDocument, openDocument, saveDocument, saveAsDocument, closeDocument, 
 		languagesMenu, 
 			toEnglish, toCroatian, toGerman,
 		toolsMenu, 
@@ -167,7 +171,6 @@ public class JNotepadPP extends JFrame{
 	                    updateCaretInfoLabel();
 	                    updateLengthLabel();
 	             });
-				
 			}
 			
 			@Override
@@ -198,6 +201,7 @@ public class JNotepadPP extends JFrame{
 		file.add(new JMenuItem(openDocument));
 		file.add(new JMenuItem(saveDocument));
 		file.add(new JMenuItem(saveAsDocument));
+		file.add(new JMenuItem(closeDocument));
 		toolbar.add(file);
 
 		JMenu languages = new JMenu(languagesMenu);
@@ -214,9 +218,11 @@ public class JNotepadPP extends JFrame{
 		JMenu sort = new JMenu(sortSubmenu);
 		sort.add(new JMenuItem(ascending));
 		sort.add(new JMenuItem(descending));
-		sort.add(new JMenuItem(unique));
+		
 		tools.add(sort);
 		tools.add(changeCase);
+		tools.add(new JMenuItem(unique));
+		
 		toolbar.add(tools);
 		
 		
@@ -267,6 +273,8 @@ public class JNotepadPP extends JFrame{
 			public void actionPerformed(ActionEvent e) {				
 			}
 		};
+		fileMenu.putValue(Action.MNEMONIC_KEY, KeyEvent.VK_F);
+		
 		
 		createBlankDocument = new LocalizableAction("createBlank", flp) {
 			private static final long serialVersionUID = 1L;
@@ -276,6 +284,8 @@ public class JNotepadPP extends JFrame{
 				model.createNewDocument();
 			}
 		};
+		createBlankDocument.putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("control N"));
+		createBlankDocument.putValue(Action.MNEMONIC_KEY, KeyEvent.VK_N);
 		
 		openDocument = new LocalizableAction("open", flp) {
 			private static final long serialVersionUID = 1L;
@@ -284,26 +294,42 @@ public class JNotepadPP extends JFrame{
 				JFileChooser fileChooser = new JFileChooser();
 				fileChooser.showOpenDialog(JNotepadPP.this);
 				File file = fileChooser.getSelectedFile();
-				
-				model.loadDocument(file.toPath());
+				if(file != null)
+					model.loadDocument(file.toPath());
 			}
 		}; 
+		openDocument.putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("control O"));
+		openDocument.putValue(Action.MNEMONIC_KEY, KeyEvent.VK_O);
 		
 		saveDocument = new LocalizableAction("save", flp) {
 			private static final long serialVersionUID = 1L;
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// save it
+				save(false);
 			}
 		}; 
+		saveDocument.putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("control S"));
+		saveDocument.putValue(Action.MNEMONIC_KEY, KeyEvent.VK_S);
 		
 		saveAsDocument = new LocalizableAction("saveAs", flp) {
 			private static final long serialVersionUID = 1L;
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// save it as
+				save(true);
 			}
 		}; 
+		saveAsDocument.putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("control shift S"));
+		saveAsDocument.putValue(Action.MNEMONIC_KEY, KeyEvent.VK_A);
+		
+		closeDocument = new LocalizableAction("close", flp) {
+			private static final long serialVersionUID = 1L;
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				model.closeDocument(model.getCurrentDocument());
+			}
+		}; 
+		closeDocument.putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("control shift X"));
+		closeDocument.putValue(Action.MNEMONIC_KEY, KeyEvent.VK_C);
 		
 		
 
@@ -316,6 +342,8 @@ public class JNotepadPP extends JFrame{
 			public void actionPerformed(ActionEvent e) {				
 			}
 		};
+		languagesMenu.putValue(Action.MNEMONIC_KEY, KeyEvent.VK_L);
+
 		
 		toEnglish = new LocalizableAction("english", flp) {
 			private static final long serialVersionUID = 1L;
@@ -324,6 +352,8 @@ public class JNotepadPP extends JFrame{
 				LocalizationProvider.getInstance().setLanguage("en");
 			}
 		};
+		toEnglish.putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("alt E"));
+		toEnglish.putValue(Action.MNEMONIC_KEY, KeyEvent.VK_E);
 		
 		toCroatian = new LocalizableAction("croatian", flp) {
 			private static final long serialVersionUID = 1L;
@@ -332,6 +362,8 @@ public class JNotepadPP extends JFrame{
 				LocalizationProvider.getInstance().setLanguage("hr");
 			}
 		};
+		toCroatian.putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("alt C"));
+		toCroatian.putValue(Action.MNEMONIC_KEY, KeyEvent.VK_C);
 		
 		toGerman = new LocalizableAction("german", flp) {
 			private static final long serialVersionUID = 1L;
@@ -340,6 +372,8 @@ public class JNotepadPP extends JFrame{
 				LocalizationProvider.getInstance().setLanguage("de");
 			}
 		};
+		toGerman.putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("alt G"));
+		toGerman.putValue(Action.MNEMONIC_KEY, KeyEvent.VK_G);
 		
 		
 		
@@ -352,12 +386,16 @@ public class JNotepadPP extends JFrame{
 			public void actionPerformed(ActionEvent e) {				
 			}
 		};
+		toolsMenu.putValue(Action.MNEMONIC_KEY, KeyEvent.VK_T);
+		
 		changeCaseSubmenu = new LocalizableAction("changeCase", flp) {
 			private static final long serialVersionUID = 1L;
 			@Override
 			public void actionPerformed(ActionEvent e) {				
 			}
 		};
+		changeCaseSubmenu.putValue(Action.MNEMONIC_KEY, KeyEvent.VK_C);
+		
 		invertCase = new LocalizableAction("invertCase", flp) {
 			private static final long serialVersionUID = 1L;
 			@Override
@@ -382,6 +420,9 @@ public class JNotepadPP extends JFrame{
 				}
 			}
 		};
+		invertCase.putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("control I"));
+		invertCase.putValue(Action.MNEMONIC_KEY, KeyEvent.VK_I);
+		
 		toLowercase = new LocalizableAction("toLowercase", flp) {
 			private static final long serialVersionUID = 1L;
 			@Override
@@ -406,6 +447,9 @@ public class JNotepadPP extends JFrame{
 				}
 			}
 		};
+		toLowercase.putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("control L"));
+		toLowercase.putValue(Action.MNEMONIC_KEY, KeyEvent.VK_L);
+		
 		toUppercase = new LocalizableAction("toUppercase", flp) {
 			private static final long serialVersionUID = 1L;
 			@Override
@@ -430,24 +474,28 @@ public class JNotepadPP extends JFrame{
 				}
 			}
 		};
+		toUppercase.putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("control U"));
+		toUppercase.putValue(Action.MNEMONIC_KEY, KeyEvent.VK_U);
 		
 		// sortSubmenu, ascending, descending, unique
-		
+	
 		sortSubmenu = new LocalizableAction("sortSubmenu", flp) {
 			private static final long serialVersionUID = 1L;
 			@Override
 			public void actionPerformed(ActionEvent e) {				
 			}
 		};
+		sortSubmenu.putValue(Action.MNEMONIC_KEY, KeyEvent.VK_S);
 		
 		ascending = new LocalizableAction("ascending", flp) {
 			private static final long serialVersionUID = 1L;
 			@Override
 			public void actionPerformed(ActionEvent e) {	
 				sortLines(true);
-			}
-			
+			}	
 		};
+		ascending.putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("control A"));
+		ascending.putValue(Action.MNEMONIC_KEY, KeyEvent.VK_A);
 		
 		descending = new LocalizableAction("descending", flp) {
 			private static final long serialVersionUID = 1L;
@@ -456,6 +504,8 @@ public class JNotepadPP extends JFrame{
 				sortLines(false);
 			}
 		};
+		descending.putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("control D"));
+		descending.putValue(Action.MNEMONIC_KEY, KeyEvent.VK_D);
 		
 		unique = new LocalizableAction("unique", flp) {
 			private static final long serialVersionUID = 1L;
@@ -464,7 +514,8 @@ public class JNotepadPP extends JFrame{
 				getUniqueLines();
 			}
 		};
-		
+		unique.putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("control shift U"));
+		unique.putValue(Action.MNEMONIC_KEY, KeyEvent.VK_U);
 		
 	}
 	
@@ -503,6 +554,7 @@ public class JNotepadPP extends JFrame{
        
         changeCaseSubmenu.setEnabled(haveSelectedText);
         sortSubmenu.setEnabled(haveSelectedText);
+        unique.setEnabled(haveSelectedText);
 		
 		// Ln : #  Col : $  Sel : %
 		String info = flp.getString("caretInfo");
@@ -539,6 +591,39 @@ public class JNotepadPP extends JFrame{
 		   clock = new javax.swing.Timer(500, e -> clockLabel.setText(dtf.format(LocalDateTime.now())));
 		   clock.start();
 	}
+	
+	
+	/**
+	 * Saves current document to disk.
+	 * 
+	 * @param saveAs if we want to save to new path or not
+	 */
+	private void save(boolean saveAs) {
+		SingleDocumentModel currentDocument = model.getCurrentDocument();
+		
+		if(!saveAs && currentDocument.getFilePath() != null) {
+			model.saveDocument(currentDocument, null);
+			return;
+		}
+		
+		JFileChooser fileChooser = new JFileChooser();
+		fileChooser.showOpenDialog(JNotepadPP.this);
+		File file = fileChooser.getSelectedFile();
+		if(file == null)
+			return;
+		
+		Path newPath = file.toPath();
+		
+		try {
+            model.saveDocument(currentDocument, newPath);
+            currentDocument.setFilePath(newPath);
+        } catch (NullPointerException e1) {
+            return;
+        }
+		
+	}
+	
+	
 	
 	/**
 	 * Changes case for given string and returns it.
@@ -647,6 +732,8 @@ public class JNotepadPP extends JFrame{
 			JOptionPane.showMessageDialog(null, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
 		}
 	}
+	
+
 	
 	
 	public static void main(String[] args) {
