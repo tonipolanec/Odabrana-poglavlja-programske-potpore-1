@@ -21,6 +21,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.swing.Timer;
 import javax.swing.JFileChooser;
@@ -630,11 +633,12 @@ public class JNotepadPP extends JFrame{
 		try {
 			String text = doc.getText(start, len);
 			String[] lines = text.split("\\r?\\n");
-			Set<String> uniqueLines = new LinkedHashSet<>();
-			Collections.addAll(uniqueLines, lines);
-			String[] uLines = uniqueLines.toArray(lines);
 			
-			text = String.join("\n", uLines) + '\n';
+			Set<String> uniqueLines = new LinkedHashSet<>(Arrays.asList(lines));
+			
+			text = "";
+			for(String l : uniqueLines)
+				text += l + '\n';
 			
 			doc.remove(start, len);
 			doc.insertString(start, text, null);
