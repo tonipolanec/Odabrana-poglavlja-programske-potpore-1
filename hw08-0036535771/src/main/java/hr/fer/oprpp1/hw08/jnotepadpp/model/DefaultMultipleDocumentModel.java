@@ -1,7 +1,6 @@
 package hr.fer.oprpp1.hw08.jnotepadpp.model;
 
 import java.awt.Image;
-import java.io.IOError;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;

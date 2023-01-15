@@ -41,7 +41,8 @@ public class JNotepadPP extends JFrame{
 	
 	private FormLocalizationProvider flp;
 	
-	private LocalizableAction fileMenu, createBlankDocument, openDocument, saveDocument, saveAsDocument;
+	private LocalizableAction fileMenu, createBlankDocument, openDocument, saveDocument, saveAsDocument, 
+		languagesMenu, toEnglish, toCroatian, toGerman;
 	
 	
 	public JNotepadPP() {
@@ -144,6 +145,12 @@ public class JNotepadPP extends JFrame{
 	 */
 	private void setupActions() {
 		
+		// -------------------------------------------------------------------
+		//
+		//						FILE MENU
+		//
+		// -------------------------------------------------------------------
+		
 		fileMenu = new LocalizableAction("fileMenu", flp) {
 			private static final long serialVersionUID = 3349379860571948582L;
 			@Override
@@ -188,6 +195,45 @@ public class JNotepadPP extends JFrame{
 			}
 		}; 
 		
+		
+		// -------------------------------------------------------------------
+		//
+		//						LANGUAGES MENU
+		//
+		// -------------------------------------------------------------------
+		//  toEnglish, toCroatian, toDeutsch;
+		
+		languagesMenu = new LocalizableAction("languages", flp) {
+			private static final long serialVersionUID = 3349379860571948582L;
+			@Override
+			public void actionPerformed(ActionEvent e) {				
+			}
+		};
+		
+		toEnglish = new LocalizableAction("english", flp) {
+			private static final long serialVersionUID = 8267260491556319217L;
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				LocalizationProvider.getInstance().setLanguage("en");
+			}
+		};
+		
+		toCroatian = new LocalizableAction("croatian", flp) {
+			private static final long serialVersionUID = 8267260491556319217L;
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				LocalizationProvider.getInstance().setLanguage("hr");
+			}
+		};
+		
+		toGerman = new LocalizableAction("german", flp) {
+			private static final long serialVersionUID = 8267260491556319217L;
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				LocalizationProvider.getInstance().setLanguage("de");
+			}
+		};
+		
 	}
 	
 	
@@ -202,6 +248,11 @@ public class JNotepadPP extends JFrame{
 		file.add(new JMenuItem(saveAsDocument));
 		toolbar.add(file);
 
+		JMenu languages = new JMenu(languagesMenu);
+		languages.add(new JMenuItem(toEnglish));
+		languages.add(new JMenuItem(toCroatian));
+		languages.add(new JMenuItem(toGerman));
+		toolbar.add(languages);
 		
 		
 		
