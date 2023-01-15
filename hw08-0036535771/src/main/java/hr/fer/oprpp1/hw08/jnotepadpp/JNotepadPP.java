@@ -4,9 +4,24 @@ import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.io.File;
+import java.text.Collator;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.LinkedHashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Set;
+
 import javax.swing.Timer;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -14,11 +29,17 @@ import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.JToolBar;
 import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Caret;
+import javax.swing.text.Document;
+import javax.swing.text.Element;
+import javax.swing.text.PlainDocument;
 
 import hr.fer.oprpp1.hw08.jnotepadpp.local.FormLocalizationProvider;
 import hr.fer.oprpp1.hw08.jnotepadpp.local.LocalizableAction;
@@ -41,14 +62,26 @@ public class JNotepadPP extends JFrame{
 	
 	private FormLocalizationProvider flp;
 	
-	private LocalizableAction fileMenu, createBlankDocument, openDocument, saveDocument, saveAsDocument, 
-		languagesMenu, toEnglish, toCroatian, toGerman;
+	private LocalizableAction 
+		fileMenu, 
+			createBlankDocument, openDocument, saveDocument, saveAsDocument, 
+		languagesMenu, 
+			toEnglish, toCroatian, toGerman,
+		toolsMenu, 
+			changeCaseSubmenu, 
+				toUppercase, toLowercase, invertCase,
+			sortSubmenu,
+				ascending, descending, unique;
+	
+	private boolean haveSelectedText;
 	
 	
 	public JNotepadPP() {
-		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+		setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+		setupClosingWindowAdapter();
+		
         setLocation(20, 20);
-        setSize(700, 700);
+        setSize(700, 400);
         setTitle("JNotepad++");
         
         initGUI();
@@ -78,6 +111,25 @@ public class JNotepadPP extends JFrame{
 		setupStatusBar(cp);
 		
 		
+	}
+	
+	private void setupClosingWindowAdapter() {
+        WindowAdapter wa = new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                exit();
+            }
+        };
+        addWindowListener((wa));
+    }
+	
+	
+	/**
+	 * Function for closing application.
+	 */
+	private void exit() {
+		this.clock.stop();
+        this.dispose();
 	}
 
 
@@ -109,9 +161,6 @@ public class JNotepadPP extends JFrame{
 			@Override
 			public void documentAdded(SingleDocumentModel model) {
 				 model.getTextComponent().getCaret().addChangeListener(e -> {
-//	                    Caret caret = model.getTextComponent().getCaret();
-//	                    setDocumentModificationActionEnablement(caret.getDot() != caret.getMark());
-//					 	System.out.println("caret changed");
 	                    updateCaretInfoLabel();
 	                    updateLengthLabel();
 	             });
@@ -126,7 +175,6 @@ public class JNotepadPP extends JFrame{
 //					currentModel.addSingleDocumentListener(currentSingleDocListener);
 				
 				if(currentModel != null) {
-					System.out.println("update when changed");
 					updateCaretInfoLabel();
 					updateLengthLabel();
 				}
@@ -137,106 +185,7 @@ public class JNotepadPP extends JFrame{
 		model.addMultipleDocumentListener(mdl);
 		
 	}
-	
-	
-	
-	/** 
-	 * Sets up all needed actions.
-	 */
-	private void setupActions() {
 		
-		// -------------------------------------------------------------------
-		//
-		//						FILE MENU
-		//
-		// -------------------------------------------------------------------
-		
-		fileMenu = new LocalizableAction("fileMenu", flp) {
-			private static final long serialVersionUID = 3349379860571948582L;
-			@Override
-			public void actionPerformed(ActionEvent e) {				
-			}
-		};
-		
-		createBlankDocument = new LocalizableAction("createBlank", flp) {
-			private static final long serialVersionUID = 8267260492556719217L;
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				model.createNewDocument();
-			}
-		};
-		
-		openDocument = new LocalizableAction("open", flp) {
-			private static final long serialVersionUID = 8267260492556319217L;
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				JFileChooser fileChooser = new JFileChooser();
-				fileChooser.showOpenDialog(JNotepadPP.this);
-				File file = fileChooser.getSelectedFile();
-				
-				model.loadDocument(file.toPath());
-			}
-		}; 
-		
-		saveDocument = new LocalizableAction("save", flp) {
-			private static final long serialVersionUID = 8267260491556319217L;
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				// save it
-			}
-		}; 
-		
-		saveAsDocument = new LocalizableAction("saveAs", flp) {
-			private static final long serialVersionUID = 8267260491556319217L;
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				// save it as
-			}
-		}; 
-		
-		
-		// -------------------------------------------------------------------
-		//
-		//						LANGUAGES MENU
-		//
-		// -------------------------------------------------------------------
-		//  toEnglish, toCroatian, toDeutsch;
-		
-		languagesMenu = new LocalizableAction("languages", flp) {
-			private static final long serialVersionUID = 3349379860571948582L;
-			@Override
-			public void actionPerformed(ActionEvent e) {				
-			}
-		};
-		
-		toEnglish = new LocalizableAction("english", flp) {
-			private static final long serialVersionUID = 8267260491556319217L;
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				LocalizationProvider.getInstance().setLanguage("en");
-			}
-		};
-		
-		toCroatian = new LocalizableAction("croatian", flp) {
-			private static final long serialVersionUID = 8267260491556319217L;
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				LocalizationProvider.getInstance().setLanguage("hr");
-			}
-		};
-		
-		toGerman = new LocalizableAction("german", flp) {
-			private static final long serialVersionUID = 8267260491556319217L;
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				LocalizationProvider.getInstance().setLanguage("de");
-			}
-		};
-		
-	}
-	
-	
 
 	private void setupMenuBar(Container cp) {
 		JMenuBar toolbar = new JMenuBar();
@@ -254,6 +203,19 @@ public class JNotepadPP extends JFrame{
 		languages.add(new JMenuItem(toGerman));
 		toolbar.add(languages);
 		
+		JMenu tools = new JMenu(toolsMenu);
+		JMenu changeCase = new JMenu(changeCaseSubmenu);
+		changeCase.add(new JMenuItem(invertCase));
+		changeCase.add(new JMenuItem(toLowercase));
+		changeCase.add(new JMenuItem(toUppercase));
+		JMenu sort = new JMenu(sortSubmenu);
+		sort.add(new JMenuItem(ascending));
+		sort.add(new JMenuItem(descending));
+		sort.add(new JMenuItem(unique));
+		tools.add(sort);
+		tools.add(changeCase);
+		toolbar.add(tools);
+		
 		
 		
 		cp.add(toolbar, BorderLayout.PAGE_START);
@@ -262,7 +224,7 @@ public class JNotepadPP extends JFrame{
 	
 	
 	/**
-	 * Sets up and adds all components of status bar.
+	 * Sets up and adds all components of a status bar.
 	 */
 	private void setupStatusBar(Container cp) {
 		JToolBar statusBar = new JToolBar();
@@ -275,6 +237,7 @@ public class JNotepadPP extends JFrame{
 		docInfoPanel.add(lengthLabel);
 		docInfoPanel.add(caretInfoLabel);
 		
+		haveSelectedText = false;
 		updateLengthLabel();
 		updateCaretInfoLabel();
 
@@ -286,7 +249,227 @@ public class JNotepadPP extends JFrame{
 		cp.add(statusBar, BorderLayout.PAGE_END);
 	}
 	
+	/** 
+	 * Sets up all needed actions.
+	 */
+	private void setupActions() {
+		
 
+		//						FILE MENU		
+		//fileMenu, createBlankDocument, openDocument, saveDocument, saveAsDocument, 
+		
+		fileMenu = new LocalizableAction("fileMenu", flp) {
+			private static final long serialVersionUID = 1L;
+			@Override
+			public void actionPerformed(ActionEvent e) {				
+			}
+		};
+		
+		createBlankDocument = new LocalizableAction("createBlank", flp) {
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				model.createNewDocument();
+			}
+		};
+		
+		openDocument = new LocalizableAction("open", flp) {
+			private static final long serialVersionUID = 1L;
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				JFileChooser fileChooser = new JFileChooser();
+				fileChooser.showOpenDialog(JNotepadPP.this);
+				File file = fileChooser.getSelectedFile();
+				
+				model.loadDocument(file.toPath());
+			}
+		}; 
+		
+		saveDocument = new LocalizableAction("save", flp) {
+			private static final long serialVersionUID = 1L;
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// save it
+			}
+		}; 
+		
+		saveAsDocument = new LocalizableAction("saveAs", flp) {
+			private static final long serialVersionUID = 1L;
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// save it as
+			}
+		}; 
+		
+		
+
+		//						LANGUAGES MENU
+		//  toEnglish, toCroatian, toDeutsch
+		
+		languagesMenu = new LocalizableAction("languages", flp) {
+			private static final long serialVersionUID = 1L;
+			@Override
+			public void actionPerformed(ActionEvent e) {				
+			}
+		};
+		
+		toEnglish = new LocalizableAction("english", flp) {
+			private static final long serialVersionUID = 1L;
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				LocalizationProvider.getInstance().setLanguage("en");
+			}
+		};
+		
+		toCroatian = new LocalizableAction("croatian", flp) {
+			private static final long serialVersionUID = 1L;
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				LocalizationProvider.getInstance().setLanguage("hr");
+			}
+		};
+		
+		toGerman = new LocalizableAction("german", flp) {
+			private static final long serialVersionUID = 1L;
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				LocalizationProvider.getInstance().setLanguage("de");
+			}
+		};
+		
+		
+		
+		//                     TOOLS MENU
+		// toolsMenu, changeCaseSubmenu, toUppercase, toLowercase, invertCase;
+		
+		toolsMenu = new LocalizableAction("tools", flp) {
+			private static final long serialVersionUID = 1L;
+			@Override
+			public void actionPerformed(ActionEvent e) {				
+			}
+		};
+		changeCaseSubmenu = new LocalizableAction("changeCase", flp) {
+			private static final long serialVersionUID = 1L;
+			@Override
+			public void actionPerformed(ActionEvent e) {				
+			}
+		};
+		invertCase = new LocalizableAction("invertCase", flp) {
+			private static final long serialVersionUID = 1L;
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				JTextArea editor = model.getCurrentDocument().getTextComponent();
+				Document doc = editor.getDocument();
+				
+				int len = Math.abs(editor.getCaret().getDot()-editor.getCaret().getMark());
+				int offset = 0;
+				if(len!=0) 
+					offset = Math.min(editor.getCaret().getDot(),editor.getCaret().getMark());
+				else 
+					len = doc.getLength();
+				
+				try {
+					String text = doc.getText(offset, len);
+					text = changeCase(text, "invert");
+					doc.remove(offset, len);
+					doc.insertString(offset, text, null);
+				} catch(BadLocationException ex) {
+					JOptionPane.showMessageDialog(null, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+				}
+			}
+		};
+		toLowercase = new LocalizableAction("toLowercase", flp) {
+			private static final long serialVersionUID = 1L;
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				JTextArea editor = model.getCurrentDocument().getTextComponent();
+				Document doc = editor.getDocument();
+				
+				int len = Math.abs(editor.getCaret().getDot()-editor.getCaret().getMark());
+				int offset = 0;
+				if(len!=0) 
+					offset = Math.min(editor.getCaret().getDot(),editor.getCaret().getMark());
+				else
+					len = doc.getLength();
+				
+				try {
+					String text = doc.getText(offset, len);
+					text = changeCase(text, "lower");
+					doc.remove(offset, len);
+					doc.insertString(offset, text, null);
+				} catch(BadLocationException ex) {
+					JOptionPane.showMessageDialog(null, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+				}
+			}
+		};
+		toUppercase = new LocalizableAction("toUppercase", flp) {
+			private static final long serialVersionUID = 1L;
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				JTextArea editor = model.getCurrentDocument().getTextComponent();
+				Document doc = editor.getDocument();
+				
+				int len = Math.abs(editor.getCaret().getDot()-editor.getCaret().getMark());
+				int offset = 0;
+				if(len!=0) 
+					offset = Math.min(editor.getCaret().getDot(),editor.getCaret().getMark());
+				else 
+					len = doc.getLength();
+				
+				try {
+					String text = doc.getText(offset, len);
+					text = changeCase(text, "upper");
+					doc.remove(offset, len);
+					doc.insertString(offset, text, null);
+				} catch(BadLocationException ex) {
+					JOptionPane.showMessageDialog(null, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+				}
+			}
+		};
+		
+		// sortSubmenu, ascending, descending, unique
+		
+		sortSubmenu = new LocalizableAction("sortSubmenu", flp) {
+			private static final long serialVersionUID = 1L;
+			@Override
+			public void actionPerformed(ActionEvent e) {				
+			}
+		};
+		
+		ascending = new LocalizableAction("ascending", flp) {
+			private static final long serialVersionUID = 1L;
+			@Override
+			public void actionPerformed(ActionEvent e) {	
+				sortLines(true);
+			}
+			
+		};
+		
+		descending = new LocalizableAction("descending", flp) {
+			private static final long serialVersionUID = 1L;
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				sortLines(false);
+			}
+		};
+		
+		unique = new LocalizableAction("unique", flp) {
+			private static final long serialVersionUID = 1L;
+			@Override
+			public void actionPerformed(ActionEvent e) {	
+				getUniqueLines();
+			}
+		};
+		
+		
+	}
+	
+	
+	
+	/*
+	 * For caret in JTextArea finds its position and puts it in caretInfoLabel.
+	 */
 	private void updateCaretInfoLabel() {
 		SingleDocumentModel currModel = model.getCurrentDocument();
 	
@@ -309,17 +492,28 @@ public class JNotepadPP extends JFrame{
         catch(Exception ex) { 
         	System.out.println("err");
         }
+        
+        Caret c = editArea.getCaret();
+        if(c.getDot() != c.getMark()) haveSelectedText = true;
+        else haveSelectedText = false;
+        String selectedInfo = haveSelectedText ? ""+Math.abs(c.getDot() - c.getMark()) : "-";
+       
+        changeCaseSubmenu.setEnabled(haveSelectedText);
+        sortSubmenu.setEnabled(haveSelectedText);
 		
 		// Ln : #  Col : $  Sel : %
 		String info = flp.getString("caretInfo");
 		info = info.replace("#", ""+row);
 		info = info.replace("$", ""+column);
-		info = info.replace("%", "");
+		info = info.replace("%", selectedInfo);
 		
 		//String.format("Ln : %d  Col : %d  Sel : %d", row, column+1, 0);
 		caretInfoLabel.setText(info);
 	}
 
+	/**
+	 * Finds length of currently opened document and puts its length in length label in status bar.
+	 */
 	private void updateLengthLabel() {
 		SingleDocumentModel currModel = model.getCurrentDocument();
 		
@@ -333,13 +527,123 @@ public class JNotepadPP extends JFrame{
 		lengthLabel.setText(info);		
 	}
 	
+	/**
+	 * Updates clock every 500ms (0.5sec).
+	 */
 	private void updateClock() {
 		   DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");  
 		   
 		   clock = new javax.swing.Timer(500, e -> clockLabel.setText(dtf.format(LocalDateTime.now())));
 		   clock.start();
 	}
+	
+	/**
+	 * Changes case for given string and returns it.
+	 * 
+	 * @param text we want to change case
+	 * @param wantedCase [upper, lower, *], if * then inverts case
+	 */
+	private String changeCase(String text, String wantedCase) {
+		
+		char[] symbols = text.toCharArray();
+		
+		for(int i = 0; i < symbols.length; i++) {
+			char c = symbols[i];
+			
+			switch (wantedCase){
+				case "upper":
+					symbols[i] = Character.toUpperCase(c);
+					break;
+				case "lower":
+					symbols[i] = Character.toLowerCase(c);
+					break;
+				default:
+					if(Character.isLowerCase(c)) 
+						symbols[i] = Character.toUpperCase(c);
+					else if(Character.isUpperCase(c))
+						symbols[i] = Character.toLowerCase(c);	
+			}		
+		}
+		return new String(symbols);
+	}
 
+	/**
+	 * Sorts highlighted lines.
+	 * @param ascending if {@code true} sorts ascending, otherwise descending
+	 */
+	private void sortLines(boolean ascending) {
+		Collator collator = Collator.getInstance(new Locale(LocalizationProvider.getInstance().getLanguage()));
+		Comparator<String> comparator = new Comparator<String>() {
+			@Override
+			public int compare(String o1, String o2) {
+				return collator.compare(o1, o2);
+			}
+		};
+		if (!ascending) comparator = comparator.reversed();
+		
+		JTextArea editor = model.getCurrentDocument().getTextComponent();
+		PlainDocument doc = (PlainDocument) editor.getDocument();
+		Element root = doc.getDefaultRootElement();
+		
+		int startSelect = editor.getSelectionStart();
+		int endSelect = editor.getSelectionEnd();
+		
+		int start = root.getElement(root.getElementIndex(startSelect)).getStartOffset();
+		int end = root.getElement(root.getElementIndex(endSelect)).getEndOffset();
+		end = Math.min(end, doc.getLength());
+		
+		int len = end - start;
+
+		try {
+			String text = doc.getText(start, len);
+			String[] lines = text.split("\\r?\\n");
+			Arrays.sort(lines, comparator);
+			
+			text = String.join("\n", lines) + '\n';
+			
+			doc.remove(start, len);
+			doc.insertString(start, text, null);
+			
+		} catch(BadLocationException ex) {
+			JOptionPane.showMessageDialog(null, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+		}
+
+	}
+	
+	/**
+	 * From a selection of lines, remove all duplicates.
+	 */
+	private void getUniqueLines() {
+		JTextArea editor = model.getCurrentDocument().getTextComponent();
+		PlainDocument doc = (PlainDocument) editor.getDocument();
+		Element root = doc.getDefaultRootElement();
+		
+		int startSelect = editor.getSelectionStart();
+		int endSelect = editor.getSelectionEnd();
+		
+		int start = root.getElement(root.getElementIndex(startSelect)).getStartOffset();
+		int end = root.getElement(root.getElementIndex(endSelect)).getEndOffset();
+		end = Math.min(end, doc.getLength());
+		
+		int len = end - start;
+
+		try {
+			String text = doc.getText(start, len);
+			String[] lines = text.split("\\r?\\n");
+			Set<String> uniqueLines = new LinkedHashSet<>();
+			Collections.addAll(uniqueLines, lines);
+			String[] uLines = uniqueLines.toArray(lines);
+			
+			text = String.join("\n", uLines) + '\n';
+			
+			doc.remove(start, len);
+			doc.insertString(start, text, null);
+			
+		} catch(BadLocationException ex) {
+			JOptionPane.showMessageDialog(null, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+		}
+	}
+	
 	
 	public static void main(String[] args) {
 		SwingUtilities.invokeLater(() -> new JNotepadPP().setVisible(true));
