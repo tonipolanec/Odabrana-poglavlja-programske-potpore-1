@@ -177,7 +177,11 @@ public class JNotepadPP extends JFrame{
 		
 
 	private void setupMenuBar(Container cp) {
-		JMenuBar toolbar = new JMenuBar();
+
+		JToolBar toolbar = new JToolBar();
+		toolbar.setFloatable(true);
+		JMenuBar menubar = new JMenuBar();
+		
 		
 		JMenu file = new JMenu(fileMenu);
 		file.add(new JMenuItem(createBlankDocument));
@@ -185,13 +189,13 @@ public class JNotepadPP extends JFrame{
 		file.add(new JMenuItem(saveDocument));
 		file.add(new JMenuItem(saveAsDocument));
 		file.add(new JMenuItem(closeDocument));
-		toolbar.add(file);
+		menubar.add(file);
 
 		JMenu languages = new JMenu(languagesMenu);
 		languages.add(new JMenuItem(toEnglish));
 		languages.add(new JMenuItem(toCroatian));
 		languages.add(new JMenuItem(toGerman));
-		toolbar.add(languages);
+		menubar.add(languages);
 		
 		JMenu tools = new JMenu(toolsMenu);
 		JMenu changeCase = new JMenu(changeCaseSubmenu);
@@ -206,9 +210,9 @@ public class JNotepadPP extends JFrame{
 		tools.add(changeCase);
 		tools.add(new JMenuItem(unique));
 		
-		toolbar.add(tools);
+		menubar.add(tools);
 		
-		
+		toolbar.add(menubar);
 		
 		cp.add(toolbar, BorderLayout.PAGE_START);
 	}

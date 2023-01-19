@@ -177,7 +177,7 @@ public class Calculator extends JFrame {
 				
 				model.freezeValue(model.toString());
 				
-				if(model.isActiveOperandSet() && model.getPendingBinaryOperation() == null) {
+				if(model.isActiveOperandSet() ){//&& model.getPendingBinaryOperation() == null) {
 					double result = model.getPendingBinaryOperation().applyAsDouble(model.getActiveOperand(), model.getValue());
 					model.setValue(result);
 					model.setActiveOperand(result);
